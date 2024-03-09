@@ -1,0 +1,89 @@
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+/cmake-build-debug/.cmake/api/v1/query/cache-v2
+/cmake-build-debug/.cmake/api/v1/query/cmakeFiles-v1
+/cmake-build-debug/.cmake/api/v1/query/codemodel-v2
+/cmake-build-debug/.cmake/api/v1/query/toolchains-v1
+/cmake-build-debug/.cmake/api/v1/reply/cache-v2-be9b1e28a27b51008431.json
+/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-0f3b9cd87ffde8311494.json
+/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-14cbecb9b7a64d6d5b9c.json
+/cmake-build-debug/.cmake/api/v1/reply/directory-.-Debug-d0094a50bb2071803777.json
+/cmake-build-debug/.cmake/api/v1/reply/index-2024-03-09T11-19-35-0030.json
+/cmake-build-debug/.cmake/api/v1/reply/target-NB-chariot-f103c8t6.elf-Debug-2b0aa95b172a8defd2b2.json
+/cmake-build-debug/.cmake/api/v1/reply/toolchains-v1-415e2fabf27946ab235b.json
+/cmake-build-debug/CMakeFiles/3.27.0/CompilerIdC/CMakeCCompilerId.c
+/cmake-build-debug/CMakeFiles/3.27.0/CompilerIdCXX/CMakeCXXCompilerId.cpp
+/cmake-build-debug/CMakeFiles/3.27.0/CMakeASMCompiler.cmake
+/cmake-build-debug/CMakeFiles/3.27.0/CMakeCCompiler.cmake
+/cmake-build-debug/CMakeFiles/3.27.0/CMakeCXXCompiler.cmake
+/cmake-build-debug/CMakeFiles/3.27.0/CMakeDetermineCompilerABI_C.bin
+/cmake-build-debug/CMakeFiles/3.27.0/CMakeDetermineCompilerABI_CXX.bin
+/cmake-build-debug/CMakeFiles/3.27.0/CMakeSystem.cmake
+/cmake-build-debug/CMakeFiles/clion-Debug-log.txt
+/cmake-build-debug/CMakeFiles/clion-environment.txt
+/cmake-build-debug/CMakeFiles/cmake.check_cache
+/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml
+/cmake-build-debug/CMakeFiles/rules.ninja
+/cmake-build-debug/CMakeFiles/TargetDirectories.txt
+/cmake-build-debug/.ninja_deps
+/cmake-build-debug/.ninja_log
+/cmake-build-debug/build.ninja
+/cmake-build-debug/cmake_install.cmake
+/cmake-build-debug/CMakeCache.txt
+/cmake-build-debug/NB-chariot-f103c8t6.bin
+/.idea/runConfigurations/OCD_NB_chariot_f103c8t6.xml
+/.idea/encodings.xml
+/.idea/misc.xml
+/.idea/NB-chariot-f103c8t6.iml
+/.idea/vcs.xml
+/.idea/workspace.xml
