@@ -1,4 +1,6 @@
 #include "usart.h"
+#include "led.h"
+#include "printf.h"
 #include "string.h"
 #include "sys.h"
 
@@ -11,6 +13,7 @@ u8 mode_flag = 0;
 
 char Lx_Buf[10] = {0};   //左摇杆数据接收缓冲区
 char Rx_Buf[10] = {0};   //右摇杆数据接收缓冲区
+char Weapon_Buf[10] = {0};   //武器方向数据接收缓冲区
 char Pitch_Roll_Buf[20]; //APP偏航角数据接收缓冲区
 
 void
@@ -165,7 +168,7 @@ USART3_Init(u32 bound) {
 }
 
 /**************************************************
-函数名称：USART1_IRQHandler(void) 
+函数名称：USART1_IRQHandler(void)
 函数功能：串口1中断函数
 入口参数：无
 返回参数：无
@@ -177,24 +180,30 @@ USART1_IRQHandler(void) {
     static u8 i = 0, j = 0, k = 0;
     static char temp_buf1[10] = {0}, temp_buf2[10] = {0}, temp_buf3[20] = {0};
     static u8 Lx_flag = 0, Rx_flag = 0, Pr_flag = 0; //左右摇杆，陀螺仪接收数据标志位
+    static uint8_t Wx_flag = 0; /*武器接收数据标志位*/
 
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
         temp = USART_ReceiveData(USART1);
+//        printf_("UART1 receives: %c\r\n", temp);
         if (temp == 'a') {
-            mode_flag = 1;
+            mode_flag = 1;  /*APP遥控模式*/
         } else if (temp == 'b') {
-            mode_flag = 2;
+            mode_flag = 2;  /*APP重力模式*/
         } else if (temp == 'c') {
-            mode_flag = 3;
+            mode_flag = 3;  /*避障模式*/
         } else if (temp == 'd') {
-            mode_flag = 4;
+            mode_flag = 4;  /*跟随模式*/
         } else if (temp == 'e') {
-            mode_flag = 5;
+            mode_flag = 5;  /*呼吸灯*/
         } else if (temp == 'f') {
-            mode_flag = 6;
+            mode_flag = 6;  /*流水灯*/
         } else if (temp == 'g') {
-            mode_flag = 7;
+            mode_flag = 7;  /*闪烁灯*/
+        } else {
+            mode_flag = 1;
         }
+
+//        printf_("modeflag = %d\r\n", mode_flag);
 
         if (t == 0 && mode_flag == 4) //过滤第一次mode_flag=4
         {
@@ -225,6 +234,7 @@ USART1_IRQHandler(void) {
                     strcpy(Lx_Buf, temp_buf1);
                     Lx_flag = 0;
                     i = 0;
+//                    printf_("UART1 receives: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X \r\n", Lx_Buf[0], Lx_Buf[1], Lx_Buf[2], Lx_Buf[3], Lx_Buf[4], Lx_Buf[5], Lx_Buf[6], Lx_Buf[7], Lx_Buf[8], Lx_Buf[9]);
                 }
             }
 
@@ -249,11 +259,39 @@ USART1_IRQHandler(void) {
                     strcpy(Rx_Buf, temp_buf2);
                     Rx_flag = 0;
                     j = 0;
+//                    printf_("UART1 receives: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X \r\n\r\n", Rx_Buf[0], Rx_Buf[1], Rx_Buf[2], Rx_Buf[3], Rx_Buf[4], Rx_Buf[5], Rx_Buf[6], Rx_Buf[7], Rx_Buf[8], Rx_Buf[9]);
                 }
             }
-        } else {
-            if (temp == 'A' && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
-                && temp != 'f') //接收到帧头为A的一帧数据(重力感应模式数据)
+
+            /*武器摇杆数据帧接收*/
+            if (temp == 'W' && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
+                && temp != 'f')
+            {
+                Wx_flag = 1;
+            }
+            if (Wx_flag == 1 && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
+                && temp != 'f') //开始接收这一帧数据
+            {
+                temp_buf2[j] = temp;
+                j++;
+                if (temp == '*') //帧尾为*时一帧数据接收完毕
+                {
+                    if (n2 == 0) //过滤第一次摇杆数据
+                    {
+                        memset(Weapon_Buf, 0, 10);
+                        memset(temp_buf2, 0, 10);
+                        n2 = 1;
+                    }
+                    strcpy(Weapon_Buf, temp_buf2);
+                    Wx_flag = 0;
+                    j = 0;
+//                    printf_("UART1 receives: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X \r\n\r\n", Weapon_Buf[0], Weapon_Buf[1], Weapon_Buf[2], Weapon_Buf[3], Weapon_Buf[4], Weapon_Buf[5], Weapon_Buf[6], Weapon_Buf[7], Weapon_Buf[8], Weapon_Buf[9]);
+                }
+            }
+        }
+        /*重力感应模式*/
+        else {
+            if (temp == 'A') //接收到帧头为A的一帧数据(重力感应模式数据)
             {
                 Pr_flag = 1;
                 memset(Pitch_Roll_Buf, 0, 20);

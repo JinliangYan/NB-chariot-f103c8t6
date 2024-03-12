@@ -50,8 +50,9 @@ else ()
 endif ()
 
 include_directories(
-        APP/SERVO
-        APP/WEAPON
+        DLC
+        DLC/SERVO
+        DLC/WEAPON
         APP/BT
         APP/Control
         APP/HCSR04
@@ -93,10 +94,12 @@ include_directories(
         SYSTEM/usart
         USER
         APP/MPU6050/eMPL
+        TEST/easylogger
+        TEST/printf_
 )
-add_definitions(-DDBUG -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD)
+add_definitions(-DDEBUG -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD)
 
-file(GLOB_RECURSE SOURCES "CORE/*.*" "APP/**/*.c" "FATFS/*.c" "FATFS/**/*.c" "HARDWARE/**/*.c" "MALLOC/*.c" "STM32F10x_FWLib/src/*.c" "SYSTEM/**/*.c" "USER/*.c")
+file(GLOB_RECURSE SOURCES "CORE/*.*" "APP/**/*.c" "FATFS/*.c" "FATFS/**/*.c" "HARDWARE/**/*.c" "MALLOC/*.c" "STM32F10x_FWLib/src/*.c" "SYSTEM/**/*.c" "USER/*.c" "DLC/*.c" "DLC/**/*.c" "TEST/*.c" "TEST/**/*.c")
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld)
 

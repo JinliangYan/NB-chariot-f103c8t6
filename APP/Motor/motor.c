@@ -298,7 +298,7 @@ void Move(u16 Dir,u16 speed)
 ***************************************************/
 void Motion_State(u16 mode)
 {
-	if(mode==6)
+	if(mode == ON)
 	{
 		L_STBY_ON;
 		R_STBY_ON;
@@ -314,7 +314,7 @@ void Motion_State(u16 mode)
 		TIM_SetCompare4(TIM2,500);//L_BIN2:×óÉÏ
 		L_BIN2_ON;
 	}
-	else if(mode==7)
+	else if(mode == OFF)
 	{
 		L_STBY_OFF;
 		R_STBY_OFF;
