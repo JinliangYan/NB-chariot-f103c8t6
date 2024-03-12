@@ -6,8 +6,6 @@
 #include "motor.h"
 #include "nrf24l01.h"
 #include "hcsr.h"
-#include "tcrt.h"
-#include "joystick.h"
 #include "math.h"
 #include "string.h"
 #include "ws2812b.h"
