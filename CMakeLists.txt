@@ -67,39 +67,38 @@ include_directories(
         APP/TCRT5000
         APP/WS2812B
         CORE
-        FATFS
-        FATFS/exfuns
-        FATFS/src
-        HARDWARE
-        HARDWARE/ADC
-        HARDWARE/CAN
-        HARDWARE/DAC
-        HARDWARE/DMA
-        HARDWARE/EXTI
         HARDWARE/FLASH
         HARDWARE/GAP
-        HARDWARE/GPIO
-        HARDWARE/IIC
         HARDWARE/IWDG
         HARDWARE/LED
         HARDWARE/PWM
         HARDWARE/SPI
-        HARDWARE/TIM
         MALLOC
         STM32F10x_FWLib/inc
         STM32F10x_FWLib/src
         SYSTEM/delay
-        SYSTEM/printf
         SYSTEM/sys
         SYSTEM/usart
         USER
-        APP/MPU6050/eMPL
-        TEST/easylogger
         TEST/printf_
 )
 add_definitions(-DDEBUG -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD)
 
-file(GLOB_RECURSE SOURCES "CORE/*.*" "APP/**/*.c" "FATFS/*.c" "FATFS/**/*.c" "HARDWARE/**/*.c" "MALLOC/*.c" "STM32F10x_FWLib/src/*.c" "SYSTEM/**/*.c" "USER/*.c" "DLC/*.c" "DLC/**/*.c" "TEST/*.c" "TEST/**/*.c")
+file(GLOB_RECURSE SOURCES
+        "CORE/*.*"
+        "APP/**/*.c"
+        "FATFS/*.c"
+        "FATFS/**/*.c"
+        "HARDWARE/**/*.c"
+        "MALLOC/*.c"
+        "STM32F10x_FWLib/src/*.c"
+        "SYSTEM/**/*.c"
+        "USER/*.c"
+        "DLC/*.c"
+        "DLC/**/*.c"
+        "TEST/*.c"
+        "TEST/**/*.c"
+)
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld)
 

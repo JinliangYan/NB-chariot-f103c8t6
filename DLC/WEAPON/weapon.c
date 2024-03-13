@@ -45,8 +45,10 @@
  * \brief 舵机角度范围
  * \note  应保证 (SERVO_MIN + SERVO_MAX) / 2 == 90
  */
-#define SERVO_MIN                (50)
-#define SERVO_MAX                (130)
+#define SERVO_X_MIN                (0)
+#define SERVO_X_MAX                (180)
+#define SERVO_Y_MIN                (50)
+#define SERVO_Y_MAX                (130)
 
 /**
  * \brief 武器方向数据接收缓冲区
@@ -70,7 +72,7 @@ weapon_init() {
     servo_init();
     servo_1_set_angle(90);
     servo_2_set_angle(90);
-    printf_("weapon initialized successful\r\n");
+//    printf_("weapon initialized successful\r\n");
 }
 
 /**
@@ -97,10 +99,10 @@ map_joystick_to_servos(float x_offset, float y_offset, float* servo1_angle, floa
     y_offset = (y_offset < JOYSTICK_MIN) ? JOYSTICK_MIN : (y_offset > JOYSTICK_MAX) ? JOYSTICK_MAX : y_offset;
 
     // 将手柄的x偏移量映射到第一个舵机的角度范围
-    *servo1_angle = SERVO_MIN + (SERVO_MAX - SERVO_MIN) * (x_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
+    *servo1_angle = SERVO_X_MIN + (SERVO_X_MAX - SERVO_X_MIN) * (x_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
 
     // 将手柄的y偏移量映射到第二个舵机的角度范围
-    *servo2_angle = SERVO_MIN + (SERVO_MAX - SERVO_MIN) * (y_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
+    *servo2_angle = SERVO_Y_MIN + (SERVO_Y_MAX - SERVO_Y_MIN) * (y_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
 }
 
 /**
