@@ -1,116 +1,177 @@
-#THIS FILE IS AUTO GENERATED FROM THE TEMPLATE! DO NOT CHANGE!
-set(CMAKE_SYSTEM_NAME Generic)
-set(CMAKE_SYSTEM_VERSION 1)
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.22)
 
-# specify cross-compilers and tools
-set(CMAKE_C_COMPILER arm-none-eabi-gcc)
-set(CMAKE_CXX_COMPILER arm-none-eabi-g++)
-set(CMAKE_ASM_COMPILER  arm-none-eabi-gcc)
-set(CMAKE_AR arm-none-eabi-ar)
-set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
-set(CMAKE_OBJDUMP arm-none-eabi-objdump)
-set(SIZE arm-none-eabi-size)
-set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+#
+# This file is generated only once,
+# and is not re-generated if converter is called multiple times.
+#
+# User is free to modify the file as much as necessary
+#
 
-# project settings
-project(NB-chariot-f103c8t6 C CXX ASM)
-set(CMAKE_CXX_STANDARD 17)
+# Core project settings
+project(NB-chariot-f103c8t6)
+enable_language(C CXX ASM)
+message("Build type: " ${CMAKE_BUILD_TYPE})
+
+# Setup compiler settings
 set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
 
-#Uncomment for hardware floating point
-#add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
-#add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
-#add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+# Core MCU flags, CPU type, instruction set and FPU setup
+set(cpu_PARAMS)
 
-#Uncomment for software floating point
-#add_compile_options(-mfloat-abi=soft)
+# Sources
+set(sources_SRCS
 
-add_compile_options(-mcpu=cortex-m3 -mthumb -mthumb-interwork)
-add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
-
-# uncomment to mitigate c++17 absolute addresses warnings
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register")
-
-# Enable assembler files preprocessing
-add_compile_options($<$<COMPILE_LANGUAGE:ASM>:-x$<SEMICOLON>assembler-with-cpp>)
-
-if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-    message(STATUS "Maximum optimization for speed")
-    add_compile_options(-Ofast)
-elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
-    message(STATUS "Maximum optimization for speed, debug info included")
-    add_compile_options(-Ofast -g)
-elseif ("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
-    message(STATUS "Maximum optimization for size")
-    add_compile_options(-Os)
-else ()
-    message(STATUS "Minimal optimization, debug info included")
-    add_compile_options(-Og -g)
-endif ()
-
-include_directories(
-        APP/SERVO
-        APP/WEAPON
-        APP/BT
-        APP/Control
-        APP/HCSR04
-        APP/JoyStick
-        APP/KEY
-        APP/Motor
-        APP/MPU6050
-        APP/NRF24L01
-        APP/OLED
-        APP/PCA9685
-        APP/SDCard
-        APP/TCRT5000
-        APP/WS2812B
-        CORE
-        FATFS
-        FATFS/exfuns
-        FATFS/src
-        HARDWARE
-        HARDWARE/ADC
-        HARDWARE/CAN
-        HARDWARE/DAC
-        HARDWARE/DMA
-        HARDWARE/EXTI
-        HARDWARE/FLASH
-        HARDWARE/GAP
-        HARDWARE/GPIO
-        HARDWARE/IIC
-        HARDWARE/IWDG
-        HARDWARE/LED
-        HARDWARE/PWM
-        HARDWARE/SPI
-        HARDWARE/TIM
-        MALLOC
-        STM32F10x_FWLib/inc
-        STM32F10x_FWLib/src
-        SYSTEM/delay
-        SYSTEM/printf
-        SYSTEM/sys
-        SYSTEM/usart
-        USER
-        APP/MPU6050/eMPL
 )
-add_definitions(-DDBUG -DUSE_STDPERIPH_DRIVER -DSTM32F10X_HD)
 
-file(GLOB_RECURSE SOURCES "CORE/*.*" "APP/**/*.c" "FATFS/*.c" "FATFS/**/*.c" "HARDWARE/**/*.c" "MALLOC/*.c" "STM32F10x_FWLib/src/*.c" "SYSTEM/**/*.c" "USER/*.c")
+# Include directories for all compilers
+set(include_DIRS
+    DLC
+    DLC/SERVO
+    DLC/WEAPON
+    APP/BT
+    APP/Control
+    APP/HCSR04
+    APP/JoyStick
+    APP/KEY
+    APP/Motor
+    APP/MPU6050
+    APP/NRF24L01
+    APP/OLED
+    APP/PCA9685
+    APP/SDCard
+    APP/TCRT5000
+    APP/WS2812B
+    CORE
+    HARDWARE/FLASH
+    HARDWARE/GAP
+    HARDWARE/IWDG
+    HARDWARE/LED
+    HARDWARE/PWM
+    HARDWARE/SPI
+    MALLOC
+    STM32F10x_FWLib/inc
+    SYSTEM/delay
+    SYSTEM/sys
+    SYSTEM/usart
+    USER
+    TEST/printf_
+)
 
-set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F103C8TX_FLASH.ld)
+# Include directories for each compiler
+set(include_c_DIRS)
+set(include_cxx_DIRS)
+set(include_asm_DIRS)
 
-add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map)
-add_link_options(-mcpu=cortex-m3 -mthumb -mthumb-interwork)
-add_link_options(-T ${LINKER_SCRIPT})
+# Symbols definition for all compilers
+set(symbols_SYMB)
 
-add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
+# Symbols definition for each compiler
+set(symbols_c_SYMB
+    -DDEBUG
+    -DUSE_STDPERIPH_DRIVER
+    -DSTM32F10X_HD
+)
+set(symbols_cxx_SYMB)
+set(symbols_asm_SYMB)
 
-set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
-set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
+# Link directories and names of libraries
+set(link_DIRS)
+set(link_LIBS)
 
-add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}.elf> ${HEX_FILE}
-        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}.elf> ${BIN_FILE}
-        COMMENT "Building ${HEX_FILE}
-Building ${BIN_FILE}")
+# Linker script
+set(linker_script_SRC)
+
+# Compiler options
+set(compiler_OPTS)
+
+# Linker options
+set(linker_OPTS)
+
+# Now call generated cmake
+# This will add script generated
+# information to the project
+include("cmake_generated/cmake_generated.cmake")
+
+# Link directories setup
+# Must be before executable is added
+link_directories(${CMAKE_PROJECT_NAME} ${link_DIRS})
+
+# Create an executable object type
+add_executable(${CMAKE_PROJECT_NAME})
+
+# Add sources to executable
+target_sources(${CMAKE_PROJECT_NAME} PUBLIC ${sources_SRCS})
+
+# Add include paths
+target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
+    ${include_DIRS}
+    $<$<COMPILE_LANGUAGE:C>: ${include_c_DIRS}>
+    $<$<COMPILE_LANGUAGE:CXX>: ${include_cxx_DIRS}>
+    $<$<COMPILE_LANGUAGE:ASM>: ${include_asm_DIRS}>
+)
+
+# Add project symbols (macros)
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
+    ${symbols_SYMB}
+    $<$<COMPILE_LANGUAGE:C>: ${symbols_c_SYMB}>
+    $<$<COMPILE_LANGUAGE:CXX>: ${symbols_cxx_SYMB}>
+    $<$<COMPILE_LANGUAGE:ASM>: ${symbols_asm_SYMB}>
+
+    # Configuration specific
+    $<$<CONFIG:Debug>:DEBUG>
+    $<$<CONFIG:Release>: >
+)
+
+# Add linked libraries
+target_link_libraries(${CMAKE_PROJECT_NAME} ${link_LIBS})
+
+# Compiler options
+target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
+    ${cpu_PARAMS}
+    ${compiler_OPTS}
+    -Wall
+    -Wextra
+    -Wpedantic
+    -Wno-unused-parameter
+    $<$<COMPILE_LANGUAGE:C>: >
+    $<$<COMPILE_LANGUAGE:CXX>:
+
+    # -Wno-volatile
+    # -Wold-style-cast
+    # -Wuseless-cast
+    # -Wsuggest-override
+    >
+    $<$<COMPILE_LANGUAGE:ASM>:-x assembler-with-cpp -MMD -MP>
+    $<$<CONFIG:Debug>:-Og -g3 -ggdb>
+    $<$<CONFIG:Release>:-Og -g0>
+)
+
+# Linker options
+target_link_options(${CMAKE_PROJECT_NAME} PRIVATE
+    -T${linker_script_SRC}
+    ${cpu_PARAMS}
+    ${linker_OPTS}
+    -Wl,-Map=${CMAKE_PROJECT_NAME}.map
+    -u _printf_float # STDIO float formatting support (remove if not used)
+    --specs=nosys.specs
+    -Wl,--start-group
+    -lc
+    -lm
+    -lstdc++
+    -lsupc++
+    -Wl,--end-group
+    -Wl,-z,max-page-size=8 # Allow good software remapping across address space (with proper GCC section making)
+    -Wl,--print-memory-usage
+)
+
+# Execute post-build to print size, generate hex and bin
+add_custom_command(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
+    COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.hex
+    COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${CMAKE_PROJECT_NAME}> ${CMAKE_PROJECT_NAME}.bin
+)
