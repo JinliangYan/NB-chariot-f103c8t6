@@ -1,20 +1,18 @@
 #include "usart.h"
+#include "bsp_usart_blt.h"
 #include "led.h"
+#include "mode.h"
 #include "printf.h"
 #include "string.h"
 #include "sys.h"
 
 //注意:使用蓝牙模块时波特率使用9600,不能超过9600波特率
 
-u8 flag = 0;
-u8 mode_flag = 0;
+typedef enum { NONE, START, TYPE, MESSAGE, FINISH } receive_state_t;
 
-//char Lx_Buf[10]={0};
+receive_state_t next_state = FINISH;
 
-char Lx_Buf[10] = {0};     //左摇杆数据接收缓冲区
-char Rx_Buf[10] = {0};     //右摇杆数据接收缓冲区
-char Weapon_Buf[10] = {0}; //武器方向数据接收缓冲区
-char Pitch_Roll_Buf[20];   //APP偏航角数据接收缓冲区
+bt_received_data_t bt_received_data;
 
 void
 USART_SendByte(USART_TypeDef* USARTx, uint16_t Data) //发送一个字节
@@ -176,136 +174,52 @@ USART3_Init(u32 bound) {
 void
 USART1_IRQHandler(void) {
     u8 temp;
-    static u8 t = 0, n1 = 0, n2 = 0;
-    static u8 i = 0, j = 0, k = 0;
-    static char temp_buf1[10] = {0}, temp_buf2[10] = {0}, temp_buf3[20] = {0};
-    static u8 Lx_flag = 0, Rx_flag = 0, Pr_flag = 0; //左右摇杆，陀螺仪接收数据标志位
-    static uint8_t Wx_flag = 0;                      /*武器接收数据标志位*/
+    static u8 idx = 0;
+    static uint8_t temp_buf1[UART_BUFF_SIZE];
 
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
         temp = USART_ReceiveData(USART1);
-        //        printf_("UART1 receives: %c\r\n", temp);
-        if (temp == 'a') {
-            mode_flag = 1; /*APP遥控模式*/
-        } else if (temp == 'b') {
-            mode_flag = 2; /*APP重力模式*/
-        } else if (temp == 'c') {
-            mode_flag = 3; /*避障模式*/
-        } else if (temp == 'd') {
-            mode_flag = 4; /*跟随模式*/
-        } else if (temp == 'e') {
-            mode_flag = 5; /*呼吸灯*/
-        } else if (temp == 'f') {
-            mode_flag = 6; /*流水灯*/
-        } else if (temp == 'g') {
-            mode_flag = 7; /*闪烁灯*/
-        } else {
-            mode_flag = 1;
+
+        /* 接收到起始位 */
+        if (temp == PACKAGE_START_FLAG) {
+            clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
+            next_state = TYPE;
+            return;
         }
 
-        //        printf_("modeflag = %d\r\n", mode_flag);
-
-        if (t == 0 && mode_flag == 4) //过滤第一次mode_flag=4
-        {
-            mode_flag = 0;
-            t = 1;
+        /* 接收消息类型 */
+        if (next_state == TYPE) {
+            /* 匹配消息类型 */
+            switch (temp) {
+                case 'L': bt_received_data.message_type = MESSAGE_LEFT_JOYSTICK; break;
+                case 'R': bt_received_data.message_type = MESSAGE_RIGHT_JOYSTICK; break;
+                case 'W': bt_received_data.message_type = MESSAGE_WEAPON_JOYSTICK; break;
+                case 'T': bt_received_data.message_type = MESSAGE_TEXT; break;
+                case 'M': bt_received_data.message_type = MESSAGE_MODE_SWITCH; break;
+                default: break;
+            }
+            next_state = MESSAGE;
+            return;
         }
 
-        if (mode_flag != 2) //当模式不为重力感应模式时(遥控模式)
-        {
-            if (temp == 'L' && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
-                && temp != 'f') //接收到帧头为L的一帧数据
-            {
-                Lx_flag = 1; //标志位置1
-            }
-            if (Lx_flag == 1 && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
-                && temp != 'f') //开始接收这一帧数据
-            {
-                temp_buf1[i] = temp;
-                i++;
-                if (temp == '*') //帧尾为*时一帧数据接收完毕
-                {
-                    if (n1 == 0) //过滤第一次摇杆数据
-                    {
-                        memset(Lx_Buf, 0, 10);
-                        memset(temp_buf1, 0, 10);
-                        n1 = 1;
-                    }
-                    strcpy(Lx_Buf, temp_buf1);
-                    Lx_flag = 0;
-                    i = 0;
-                    //                    printf_("UART1 receives: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X \r\n", Lx_Buf[0], Lx_Buf[1], Lx_Buf[2], Lx_Buf[3], Lx_Buf[4], Lx_Buf[5], Lx_Buf[6], Lx_Buf[7], Lx_Buf[8], Lx_Buf[9]);
-                }
-            }
-
-            if (temp == 'R' && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
-                && temp != 'f') //接收到帧头为R的一帧数据
-            {
-                Rx_flag = 1;
-            }
-            if (Rx_flag == 1 && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
-                && temp != 'f') //开始接收这一帧数据
-            {
-                temp_buf2[j] = temp;
-                j++;
-                if (temp == '*') //帧尾为*时一帧数据接收完毕
-                {
-                    if (n2 == 0) //过滤第一次摇杆数据
-                    {
-                        memset(Rx_Buf, 0, 10);
-                        memset(temp_buf2, 0, 10);
-                        n2 = 1;
-                    }
-                    strcpy(Rx_Buf, temp_buf2);
-                    Rx_flag = 0;
-                    j = 0;
-                    //                    printf_("UART1 receives: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X \r\n\r\n", Rx_Buf[0], Rx_Buf[1], Rx_Buf[2], Rx_Buf[3], Rx_Buf[4], Rx_Buf[5], Rx_Buf[6], Rx_Buf[7], Rx_Buf[8], Rx_Buf[9]);
-                }
-            }
-
-            /*武器摇杆数据帧接收*/
-            if (temp == 'W' && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e' && temp != 'f') {
-                Wx_flag = 1;
-            }
-            if (Wx_flag == 1 && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
-                && temp != 'f') //开始接收这一帧数据
-            {
-                temp_buf2[j] = temp;
-                j++;
-                if (temp == '*') //帧尾为*时一帧数据接收完毕
-                {
-                    if (n2 == 0) //过滤第一次摇杆数据
-                    {
-                        memset(Weapon_Buf, 0, 10);
-                        memset(temp_buf2, 0, 10);
-                        n2 = 1;
-                    }
-                    strcpy(Weapon_Buf, temp_buf2);
-                    Wx_flag = 0;
-                    j = 0;
-                    //                    printf_("UART1 receives: %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X \r\n\r\n", Weapon_Buf[0], Weapon_Buf[1], Weapon_Buf[2], Weapon_Buf[3], Weapon_Buf[4], Weapon_Buf[5], Weapon_Buf[6], Weapon_Buf[7], Weapon_Buf[8], Weapon_Buf[9]);
-                }
-            }
+        /* 接收到终止位 */
+        if (temp == PACKAGE_END_FLAG) {
+            bt_received_data.receive_data_flag = 1;
+            next_state = START;
+            strcpy(bt_received_data.uart_buff, temp_buf1);
+            bt_received_data.datanum = idx;
+            bt_received_data.receive_data_flag = 1;
+            idx = 0;
+            return;
         }
-        /*重力感应模式*/
-        else {
-            if (temp == 'A') //接收到帧头为A的一帧数据(重力感应模式数据)
-            {
-                Pr_flag = 1;
-                memset(Pitch_Roll_Buf, 0, 20);
-                memset(temp_buf3, 0, 20);
-            }
-            if (Pr_flag == 1 && temp != 'a' && temp != 'b' && temp != 'c' && temp != 'd' && temp != 'e'
-                && temp != 'f') {
-                temp_buf3[k] = temp;
-                k++;
-                if (temp == '*') {
-                    strcpy(Pitch_Roll_Buf, temp_buf3);
-                    Pr_flag = 0;
-                    k = 0;
-                }
-            }
+
+        if (next_state != MESSAGE) {
+            next_state = NONE;
+            return;
         }
+
+        /* 接收消息内容 */
+        temp_buf1[idx++] = temp;
     }
 }
 
@@ -317,12 +231,12 @@ USART1_IRQHandler(void) {
 ***************************************************/
 void
 USART2_IRQHandler(void) {
-    u8 temp;
+    u8 temp = 0;
     if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
         temp = USART_ReceiveData(USART2);
         switch (temp) {
-            case 'a': flag = 1; break;
-            case 'b': flag = 2; break;
+            // case 'a': flag = 1; break;
+            // case 'b': flag = 2; break;
         }
     }
     USART_SendByte(USART2, temp);
@@ -340,8 +254,8 @@ USART3_IRQHandler(void) {
     if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
         temp = USART_ReceiveData(USART3);
         switch (temp) {
-            case 'a': flag = 1; break;
-            case 'b': flag = 2; break;
+            // case 'a': flag = 1; break;
+            // case 'b': flag = 2; break;
         }
     }
     USART_SendByte(USART3, temp);
@@ -428,35 +342,4 @@ USART3_Send_Str(u8* Data) {
             ;
     }
     return;
-}
-
-/**************************************************
-函数名称：fputc(int ch,FILE *f)
-函数功能：串口重定向
-入口参数：无
-返回参数：无
-***************************************************/
-#pragma import(__use_no_semihosting)
-
-struct __FILE {
-    int handle;
-};
-
-FILE __stdout;
-
-_sys_exit(int x) { x = x; }
-
-int
-fputc(int ch, FILE* f) {
-    USART_SendData(USART1, (uint8_t)ch);
-    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-        ;
-    return (ch);
-}
-
-int
-fgetc(FILE* f) {
-    while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
-        ;
-    return ((int)USART_ReceiveData(USART1));
 }

@@ -25,7 +25,8 @@ set(cpu_PARAMS)
 
 # Sources
 set(sources_SRCS
-
+    DLC/HC05/bsp_hc05.c
+    DLC/HC05/usart/bsp_usart_blt.c
 )
 
 # Include directories for all compilers
@@ -33,18 +34,13 @@ set(include_DIRS
     DLC
     DLC/SERVO
     DLC/WEAPON
-    APP/BT
+    DLC/HC05/
+    DLC/HC05/usart
     APP/Control
     APP/HCSR04
-    APP/JoyStick
-    APP/KEY
     APP/Motor
-    APP/MPU6050
     APP/NRF24L01
-    APP/OLED
-    APP/PCA9685
     APP/SDCard
-    APP/TCRT5000
     APP/WS2812B
     CORE
     HARDWARE/FLASH

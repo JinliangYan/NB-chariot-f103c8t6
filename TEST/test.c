@@ -52,7 +52,7 @@ debug_test() {
     printf_("HELLO\r\n");
 
     while (1) {
-        APP_Joy_Mode();
+        // APP_Joy_Mode();
         dlc_control();
     }
     return 0;
@@ -74,3 +74,6 @@ sysinit() {
     dlc_init();
     delay_ms(1000);
 }
+
+void
+test_bt() {}
