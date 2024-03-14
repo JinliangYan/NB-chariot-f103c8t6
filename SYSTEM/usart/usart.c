@@ -196,6 +196,7 @@ USART1_IRQHandler(void) {
                 case 'W': bt_received_data.message_type = MESSAGE_WEAPON_JOYSTICK; break;
                 case 'T': bt_received_data.message_type = MESSAGE_TEXT; break;
                 case 'M': bt_received_data.message_type = MESSAGE_MODE_SWITCH; break;
+                case 'A': bt_received_data.message_type = MESSAGE_WEAPON_ATTACK; break;
                 default: break;
             }
             next_state = MESSAGE;
