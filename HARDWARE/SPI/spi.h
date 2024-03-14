@@ -1,9 +1,9 @@
 #ifndef __SPI_H
-#define __SPI_H	
-#include "sys.h" 
-#include "stm32f10x.h"
-#include "usart.h"
+#define __SPI_H
 #include "delay.h"
+#include "stm32f10x.h"
+#include "sys.h"
+#include "usart.h"
 
 #define NSS1 PAout(4)
 #define NSS2 PBout(12)
@@ -15,7 +15,5 @@ u8 SPI2_ReadWriteByte(u8 TxData);
 void SPI1_SetSpeed(u8 SPI_BaudRatePrescaler);
 void SPI2_SetSpeed(u8 SPI_BaudRatePrescaler);
 void SPI_text(void);
-	
+
 #endif
-
-

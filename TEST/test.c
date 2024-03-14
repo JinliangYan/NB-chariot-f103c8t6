@@ -38,14 +38,15 @@
 #include "led.h"
 #include "motor.h"
 #include "nrf24l01.h"
+#include "printf.h"
 #include "stm32f10x.h"
 #include "usart.h"
 #include "ws2812b.h"
-#include "printf.h"
 
 void sysinit();
 
-int debug_test() {
+int
+debug_test() {
     sysinit();
     delay_init();
     printf_("HELLO\r\n");
@@ -57,17 +58,18 @@ int debug_test() {
     return 0;
 }
 
-void sysinit() {
+void
+sysinit() {
     delay_init(); //��ʱ������ʼ��
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
     USART1_Init(9600); //���ڳ�ʼ��Ϊ9600
     NRF24L01_Init();
     //    NRF24L01_Check_detection(); //NRF24L01�ȴ�Ӧ��
-    Motor_Init();               //�����ʼ��
-    Hcsr04_Init();              //��������ʼ��
-    Motion_State(OFF);          //�رյ������ʧ��
-    RGB_LED_Init();             //RGB�ʵƳ�ʼ��
+    Motor_Init();      //�����ʼ��?
+    Hcsr04_Init();     //��������ʼ��
+    Motion_State(OFF); //�رյ������ʧ��?
+    RGB_LED_Init();    //RGB�ʵƳ�ʼ��
     printf_init();
     dlc_init();
     delay_ms(1000);
