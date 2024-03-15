@@ -64,9 +64,9 @@ HC05_Send_CMD(char* cmd, uint8_t clean) {
             redata = get_rebuff(&len);
             if (len > 0) {
                 if (strstr(redata, "VER")) {
-                    printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
+                    // printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
 
-                    printf_("recv back: %s\r\n", redata);
+                    // printf_("recv back: %s\r\n", redata);
 
                     if (clean == 1) {
                         clean_rebuff();
@@ -80,13 +80,13 @@ HC05_Send_CMD(char* cmd, uint8_t clean) {
 
         } while (--i); //继续等待
 
-        printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
-        printf_("recv back: %s\r\n", redata);
-        printf_("HC05 send CMD fail %d times\r\n", retry); //提示失败重试
+        // printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
+        // printf_("recv back: %s\r\n", redata);
+        // printf_("HC05 send CMD fail %d times\r\n", retry); //提示失败重试
     }
 
     //	BLT_KEY_LOW;
-    printf_("HC05 send CMD fail \r\n");
+    // printf_("HC05 send CMD fail \r\n");
 
     if (clean == 1) {
         clean_rebuff();
