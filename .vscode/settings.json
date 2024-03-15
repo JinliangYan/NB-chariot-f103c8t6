@@ -2,6 +2,7 @@
     "files.encoding": "gbk",
     "files.associations": {
         "stm32f10x.h": "c",
-        "bsp_usart_blt.h": "c"
+        "bsp_usart_blt.h": "c",
+        "bsp_hc05.h": "c"
     }
 }

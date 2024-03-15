@@ -1,4 +1,5 @@
 #include "control.h"
+#include "bsp_usart_blt.h"
 
 u8 Joy_RxBuf[20];      //摇杆接收数据缓冲区
 u8 MPU_RxBuf[10];      //陀螺仪接收数据缓冲区
@@ -18,8 +19,7 @@ int HSV_H = 0;    //HSV的H数值
 u8 HSV_flag = 0;  //颜色转换时所用标志位
 u8 LED_Count = 0; //LED灯的个数
 
-extern char Lx_Buf[10]; //串口接收摇杆数据缓冲区
-extern char Rx_Buf[10]; //串口接收摇杆数据缓冲区
+extern bt_received_data_t bt_received_data;
 
 /**************************************************
 函数名称：Map(int val,int in_min,int in_max,int out_min,int out_max)
@@ -525,14 +525,13 @@ APP_Joy_Mode(void) {
     int Map_Lx, Map_Ly, Map_Rx, Map_Ry;
     int pwm1, pwm2, pwm3, pwm4;
 
-    /*锟斤拷摇锟斤拷锟斤拷锟斤拷*/
-    if (Lx_Buf[0] == 'L') {
-        Joy_Lx = (Lx_Buf[2] - '0') * 10 + (Lx_Buf[3] - '0');
-        Joy_Ly = (Lx_Buf[5] - '0') * 10 + (Lx_Buf[6] - '0');
+    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == MESSAGE_LEFT_JOYSTICK) {
+        Joy_Lx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
+        Joy_Ly = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
     }
-    if (Rx_Buf[0] == 'R') {
-        Joy_Rx = (Rx_Buf[2] - '0') * 10 + (Rx_Buf[3] - '0');
-        Joy_Ry = (Rx_Buf[5] - '0') * 10 + (Rx_Buf[6] - '0');
+    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == MESSAGE_RIGHT_JOYSTICK) {
+        Joy_Rx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
+        Joy_Ry = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
     }
 
     Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
