@@ -1,36 +1,36 @@
 #include "control.h"
 
-u8 Joy_RxBuf[20];      //Ò¡ï¿½Ë½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½
-u8 MPU_RxBuf[10];      //ï¿½ï¿½ï¿½ï¿½ï¿½Ç½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½
-u8 Joy_Lpos, Joy_Rpos; //Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-u8 MPU_Data[10];       //MPUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½
-u8 Con_RxBuf[10];      //ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-u8 Eva_RxBuf[4];       //ï¿½ï¿½ï¿½ï¿½Í£Ö¹Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-u8 RGB_RxBuf[4];       //ï¿½Êµï¿½Í£Ö¹Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-u8 mode = 1;           //Ä£Ê½ï¿½ï¿½1Ä¬ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½
+u8 Joy_RxBuf[20];      //Ò¡¸Ë½ÓÊÕÊý¾Ý»º³åÇø
+u8 MPU_RxBuf[10];      //ÍÓÂÝÒÇ½ÓÊÕÊý¾Ý»º³åÇø
+u8 Joy_Lpos, Joy_Rpos; //Ò¡¸Ë×ø±êÊý¾Ý
+u8 MPU_Data[10];       //MPU½ÓÊÕÊý¾ÝÂË²¨Êý×é
+u8 Con_RxBuf[10];      //¿ØÖÆÖ¸Áî½ÓÊÕÊý×é
+u8 Eva_RxBuf[4];       //±ÜÕÏÍ£Ö¹Ö¸ÁîÊý×é
+u8 RGB_RxBuf[4];       //²ÊµÆÍ£Ö¹Ö¸ÁîÊý×é
+u8 mode = 1;           //Ä£Ê½£¬1Ä¬ÈÏÎªÀ¶ÑÀÄ£Ê½
 extern u8 mode_flag;
-u8 NRF_flag = 0; //Ò£ï¿½ï¿½Ä£Ê½ï¿½Ð¶ï¿½Ñ­ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½Ö¾Î»
-u8 MPU_flag = 0; //ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½Ð¶ï¿½Ñ­ï¿½ï¿½ï¿½Ë³ï¿½ï¿½ï¿½Ö¾Î»
+u8 NRF_flag = 0; //Ò£¿ØÄ£Ê½ÅÐ¶ÏÑ­»·ÍË³ö±êÖ¾Î»
+u8 MPU_flag = 0; //ÖØÁ¦Ä£Ê½ÅÐ¶ÏÑ­»·ÍË³ö±êÖ¾Î»
 
-u8 RGB_flag = 0;  //RGBï¿½ÊµÆ±ï¿½Ö¾Î»
-u8 RGB_mode = 0;  //RGBï¿½Êµï¿½Ä£Ê½
-int HSV_H = 0;    //HSVï¿½ï¿½Hï¿½ï¿½Öµ
-u8 HSV_flag = 0;  //ï¿½ï¿½É«×ªï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ã±ï¿½Ö¾Î»
-u8 LED_Count = 0; //LEDï¿½ÆµÄ¸ï¿½ï¿½ï¿½
+u8 RGB_flag = 0;  //RGB²ÊµÆ±êÖ¾Î»
+u8 RGB_mode = 0;  //RGB²ÊµÆÄ£Ê½
+int HSV_H = 0;    //HSVµÄHÊýÖµ
+u8 HSV_flag = 0;  //ÑÕÉ«×ª»»Ê±ËùÓÃ±êÖ¾Î»
+u8 LED_Count = 0; //LEDµÆµÄ¸öÊý
 
-extern char Lx_Buf[10]; //ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½
-extern char Rx_Buf[10]; //ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½
+extern char Lx_Buf[10]; //´®¿Ú½ÓÊÕÒ¡¸ËÊý¾Ý»º³åÇø
+extern char Rx_Buf[10]; //´®¿Ú½ÓÊÕÒ¡¸ËÊý¾Ý»º³åÇø
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Map(int val,int in_min,int in_max,int out_min,int out_max)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½Ó³ï¿½äº¯ï¿½ï¿½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½val:ï¿½ï¿½ÒªÓ³ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
-					in_min:ï¿½ï¿½ï¿½ï¿½Öµï¿½Ä·ï¿½Î§ï¿½ï¿½Ð¡Öµ
-					in_max:ï¿½ï¿½ï¿½ï¿½Öµï¿½Ä·ï¿½Î§ï¿½ï¿½ï¿½Öµ
-					out_min:ï¿½ï¿½ï¿½Öµï¿½Ä·ï¿½Î§ï¿½ï¿½Ð¡Öµ
-					out_max:ï¿½ï¿½ï¿½Öµï¿½Ä·ï¿½Î§ï¿½ï¿½ï¿½Öµ
+º¯ÊýÃû³Æ£ºMap(int val,int in_min,int in_max,int out_min,int out_max)
+º¯Êý¹¦ÄÜ£ºÓ³Éäº¯Êý
+Èë¿Ú²ÎÊý£ºval:ÐèÒªÓ³ÉäµÄÊýÖµ
+					in_min:ÊäÈëÖµµÄ·¶Î§×îÐ¡Öµ
+					in_max:ÊäÈëÖµµÄ·¶Î§×î´óÖµ
+					out_min:Êä³öÖµµÄ·¶Î§×îÐ¡Öµ
+					out_max:Êä³öÖµµÄ·¶Î§×î´óÖµ
 
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+·µ»Ø²ÎÊý£ºÓ³ÉäºóµÄÊýÖµ
 ***************************************************/
 int
 Map(int val, int in_min, int in_max, int out_min, int out_max) {
@@ -38,10 +38,10 @@ Map(int val, int in_min, int in_max, int out_min, int out_max) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Bluetooth_Mode(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½Ä£Ê½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºBluetooth_Mode(void)
+º¯Êý¹¦ÄÜ£ºÀ¶ÑÀÒ£¿ØÄ£Ê½
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 Bluetooth_Mode(void) {
@@ -65,10 +65,10 @@ Bluetooth_Mode(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Wireless_Mode(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½Ò£ï¿½ï¿½Ä£Ê½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºWireless_Mode(void)
+º¯Êý¹¦ÄÜ£ºÒ£¿ØÄ£Ê½
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 Wireless_Mode(void) {
@@ -142,39 +142,39 @@ Wireless_Mode(void) {
         }
 
         if (pwm1 >= 0) {
-            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:×óÉÏÂÖ
             L_BIN2_ON;
 
         } else if (pwm1 < 0) {
             pwm1 = abs(pwm1);
-            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:×óÉÏÂÖ
             L_BIN2_OFF;
         }
 
         if (pwm2 >= 0) {
-            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ÓÒÉÏÂÖ
             L_AIN2_OFF;
         } else if (pwm2 < 0) {
             pwm2 = abs(pwm2);
-            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ÓÒÉÏÂÖ
             L_AIN2_ON;
         }
 
         if (pwm3 >= 0) {
-            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ÓÒÏÂÂÖ
             R_AIN2_ON;
         } else if (pwm3 < 0) {
             pwm3 = abs(pwm3);
-            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ÓÒÏÂÂÖ
             R_AIN2_OFF;
         }
 
         if (pwm4 >= 0) {
-            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:×óÏÂÂÖ
             R_BIN2_OFF;
         } else if (pwm4 < 0) {
             pwm4 = abs(pwm4);
-            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:×óÏÂÂÖ
             R_BIN2_ON;
         }
 
@@ -189,7 +189,7 @@ Wireless_Mode(void) {
     }
 
     if (RGB_mode == 0) {
-        //RGBï¿½ÊµÆºï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ð§ï¿½ï¿½
+        //RGB²ÊµÆºôÎüÁ÷Ë®µÆÐ§¹û
         hsv_to_rgb(HSV_H, 100, 100, &RGB_R, &RGB_G, &RGB_B);
         if (HSV_H == 360) {
             HSV_flag = 1;
@@ -233,15 +233,15 @@ Wireless_Mode(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Evadible_Mode(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºEvadible_Mode(void)
+º¯Êý¹¦ÄÜ£º±ÜÕÏÄ£Ê½
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 Evadible_Mode(void) {
     float Dis;
-    Dis = Hcsr04GetLength(); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
+    Dis = Hcsr04GetLength(); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿?
     forward(200);            //Ç°ï¿½ï¿½
 
     if (Dis <= 15) {
@@ -253,10 +253,10 @@ Evadible_Mode(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Gravity_Mode(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºGravity_Mode(void)
+º¯Êý¹¦ÄÜ£ºÖØÁ¦Ä£Ê½
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 Gravity_Mode(void) {
@@ -325,39 +325,39 @@ Gravity_Mode(void) {
         }
 
         if (pwm1 >= 0) {
-            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:×óÉÏÂÖ
             L_BIN2_ON;
 
         } else if (pwm1 < 0) {
             pwm1 = abs(pwm1);
-            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:×óÉÏÂÖ
             L_BIN2_OFF;
         }
 
         if (pwm2 >= 0) {
-            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ÓÒÉÏÂÖ
             L_AIN2_OFF;
         } else if (pwm2 < 0) {
             pwm2 = abs(pwm2);
-            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ÓÒÉÏÂÖ
             L_AIN2_ON;
         }
 
         if (pwm3 >= 0) {
-            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ÓÒÏÂÂÖ
             R_AIN2_ON;
         } else if (pwm3 < 0) {
             pwm3 = abs(pwm3);
-            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ÓÒÏÂÂÖ
             R_AIN2_OFF;
         }
 
         if (pwm4 >= 0) {
-            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:×óÏÂÂÖ
             R_BIN2_OFF;
         } else if (pwm4 < 0) {
             pwm4 = abs(pwm4);
-            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:×óÏÂÂÖ
             R_BIN2_ON;
         }
 
@@ -370,7 +370,7 @@ Gravity_Mode(void) {
     }
 
     if (RGB_mode == 0) {
-        //RGBï¿½ÊµÆºï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ð§ï¿½ï¿½
+        //RGB²ÊµÆºôÎüÁ÷Ë®µÆÐ§¹û
         hsv_to_rgb(HSV_H, 100, 100, &RGB_R, &RGB_G, &RGB_B);
         if (HSV_H == 360) {
             HSV_flag = 1;
@@ -414,15 +414,15 @@ Gravity_Mode(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Follow_Mode(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºFollow_Mode(void)
+º¯Êý¹¦ÄÜ£º¸úËæÄ£Ê½
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 Follow_Mode(void) {
     float Dis;
-    Dis = Hcsr04GetLength(); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
+    Dis = Hcsr04GetLength(); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿?
     if (Dis <= 10) {
         backward(200); //ï¿½ï¿½ï¿½ï¿½
     } else if (Dis <= 30 && Dis >= 20) {
@@ -433,10 +433,10 @@ Follow_Mode(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½void RGB_Select(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½Êµï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºvoid RGB_Select(void)
+º¯Êý¹¦ÄÜ£º²ÊµÆÄ£Ê½µÆÀàÐÍÑ¡Ôñ
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 RGB_Select(void) {
@@ -447,11 +447,11 @@ RGB_Select(void) {
             RGB_flag = 1;
         }
         if (RGB_RxBuf[2] == '0') {
-            RGB_mode = 0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            RGB_mode = 0; //ºôÎüµÆ
         } else if (RGB_RxBuf[2] == '1') {
-            RGB_mode = 1; //ï¿½ï¿½Ë®ï¿½ï¿½
+            RGB_mode = 1; //Á÷Ë®µÆ
         } else if (RGB_RxBuf[2] == '2') {
-            RGB_mode = 2; //ï¿½ï¿½Ë¸ï¿½ï¿½
+            RGB_mode = 2; //ÉÁË¸µÆ
         }
     }
     delay_ms(10);
@@ -459,17 +459,17 @@ RGB_Select(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½RGB_Show(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½Êµï¿½ï¿½ï¿½Ê¾
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºRGB_Show(void)
+º¯Êý¹¦ÄÜ£º²ÊµÆÏÔÊ¾
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 RGB_Show(void) {
     static u8 RGB_mode1 = 0, i = 0;
     static u8 RGB_mode2 = 0, j = 0;
     if (RGB_mode == 0) {
-        //RGBï¿½ÊµÆºï¿½ï¿½ï¿½ï¿½ï¿½Ë®ï¿½ï¿½Ð§ï¿½ï¿½
+        //RGB²ÊµÆºôÎüÁ÷Ë®µÆÐ§¹û
         hsv_to_rgb(HSV_H, 100, 100, &RGB_R, &RGB_G, &RGB_B);
         if (HSV_H == 360) {
             HSV_flag = 1;
@@ -514,16 +514,10 @@ RGB_Show(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Joy_Mode(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½Ò¡ï¿½ï¿½Ò£ï¿½ï¿½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½Ö»ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Ò¡ï¿½Ë·ï¿½ï¿½ï¿½7ï¿½ï¿½ï¿½Ö½Úµï¿½ï¿½ï¿½ï¿½Ý°ï¿½
-ï¿½ï¿½Ò¡ï¿½ï¿½:
-LXm,Yn*
-ï¿½ï¿½Ò¡ï¿½ï¿½:
-RXm,Yn*
-m,nï¿½ï¿½Ò¡ï¿½ï¿½Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, È¡Öµï¿½ï¿½ï¿½Îª90, Ð¡ï¿½ï¿½10Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºJoy_Mode(void)
+º¯Êý¹¦ÄÜ£ºÀ¶ÑÀÄ£Ê½µÄÒ¡¸ËÒ£¿Ø
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 APP_Joy_Mode(void) {
@@ -596,78 +590,74 @@ APP_Joy_Mode(void) {
     }
 
     if (pwm1 >= 0) {
-        TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:×óÉÏÂÖ
         L_BIN2_ON;
 
     } else if (pwm1 < 0) {
         pwm1 = abs(pwm1);
-        TIM_SetCompare4(TIM2, pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare4(TIM2, pwm1); //L_BIN2:×óÉÏÂÖ
         L_BIN2_OFF;
     }
 
     if (pwm2 >= 0) {
-        TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ÓÒÉÏÂÖ
         L_AIN2_OFF;
     } else if (pwm2 < 0) {
         pwm2 = abs(pwm2);
-        TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ÓÒÉÏÂÖ
         L_AIN2_ON;
     }
 
     if (pwm3 >= 0) {
-        TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ÓÒÏÂÂÖ
         R_AIN2_ON;
     } else if (pwm3 < 0) {
         pwm3 = abs(pwm3);
-        TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ÓÒÏÂÂÖ
         R_AIN2_OFF;
     }
 
     if (pwm4 >= 0) {
-        TIM_SetCompare2(TIM2, pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare2(TIM2, pwm4); //R_BIN2:×óÏÂÂÖ
         R_BIN2_OFF;
     } else if (pwm4 < 0) {
         pwm4 = abs(pwm4);
-        TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:×óÏÂÂÖ
         R_BIN2_ON;
     }
     delay_ms(10);
-    //	printf(Lx_Buf);
-    //	printf(Rx_Buf);
-    //	printf(Rx_Buf);
-    //	printf("\n");
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½APP_Gravity_Mode(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½APPï¿½ï¿½ï¿½ï¿½Ä£Ê½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºAPP_Gravity_Mode(void)
+º¯Êý¹¦ÄÜ£ºAPPÖØÁ¦Ä£Ê½
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 APP_Gravity_Mode(void) {
     int i, j = 0, Pitch_flag = 0;
     int APP_Pitch = 0, APP_Roll = 0;
-    int Pitch_symbel = 1, Roll_symbel = 1; //Æ«ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½
+    int Pitch_symbel = 1, Roll_symbel = 1; //Æ«º½½Ç·ûºÅ
     char Pitch_Buf[10], Roll_Buf[10];
-    int Map_pitch, Map_roll; //Ó³ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½
+    int Map_pitch, Map_roll; //Ó³ÉäºóµÄÆ«º½½Ç
     int pwm1, pwm2, pwm3, pwm4;
-    static int Smoothing_Pitch_Buf[5]; //ï¿½ï¿½Öµï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½
-    static int Smoothing_Roll_Buf[5];  //ï¿½ï¿½Öµï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½
-    static int Smoothing_Count = 0;    //ï¿½ï¿½Öµï¿½Ë²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-    int Pitch_temp, Roll_temp;         //Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    static int Smoothing_Pitch_Buf[5]; //ÖÐÖµÂË²¨Êý×é
+    static int Smoothing_Roll_Buf[5];  //ÖÐÖµÂË²¨Êý×é
+    static int Smoothing_Count = 0;    //ÖÐÖµÂË²¨²ÉÑù¸öÊý
+    int Pitch_temp, Roll_temp;         //Ñ¡ÔñÅÅÐò±äÁ¿
 
     L_STBY_ON;
     R_STBY_ON;
 
-    //ï¿½ï¿½È¡Roll
+    //ÌáÈ¡Roll
     for (i = 1; i < 20; i++) {
         if (Pitch_Roll_Buf[i] == '.') {
             break;
         }
         Roll_Buf[i - 1] = Pitch_Roll_Buf[i];
     }
-    //ï¿½ï¿½È¡Pitch
+    //ÌáÈ¡Pitch
     for (i = 0; i < 20; i++) {
         if (Pitch_Roll_Buf[i] == ',') {
             Pitch_flag = 1;
@@ -682,7 +672,7 @@ APP_Gravity_Mode(void) {
             j++;
         }
     }
-    //ï¿½ï¿½Rollï¿½Ö·ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //½«Roll×Ö·û´®×ª»»ÎªÕûÐÎÊý¾Ý
     j = 0;
     for (i = 10; i >= 0; i--) {
         if (Roll_Buf[i] >= '0' && Roll_Buf[i] <= '9') {
@@ -693,7 +683,7 @@ APP_Gravity_Mode(void) {
             Roll_symbel = -1;
         }
     }
-    //ï¿½ï¿½Pitchï¿½Ö·ï¿½ï¿½ï¿½×ªï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //½«Pitch×Ö·û´®×ª»»ÎªÕûÐÎÊý¾Ý
     j = 0;
     for (i = 10; i >= 0; i--) {
         if (Pitch_Buf[i] >= '0' && Pitch_Buf[i] <= '9') {
@@ -704,14 +694,14 @@ APP_Gravity_Mode(void) {
             Pitch_symbel = -1;
         }
     }
-    //ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½Æ«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //µÃµ½ÕûÐÎÆ«º½½ÇÊý¾Ý
     APP_Pitch = Pitch_symbel * APP_Pitch;
     APP_Roll = Roll_symbel * APP_Roll;
-    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //²ÉÑùÎå´Î
     Smoothing_Pitch_Buf[Smoothing_Count] = APP_Pitch;
     Smoothing_Roll_Buf[Smoothing_Count] = APP_Roll;
     Smoothing_Count++;
-    //Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    //Ñ¡ÔñÅÅÐò
     if (Smoothing_Count == 5) {
         Smoothing_Count = 0;
 
@@ -729,7 +719,7 @@ APP_Gravity_Mode(void) {
                 }
             }
         }
-        //ï¿½ï¿½Öµï¿½Ë²ï¿½
+        //ÖÐÖµÂË²¨
         APP_Pitch = Smoothing_Pitch_Buf[2];
         APP_Roll = Smoothing_Roll_Buf[2];
 
@@ -786,39 +776,39 @@ APP_Gravity_Mode(void) {
         }
 
         if (pwm1 >= 0) {
-            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:×óÉÏÂÖ
             L_BIN2_ON;
 
         } else if (pwm1 < 0) {
             pwm1 = abs(pwm1);
-            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:×óÉÏÂÖ
             L_BIN2_OFF;
         }
 
         if (pwm2 >= 0) {
-            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:ÓÒÉÏÂÖ
             L_AIN2_OFF;
         } else if (pwm2 < 0) {
             pwm2 = abs(pwm2);
-            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:ÓÒÉÏÂÖ
             L_AIN2_ON;
         }
 
         if (pwm3 >= 0) {
-            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:ÓÒÏÂÂÖ
             R_AIN2_ON;
         } else if (pwm3 < 0) {
             pwm3 = abs(pwm3);
-            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:ÓÒÏÂÂÖ
             R_AIN2_OFF;
         }
 
         if (pwm4 >= 0) {
-            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:×óÏÂÂÖ
             R_BIN2_OFF;
         } else if (pwm4 < 0) {
             pwm4 = abs(pwm4);
-            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:×óÏÂÂÖ
             R_BIN2_ON;
         }
 
@@ -834,32 +824,32 @@ APP_Gravity_Mode(void) {
 }
 
 /**************************************************
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½void Control(void)
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½Æºï¿½ï¿½ï¿½
-ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-ï¿½ï¿½ï¿½Ø²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+º¯ÊýÃû³Æ£ºvoid Control(void)
+º¯Êý¹¦ÄÜ£ºÂóÂÖÐ¡³µ¿ØÖÆº¯Êý
+Èë¿Ú²ÎÊý£ºÎÞ
+·µ»Ø²ÎÊý£ºÎÞ
 ***************************************************/
 void
 Control(void) {
 
     NRF24L01_RX_Mode();
     if (NRF24L01_RxPacket(Con_RxBuf) == 0 && Con_RxBuf[0] != ' ') {
-        if (Con_RxBuf[0] == 'L' && Con_RxBuf[1] == 'Y') //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+        if (Con_RxBuf[0] == 'L' && Con_RxBuf[1] == 'Y') //À¶ÑÀÄ£Ê½
         {
             mode = 1;
-        } else if (Con_RxBuf[0] == 'L' && Con_RxBuf[1] == 'X') //Ò£ï¿½ï¿½Ä£Ê½
+        } else if (Con_RxBuf[0] == 'L' && Con_RxBuf[1] == 'X') //Ò£¿ØÄ£Ê½
         {
             mode = 2;
-        } else if (Con_RxBuf[0] >= 'P' && Con_RxBuf[3] <= 'R') //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Ä£Ê½
+        } else if (Con_RxBuf[0] >= 'P' && Con_RxBuf[3] <= 'R') //ÖØÁ¦¸ÐÓ¦Ä£Ê½
         {
             mode = 3;
-        } else if (Con_RxBuf[0] == 'B' && Con_RxBuf[1] == 'Z') //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+        } else if (Con_RxBuf[0] == 'B' && Con_RxBuf[1] == 'Z') //±ÜÕÏÄ£Ê½
         {
             mode = 4;
-        } else if (Con_RxBuf[0] == 'G' && Con_RxBuf[1] == 'S') //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+        } else if (Con_RxBuf[0] == 'G' && Con_RxBuf[1] == 'S') //¸úËæÄ£Ê½
         {
             mode = 5;
-        } else if (Con_RxBuf[0] == 'C' && Con_RxBuf[1] == 'D') //RGBï¿½Êµï¿½Ä£Ê½
+        } else if (Con_RxBuf[0] == 'C' && Con_RxBuf[1] == 'D') //RGB²ÊµÆÄ£Ê½
         {
             mode = 6;
         }
@@ -874,7 +864,7 @@ Control(void) {
         Bluetooth_Mode();
     } else if (mode == 2) {
         while (1) {
-            Wireless_Mode(); //Ò£ï¿½ï¿½Ä£Ê½
+            Wireless_Mode(); //Ò£¿ØÄ£Ê½
             if (NRF_flag == 1) {
                 mode = 1;
                 break;
@@ -882,19 +872,19 @@ Control(void) {
         }
     } else if (mode == 3) {
         while (1) {
-            Gravity_Mode(); //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+            Gravity_Mode(); //ÖØÁ¦Ä£Ê½
             if (MPU_flag == 1) {
                 mode = 1;
                 break;
             }
         }
     } else if (mode == 4) {
-        Evadible_Mode(); //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+        Evadible_Mode(); //±ÜÕÏÄ£Ê½
     } else if (mode == 5) {
-        Follow_Mode(); //ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+        Follow_Mode(); //¸úËæÄ£Ê½
     } else if (mode == 6) {
         while (1) {
-            RGB_Select(); //RGBï¿½Êµï¿½Ñ¡ï¿½ï¿½
+            RGB_Select(); //RGB²ÊµÆÑ¡Ôñ
             if (RGB_flag == 1) {
                 mode = 1;
                 break;
@@ -906,5 +896,5 @@ Control(void) {
     NRF_flag = 0;
     RGB_flag = 0;
 
-    RGB_Show(); //RGBï¿½Êµï¿½ï¿½ï¿½Ê¾
+    RGB_Show(); //RGB²ÊµÆÏÔÊ¾
 }

@@ -52,7 +52,7 @@ debug_test() {
     printf_("HELLO\r\n");
 
     while (1) {
-        // APP_Joy_Mode();
+        APP_Joy_Mode();
         dlc_control();
     }
     return 0;
@@ -60,16 +60,16 @@ debug_test() {
 
 void
 sysinit() {
-    delay_init(); //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+    delay_init(); //ÑÓÊ±º¯Êý³õÊ¼»¯
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
-    USART1_Init(9600); //ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½Îª9600
+    USART1_Init(9600); //´®¿Ú³õÊ¼»¯Îª9600
     NRF24L01_Init();
-    //    NRF24L01_Check_detection(); //NRF24L01ï¿½È´ï¿½Ó¦ï¿½ï¿½
-    Motor_Init();      //ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿?
-    Hcsr04_Init();     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
-    Motion_State(OFF); //ï¿½Ø±Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿?
-    RGB_LED_Init();    //RGBï¿½ÊµÆ³ï¿½Ê¼ï¿½ï¿½
+    // NRF24L01_Check_detection(); //NRF24L01µÈ´ýÓ¦´ð
+    Motor_Init();      //µç»ú³õÊ¼»¯
+    Hcsr04_Init();     //³¬Éù²¨³õÊ¼»¯
+    Motion_State(OFF); //¹Ø±Õµç»úÇý¶¯Ê§ÄÜ
+    RGB_LED_Init();    //RGB²ÊµÆ³õÊ¼»¯
     printf_init();
     dlc_init();
     delay_ms(1000);
