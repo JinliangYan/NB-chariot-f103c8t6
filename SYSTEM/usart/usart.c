@@ -8,7 +8,7 @@
 
 //注意:使用蓝牙模块时波特率使用9600,不能超过9600波特率
 
-typedef enum { NONE, START, TYPE, MESSAGE, FINISH } receive_state_t;
+typedef enum { NONE, START, TYPE_COMMON, TYPE_AT, MESSAGE, FINISH } receive_state_t;
 
 receive_state_t next_state = FINISH;
 
@@ -183,12 +183,18 @@ USART1_IRQHandler(void) {
         /* 接收到起始位 */
         if (temp == PACKAGE_START_FLAG) {
             clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
-            next_state = TYPE;
+            next_state = TYPE_COMMON;
+            return;
+        }
+        if (temp == PACKAGE_AT_FLAG) {
+            clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
+            bt_received_data.message_type = MESSAGE_AT_COMMAND;
+            next_state = TYPE_AT;
             return;
         }
 
         /* 接收消息类型 */
-        if (next_state == TYPE) {
+        if (next_state == TYPE_COMMON) {
             /* 匹配消息类型 */
             switch (temp) {
                 case 'L': bt_received_data.message_type = MESSAGE_LEFT_JOYSTICK; break;
@@ -203,6 +209,14 @@ USART1_IRQHandler(void) {
             return;
         }
 
+        /* AT没有终止位, 这里一直接收 */
+        if (bt_received_data.message_type == MESSAGE_AT_COMMAND) {
+            bt_received_data.uart_buff[idx++] = temp;
+            bt_received_data.datanum = idx;
+            bt_received_data.receive_data_flag = 1;
+            return;
+        }
+
         /* 接收到终止位 */
         if (temp == PACKAGE_END_FLAG) {
             bt_received_data.receive_data_flag = 1;
@@ -213,6 +227,7 @@ USART1_IRQHandler(void) {
             idx = 0;
             return;
         }
+
 
         if (next_state != MESSAGE) {
             next_state = NONE;

@@ -10,6 +10,7 @@
 
 #define PACKAGE_START_FLAG  '$'
 #define PACKAGE_END_FLAG    '*'
+#define PACKAGE_AT_FLAG     '+'
 
 typedef enum {
     MESSAGE_NONE,
@@ -18,7 +19,8 @@ typedef enum {
     MESSAGE_RIGHT_JOYSTICK,
     MESSAGE_WEAPON_JOYSTICK,
     MESSAGE_WEAPON_ATTACK,
-    MESSAGE_TEXT
+    MESSAGE_TEXT,
+    MESSAGE_AT_COMMAND
 } receiving_message_type_t;
 
 typedef struct {

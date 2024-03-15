@@ -12,7 +12,8 @@
 uint8_t
 bt_init(void) {
     USART1_Init(BLT_USART_BAUD_RATE);
-    return HC05_Send_CMD("AT\r\n", 1);
+    delay_ms(100);
+    return HC05_Send_CMD("AT+VER\r\n", 1);
 }
 
 /**
@@ -37,7 +38,7 @@ writeCommand(const char* command, const char* arg) {
 
     HC05_DEBUG("CMD send:%s", str_buf);
 
-    Usart_SendString(HC05_USART, (uint8_t*)str_buf);
+    USART1_Send_Str(str_buf);
 }
 
 /**
@@ -55,22 +56,21 @@ HC05_Send_CMD(char* cmd, uint8_t clean) {
     char* redata;
 
     while (retry--) {
-        Usart_SendString(HC05_USART, (uint8_t*)cmd); //让手机知道发送了什么命令(可删除)
+        USART1_Send_Str((uint8_t *)cmd);
         i = 500;                                     //初始化i，最长等待5秒
         hc05_delay_ms(10);                           //
 
         do {
             redata = get_rebuff(&len);
             if (len > 0) {
-                if (strstr(redata, "OK")) {
-                    HC05_DEBUG("send CMD: %s", cmd); //打印发送的蓝牙指令和返回信息
+                if (strstr(redata, "VER")) {
+                    printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
 
-                    HC05_DEBUG("recv back: %s", redata);
+                    printf_("recv back: %s\r\n", redata);
 
                     if (clean == 1) {
                         clean_rebuff();
                     }
-                    //          BLT_KEY_LOW;
 
                     return 0; //AT指令成功
                 }
@@ -80,13 +80,13 @@ HC05_Send_CMD(char* cmd, uint8_t clean) {
 
         } while (--i); //继续等待
 
-        HC05_DEBUG("send CMD: %s", cmd); //打印发送的蓝牙指令和返回信息
-        HC05_DEBUG("recv back: %s", redata);
-        HC05_DEBUG("HC05 send CMD fail %d times", retry); //提示失败重试
+        printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
+        printf_("recv back: %s\r\n", redata);
+        printf_("HC05 send CMD fail %d times\r\n", retry); //提示失败重试
     }
 
     //	BLT_KEY_LOW;
-    HC05_DEBUG("HC05 send CMD fail ");
+    printf_("HC05 send CMD fail \r\n");
 
     if (clean == 1) {
         clean_rebuff();
