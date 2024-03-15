@@ -41,7 +41,6 @@
 void dlc_init() {
     weapon_init();
     bt_init();
-    delay_ms(100);
 }
 
 void dlc_control() {
