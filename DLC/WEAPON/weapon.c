@@ -34,7 +34,7 @@
 #include "weapon.h"
 #include "printf.h"
 #include "servo.h"
-#include "bsp_usart_blt.h"
+#include "usart_blt.h"
 
 extern bt_received_data_t bt_received_data;
 

@@ -25,8 +25,8 @@ set(cpu_PARAMS)
 
 # Sources
 set(sources_SRCS
-    DLC/HC05/bsp_hc05.c
-    DLC/HC05/usart/bsp_usart_blt.c
+    DLC/bluetooth/blt.c
+    DLC/bluetooth/usart/usart_blt.c
 )
 
 # Include directories for all compilers
@@ -34,8 +34,8 @@ set(include_DIRS
     DLC
     DLC/SERVO
     DLC/WEAPON
-    DLC/HC05/
-    DLC/HC05/usart
+    DLC/bluetooth/
+    DLC/bluetooth/usart
     APP/Control
     APP/HCSR04
     APP/Motor

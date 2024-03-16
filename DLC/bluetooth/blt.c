@@ -1,7 +1,7 @@
-#include "bsp_hc05.h"
+#include "blt.h"
 #include <stdio.h>
 #include <string.h>
-#include "bsp_usart_blt.h"
+#include "usart_blt.h"
 #include "usart.h"
 
 /**
@@ -38,7 +38,7 @@ writeCommand(const char* command, const char* arg) {
 
     HC05_DEBUG("CMD send:%s", str_buf);
 
-    USART1_Send_Str(str_buf);
+    Usart_SendString(HC05_USART, (uint8_t*)str_buf);
 }
 
 /**
@@ -56,7 +56,7 @@ HC05_Send_CMD(char* cmd, uint8_t clean) {
     char* redata;
 
     while (retry--) {
-        USART1_Send_Str((uint8_t *)cmd);
+        Usart_SendString(HC05_USART, (uint8_t*)cmd);
         i = 500;                                     //初始化i，最长等待5秒
         hc05_delay_ms(10);                           //
 

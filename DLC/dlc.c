@@ -36,7 +36,7 @@
 #include "servo.h"
 #include "weapon.h"
 #include "delay.h"
-#include "bsp_hc05.h"
+#include "blt.h"
 
 void dlc_init() {
     weapon_init();

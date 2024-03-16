@@ -1,5 +1,5 @@
 #include "control.h"
-#include "bsp_usart_blt.h"
+#include "usart_blt.h"
 
 u8 Joy_RxBuf[20];      //摇杆接收数据缓冲区
 u8 MPU_RxBuf[10];      //陀螺仪接收数据缓冲区
