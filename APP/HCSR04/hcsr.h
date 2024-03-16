@@ -16,8 +16,6 @@
 
 void Hcsr04_NVIC(void);
 void Hcsr04_Init(void);
-static void OpenTimerForHc(void);  //打开定时器4
-static void CloseTimerForHc(void); //关闭定时器4
 u32 GetEchoTimer(void);            //获取定时器4计数器值
 float Hcsr04GetLength(void);       //通过定时器4计数器值推算距离
 void Hcsr04_Text(void);

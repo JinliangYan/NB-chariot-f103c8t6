@@ -1,3 +1,13 @@
+/*** 
+ * @Author: Jinliang miku.cy@foxmail.com
+ * @Date: 2024-03-08 22:22:28
+ * @LastEditors: Jinliang miku.cy@foxmail.com
+ * @LastEditTime: 2024-03-16 21:38:45
+ * @FilePath: \NB-chariot-f103c8t6\APP\Control\control.h
+ * @Description: 
+ * @
+ * @Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+ */
 #ifndef __CONTROL_H
 #define __CONTROL_H
 #include "delay.h"
@@ -9,41 +19,26 @@
 #include "usart.h"
 #include "ws2812b.h"
 
-#define MPU_D    0
-#define MPU_U    1
+/**
+ * \brief       HSV转RGB的颜色
+*/
+extern float RGB_R, RGB_G, RGB_B;
 
-#define MPU_L    2
-#define MPU_R    3
-
-#define MPU_L_D  4
-#define MPU_R_D  5
-#define MPU_L_U  6
-#define MPU_R_U  7
-
-#define MPU_STOP 10
-
-#define LY_Mode  1
-#define YK_Mode  2
-#define ZL_Mode  3
-#define BZ_Mode  4
-#define GS_Mode  5
-#define XJ_Mode  6
-
-extern u8 flag;
-extern float RGB_R, RGB_G, RGB_B; //HSV转RGB的颜色
+/**
+ * \brief       偏航角数据接收缓冲区
+ * \note        已弃用!
+*/
 extern char Pitch_Roll_Buf[20];
 
-int Map(int val, int in_min, int in_max, int out_min, int out_max);
-void APP_Joy_Mode(void);
-void APP_Gravity_Mode(void);
+void joystick_mode(void);
+void gravity_mode(void);
 
-void Bluetooth_Mode(void);
-void Wireless_Mode(void);
-void Evadible_Mode(void);
-void Gravity_Mode(void);
-void Follow_Mode(void);
-void RGB_Select(void);
-void RGB_Show(void);
-void Control(void);
+void mode_switch(void);
+void evadible_mode(void);
+void gravity_mode(void);
+void follow_mode(void);
+void rgb_select(void);
+void rgb_show(void);
+void control(void);
 
 #endif
