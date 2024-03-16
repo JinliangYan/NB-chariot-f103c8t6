@@ -44,6 +44,7 @@
 #endif
 
 #include "printf.h"
+#include "stm32f10x_gpio.h"
 
 #ifdef __cplusplus
 #include <cstdint>
@@ -1362,15 +1363,14 @@ static int vsnprintf_impl(output_gadget_t* output, const char* format, va_list a
   return (int)output->pos;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-/***************串口初始化*******************/
-#include "stm32f10x_gpio.h"
 static void serial_sendByte(uint8_t Byte) {
     USART_SendData(USART3, Byte);
     while (USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET)
         ;
 }
+
 void printf_init(void) {
+#ifdef DEBUG_TEST
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
@@ -1390,69 +1390,88 @@ void printf_init(void) {
     USART_Init(USART3, &USART_InitStructure);
 
     USART_Cmd(USART3, ENABLE);
+#endif /* DEBUG_TEST */
 }
 
 /******************************************/
 void putchar_(char c) {
+#ifdef DEBUG_TEST
     serial_sendByte(c);
+#endif /* DEBUG_TEST */
 }
 
 int vprintf_(const char* format, va_list arg)
 {
-  output_gadget_t gadget = extern_putchar_gadget();
-  return vsnprintf_impl(&gadget, format, arg);
+#ifdef DEBUG_TEST
+    output_gadget_t gadget = extern_putchar_gadget();
+    return vsnprintf_impl(&gadget, format, arg);
+#endif /* DEBUG_TEST */
 }
 
 int vsnprintf_(char* s, size_t n, const char* format, va_list arg)
 {
-  output_gadget_t gadget = buffer_gadget(s, n);
-  return vsnprintf_impl(&gadget, format, arg);
+#ifdef DEBUG_TEST
+    output_gadget_t gadget = buffer_gadget(s, n);
+    return vsnprintf_impl(&gadget, format, arg);
+#endif /* DEBUG_TEST */
 }
 
 int vsprintf_(char* s, const char* format, va_list arg)
 {
-  return vsnprintf_(s, PRINTF_MAX_POSSIBLE_BUFFER_SIZE, format, arg);
+#ifdef DEBUG_TEST
+    return vsnprintf_(s, PRINTF_MAX_POSSIBLE_BUFFER_SIZE, format, arg);
+#endif /* DEBUG_TEST */
 }
 
 int vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, va_list arg)
 {
-  output_gadget_t gadget = function_gadget(out, extra_arg);
-  return vsnprintf_impl(&gadget, format, arg);
+#ifdef DEBUG_TEST
+    output_gadget_t gadget = function_gadget(out, extra_arg);
+    return vsnprintf_impl(&gadget, format, arg);
+#endif /* DEBUG_TEST */
 }
 
 int printf_(const char* format, ...)
 {
-  va_list args;
-  va_start(args, format);
-  const int ret = vprintf_(format, args);
-  va_end(args);
-  return ret;
+#ifdef DEBUG_TEST
+    va_list args;
+    va_start(args, format);
+    const int ret = vprintf_(format, args);
+    va_end(args);
+    return ret;
+#endif /* DEBUG_TEST */
 }
 
 int sprintf_(char* s, const char* format, ...)
 {
-  va_list args;
-  va_start(args, format);
-  const int ret = vsprintf_(s, format, args);
-  va_end(args);
-  return ret;
+#ifdef DEBUG_TEST
+    va_list args;
+    va_start(args, format);
+    const int ret = vsprintf_(s, format, args);
+    va_end(args);
+    return ret;
+#endif /* DEBUG_TEST */
 }
 
 int snprintf_(char* s, size_t n, const char* format, ...)
 {
-  va_list args;
-  va_start(args, format);
-  const int ret = vsnprintf_(s, n, format, args);
-  va_end(args);
-  return ret;
+#ifdef DEBUG_TEST
+    va_list args;
+    va_start(args, format);
+    const int ret = vsnprintf_(s, n, format, args);
+    va_end(args);
+    return ret;
+#endif /* DEBUG_TEST */
 }
 
 int fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, ...)
 {
-  va_list args;
-  va_start(args, format);
-  const int ret = vfctprintf(out, extra_arg, format, args);
-  va_end(args);
-  return ret;
+#ifdef DEBUG_TEST
+    va_list args;
+    va_start(args, format);
+    const int ret = vfctprintf(out, extra_arg, format, args);
+    va_end(args);
+    return ret;
+#endif /* DEBUG_TEST */
 }
 
