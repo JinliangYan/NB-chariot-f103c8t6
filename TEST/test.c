@@ -78,7 +78,12 @@ sysinit() {
 
 void
 test_bt() {
+    extern bt_received_data_t bt_received_data;
     if (is_bt_connected()) {
         printf_("BT CONNECTED\r\n");
+        return;
+    }
+    if (!bt_reset()) {
+        printf_("PASS:bt_reset()\r\n");
     }
 }

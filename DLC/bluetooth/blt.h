@@ -35,6 +35,8 @@ enum {
 uint8_t bt_init(void);
 uint8_t bt_send_atcmd_with_check(char* cmd, uint8_t clean);
 uint8_t bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms); //Debug
+uint8_t bt_reset(void);
+void bt_send_atcmd(const char* command, const char* arg);
 void bt_send_str(char* str);
 
 uint8_t get_remote_device_name(void);

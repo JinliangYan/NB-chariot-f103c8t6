@@ -38,6 +38,7 @@
 #include "stm32f10x.h"
 #include "weapon.h"
 #include "servo.h"
+#include "usart_blt.h"
 #include "blt.h"
 
 #ifdef __cplusplus

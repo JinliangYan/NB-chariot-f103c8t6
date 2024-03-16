@@ -1,8 +1,10 @@
 #include "blt.h"
 #include <stdio.h>
 #include <string.h>
-#include "usart_blt.h"
 #include "usart.h"
+#include "usart_blt.h"
+
+extern bt_received_data_t bt_received_data;
 
 /**
   * @brief  初始化GPIO及检测HC05模块
@@ -18,7 +20,20 @@ bt_init(void) {
     GPIO_Init(BT_SATAT_PORT, &GPIO_InitStructure);
     USART1_Init(BLT_USART_BAUD_RATE);
     delay_ms(100);
-    return bt_send_atcmd_with_check("AT+VER\r\n", 1);
+    return bt_send_atcmd_with_check("AT+BAUD4\r\n", 1);
+}
+
+uint8_t
+bt_reset(void) {
+    uint32_t i = 500;         //初始化i，最长等待5秒
+    bt_send_atcmd("RST", NULL);
+    do {
+        delay_ms(10);
+        if (bt_received_data.receive_data_flag == 1 && strstr(bt_received_data.uart_buff, "Ready")) {
+            return 0;
+        }
+    } while (--i);
+    return 1;
 }
 
 /**
@@ -70,13 +85,13 @@ bt_send_atcmd_with_check(char* cmd, uint8_t clean) {
 
     while (retry--) {
         Usart_SendString(BT_USART, (uint8_t*)cmd);
-        i = 500;                                     //初始化i，最长等待5秒
-        bt_delay_ms(10);                           //
+        i = 500;         //初始化i，最长等待5秒
+        bt_delay_ms(10); //
 
         do {
             redata = get_rebuff(&len);
             if (len > 0) {
-                if (strstr(redata, "VER")) {
+                if (strstr(redata, "OK")) {
                     printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
 
                     printf_("recv back: %s\r\n", redata);
@@ -95,11 +110,11 @@ bt_send_atcmd_with_check(char* cmd, uint8_t clean) {
 
         printf_("send CMD: %s\r\n", cmd); //打印发送的蓝牙指令和返回信息
         printf_("recv back: %s\r\n", redata);
-        printf_("HC05 send CMD fail %d times\r\n", retry); //提示失败重试
+        printf_("BT send CMD fail %d times\r\n", retry); //提示失败重试
     }
 
     //	BLT_KEY_LOW;
-    printf_("HC05 send CMD fail \r\n");
+    printf_("BT send CMD fail \r\n");
 
     if (clean == 1) {
         clean_rebuff();
@@ -147,7 +162,7 @@ bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms) //Debug
         }
     }
 
-    printf_("HC05 send CMD fail ");
+    printf_("BT send CMD fail \r\n");
 
     if (clean == 1) {
         clean_rebuff();
