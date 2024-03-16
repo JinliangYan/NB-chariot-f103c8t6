@@ -37,7 +37,6 @@
 #include "hcsr.h"
 #include "led.h"
 #include "motor.h"
-#include "nrf24l01.h"
 #include "printf.h"
 #include "stm32f10x.h"
 #include "usart.h"
@@ -65,8 +64,6 @@ sysinit() {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
     USART1_Init(9600); //串口初始化为9600
-    NRF24L01_Init();
-    // NRF24L01_Check_detection(); //NRF24L01等待应答
     Motor_Init();      //电机初始化
     Hcsr04_Init();     //超声波初始化
     Motion_State(OFF); //关闭电机驱动失能

@@ -54,7 +54,6 @@ main(void) {
     RGB_LED_Init();    //RGB≤ µ∆≥ı ºªØ
     dlc_init();
     delay_ms(1000);
-    LED = 0;
     while (1) {
         Control();
         dlc_control();
