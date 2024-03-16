@@ -1,12 +1,6 @@
 {
     "files.encoding": "gbk",
     "files.associations": {
-        "stm32f10x.h": "c",
-        "bsp_usart_blt.h": "c",
-        "bsp_hc05.h": "c",
-        "stdio.h": "c",
-        "ws2812b.h": "c",
-        "hcsr.h": "c",
-        "delay.h": "c"
-    }
+        "dlc.h": "c"
+    },
 }

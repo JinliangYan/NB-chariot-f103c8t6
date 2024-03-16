@@ -44,11 +44,12 @@
 #include "ws2812b.h"
 
 void sysinit();
+void test_bt();
 
-int
-debug_test() {
+    int debug_test() {
     sysinit();
     delay_init();
+    test_bt();
     printf_("HELLO\r\n");
 
     while (1) {
@@ -76,4 +77,8 @@ sysinit() {
 }
 
 void
-test_bt() {}
+test_bt() {
+    if (is_bt_connected()) {
+        printf_("BT CONNECTED\r\n");
+    }
+}

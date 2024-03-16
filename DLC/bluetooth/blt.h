@@ -5,48 +5,20 @@
 #include "printf.h"
 #include "stm32f10x.h"
 
-#define hc05_delay_ms           delay_ms
-#define HC05_USART              USART1
+#define bt_delay_ms             delay_ms
+#define BT_USART                USART1
+#define BT_STATA_PIN            GPIO_Pin_8
+#define BT_SATAT_PORT           GPIOA
 
-//IS_HC05_CONNECTED用于检查模块是否处于配对状态
-#define IS_HC05_CONNECTED()     GPIO_ReadInputDataBit(BLT_INT_GPIO_PORT, BLT_INT_GPIO_PIN)
-
-/*信息输出*/
-#define HC05_DEBUG_ON           0
-#define HC05_DEBUG_FUNC_ON      0
-
-#define HC05_INFO(fmt, arg...)  printf("<<-HC05-INFO->> " fmt "\n", ##arg)
-#define HC05_ERROR(fmt, arg...) printf("<<-HC05-ERROR->> " fmt "\n", ##arg)
-#define HC05_DEBUG(fmt, arg...)                                                                                        \
-    do {                                                                                                               \
-        if (HC05_DEBUG_ON)                                                                                             \
-            printf("<<-HC05-DEBUG->> [%d]" fmt "\n", __LINE__, ##arg);                                                 \
-    } while (0)
-
-#define HC05_DEBUG_FUNC()                                                                                              \
-    do {                                                                                                               \
-        if (HC05_DEBUG_FUNC_ON)                                                                                        \
-            printf("<<-HC05-FUNC->> Func:%s@Line:%d\n", __func__, __LINE__);                                           \
-    } while (0)
-
-//#define ENABLE_LCD_DISPLAY    //切换液晶显示宏 使用野火【电阻触摸屏ILI9341_XPT2046_3.2_2.8寸】
-
-//最大蓝牙设备数量
-#define BLTDEV_MAX_NUM 10
-
-/*蓝牙地址，数字形式，分NAP，UAP，LAP段*/
+/**
+ * \brief 检查模块是否处于配对状态
+ */
+#define is_bt_connected()       GPIO_ReadInputDataBit(BT_SATAT_PORT, BT_STATA_PIN)
 
 typedef struct {
-    uint8_t num; //扫描到的蓝牙设备数量
-
-    char unpraseAddr[BLTDEV_MAX_NUM][50]; //蓝牙设备地址，字符串形式，方便扫描时和连接时使用
-
-    char name[BLTDEV_MAX_NUM][50]; //蓝牙设备的名字
-
-} BLTDev;
-
-//蓝牙设备列表，在 bsp_hc05.c 文件中定义
-extern BLTDev bltDevList;
+    char addr; //蓝牙设备地址，字符串形式，方便扫描时和连接时使用
+    char name; //蓝牙设备的名字
+} remote_bt_dev_t;
 
 enum {
     HC05_DEFAULT_TIMEOUT = 200,
@@ -61,14 +33,11 @@ enum {
 };
 
 uint8_t bt_init(void);
-uint8_t HC05_Send_CMD(char* cmd, uint8_t clean);
-uint8_t HC05_Send_CMD_Wait(char* cmd, uint8_t clean, uint32_t delayms); //Debug
-void HC05_SendString(char* str);
+uint8_t bt_send_atcmd_with_check(char* cmd, uint8_t clean);
+uint8_t bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms); //Debug
+void bt_send_str(char* str);
 
-uint8_t parseBltAddr(void);
-uint8_t getRemoteDeviceName(void);
-void printBLTInfo(void);
-uint8_t linkHC05(void);
+uint8_t get_remote_device_name(void);
 
 int get_line(char* line, char* stream, int max_size);
 
