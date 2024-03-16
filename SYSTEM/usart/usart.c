@@ -209,11 +209,20 @@ USART1_IRQHandler(void) {
             return;
         }
 
-        /* AT没有终止位, 这里一直接收 */
+        /* AT接收 */
         if (bt_received_data.message_type == MESSAGE_AT_COMMAND) {
+            /* 过滤0 */
+            if (temp == 0) {
+                return;
+            }
             bt_received_data.uart_buff[idx++] = temp;
             bt_received_data.datanum = idx;
-            bt_received_data.receive_data_flag = 1;
+            if (temp == '\n') {
+                bt_received_data.receive_data_flag = 1;
+                bt_received_data.datanum -= 2;
+                idx = 0;
+                next_state = START;
+            }
             return;
         }
 
