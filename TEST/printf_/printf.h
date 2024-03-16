@@ -36,6 +36,8 @@
  * THE SOFTWARE.
  */
 
+#define DEBUG_TEST
+
 #ifndef PRINTF_H_
 #define PRINTF_H_
 

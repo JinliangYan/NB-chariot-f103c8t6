@@ -36,11 +36,11 @@
 #include "servo.h"
 #include "weapon.h"
 #include "delay.h"
+#include "blt.h"
 
 void dlc_init() {
-    servo_init();
     weapon_init();
-    delay_ms(100);
+    bt_init();
 }
 
 void dlc_control() {

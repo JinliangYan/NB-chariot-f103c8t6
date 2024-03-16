@@ -62,7 +62,7 @@ void
 servo_1_set_angle(float Angle) {
     Angle = 180 - Angle;
     pwm_set_compare_1((uint16_t)(Angle / 180 * 2000) + 500);
-    printf_("set angle1 = %d\r\n", (uint16_t)Angle);
+    // printf_("set angle1 = %d\r\n", (uint16_t)Angle);
 }
 
 /**
@@ -73,5 +73,5 @@ void
 servo_2_set_angle(float Angle) {
     Angle = 180 - Angle;
     pwm_set_compare_2((uint16_t)(Angle / 180 * 2000) + 500);
-    printf_("set angle2 = %d\r\n", (uint16_t)Angle);
+    // printf_("set angle2 = %d\r\n", (uint16_t)Angle);
 }

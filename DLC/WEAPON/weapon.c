@@ -34,6 +34,9 @@
 #include "weapon.h"
 #include "printf.h"
 #include "servo.h"
+#include "usart_blt.h"
+
+extern bt_received_data_t bt_received_data;
 
 /**
  * \brief ÊÖ±úÆ«ÒÆÁ¿·¶Î§
@@ -110,8 +113,8 @@ map_joystick_to_servos(float x_offset, float y_offset, float* servo1_angle, floa
  */
 void
 weapon_steering() {
-    float weapon_x = (float )((Weapon_Buf[2] - '0') * 10 + Weapon_Buf[3] - '0');
-    float weapon_y = (float )((Weapon_Buf[5] - '0') * 10 + Weapon_Buf[6] - '0');
+    float weapon_x = (float )((bt_received_data.uart_buff[1] - '0') * 10 + bt_received_data.uart_buff[2] - '0');
+    float weapon_y = (float )((bt_received_data.uart_buff[4] - '0') * 10 + bt_received_data.uart_buff[5] - '0');
     float w_angle_x;
     float w_angle_y;
     map_joystick_to_servos(weapon_x, weapon_y, &w_angle_x, &w_angle_y);
@@ -130,9 +133,15 @@ weapon_steering() {
 
 void
 weapon_control_loop() {
-    if (Weapon_Buf[1] == 'X') {
+    if (bt_received_data.receive_data_flag == 0)
+    {
+        return;
+    }
+
+    if (bt_received_data.message_type == MESSAGE_WEAPON_JOYSTICK) {
         weapon_steering();
-    } else if (Weapon_Buf[1] == 'A') {
+        bt_received_data.receive_data_flag = 0;
+    } else if (bt_received_data.message_type == MESSAGE_WEAPON_ATTACK) {
         weapon_attack();
     }
 }
