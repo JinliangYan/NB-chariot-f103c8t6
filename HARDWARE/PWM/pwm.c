@@ -1,11 +1,3 @@
-/*
- * @Author: Jinliang miku.cy@foxmail.com
- * @Date: 2024-03-08 22:22:26
- * @LastEditors: Jinliang miku.cy@foxmail.com
- * @LastEditTime: 2024-03-17 15:10:58
- * @FilePath: \NB-chariot-f103c8t6\HARDWARE\PWM\pwm.c
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 #include "pwm.h"
 #include "delay.h"
 #include "led.h"
@@ -17,55 +9,46 @@
 入口参数：arr 重装载值    psc   预分频系数
 返回参数：无
 ***************************************************/
-// void
-// PWM1_Init(u32 arr, u32 psc) {
-//     GPIO_InitTypeDef GPIO_InitStructure;
-//     TIM_TimeBaseInitTypeDef TIM_InitStructure;
-//     TIM_OCInitTypeDef TIM_OCInitStructure;
+void
+pwm1_init(u32 arr, u32 psc) {
+    tim1_init(arr, psc);
 
-//     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-//     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); //开启定时器1时钟
+    GPIO_InitTypeDef GPIO_InitStructure;
+    TIM_OCInitTypeDef TIM_OCInitStructure;
 
-//     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
-//     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
-//     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;   //复用推挽输出
-//     GPIO_Init(GPIOA, &GPIO_InitStructure);            //初始化GPIOA
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
 
-//     TIM_InitStructure.TIM_Period = arr;                     //自动重装载寄存器周期的值
-//     TIM_InitStructure.TIM_Prescaler = psc;                  //设置预分频值
-//     TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1;     //设置时钟分割:TDTS = Tck_tim
-//     TIM_InitStructure.TIM_CounterMode = TIM_CounterMode_Up; //TIM向上计数模式
-//     TIM_InitStructure.TIM_RepetitionCounter = 0;            //重复计数的值
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9 | GPIO_Pin_10 | GPIO_Pin_11;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;   //复用推挽输出
+    GPIO_Init(GPIOA, &GPIO_InitStructure);            //初始化GPIOA
 
-//     TIM_TimeBaseInit(TIM1, &TIM_InitStructure);
-//     TIM_Cmd(TIM1, ENABLE); //使能计数器
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;             //选择定时器模式:TIM脉冲宽度调制模式1
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
+    TIM_OC1Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC1
+    TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
 
-//     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;             //选择定时器模式:TIM脉冲宽度调制模式2
-//     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-//     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
-//     TIM_OC1Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC1
-//     TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;             //选择定时器模式:TIM脉冲宽度调制模式1
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
+    TIM_OC2Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC2
+    TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
 
-//     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;             //选择定时器模式:TIM脉冲宽度调制模式2
-//     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-//     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
-//     TIM_OC2Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC2
-//     TIM_OC2PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;             //选择定时器模式:TIM脉冲宽度调制模式1
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
+    TIM_OC3Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC3
+    TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
 
-//     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;             //选择定时器模式:TIM脉冲宽度调制模式2
-//     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-//     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
-//     TIM_OC3Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC3
-//     TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;             //选择定时器模式:TIM脉冲宽度调制模式1
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
+    TIM_OC4Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC4
+    TIM_OC4PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
 
-//     TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;             //选择定时器模式:TIM脉冲宽度调制模式2
-//     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-//     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
-//     TIM_OC4Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC4
-//     TIM_OC4PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
-
-//     TIM_CtrlPWMOutputs(TIM1, ENABLE);
-// }
+    TIM_CtrlPWMOutputs(TIM1, ENABLE);
+}
 
 /**************************************************
 函数名称：PWM2_Init(u32 arr,u32 psc)
