@@ -44,11 +44,13 @@
 
 void sysinit();
 void test_bt();
+void test_motor_pwm();
 
     int debug_test() {
     sysinit();
     delay_init();
-    test_bt();
+    // test_bt();
+    test_motor_pwm();
     printf_("HELLO\r\n");
 
     while (1) {
@@ -69,7 +71,7 @@ sysinit() {
     Motion_State(OFF); //关闭电机驱动失能
     RGB_LED_Init();    //RGB彩灯初始化
     printf_init();
-    dlc_init();
+    // dlc_init();
     delay_ms(1000);
 }
 
@@ -82,4 +84,33 @@ test_bt() {
     if (!bt_reset()) {
         printf_("PASS:bt_reset()\r\n");
     }
+}
+
+void
+test_motor_pwm() {
+    TIM_SetCompare1(TIM1, 300);
+    TIM_SetCompare2(TIM1, 300);
+    TIM_SetCompare3(TIM1, 300);
+    TIM_SetCompare4(TIM1, 300);
+    delay_ms(1000);
+    forward(100);
+    delay_ms(1000);
+    backward(100);
+    delay_ms(1000);
+    Left_Turn(100);
+    delay_ms(1000);
+    Right_Turn(100);
+    delay_ms(1000);
+    Move(0, 100);
+    delay_ms(1000);
+    Move(1, 100);
+    delay_ms(1000);
+    Move(2, 100);
+    delay_ms(1000);
+    Move(3, 100);
+    delay_ms(1000);
+    Move(4, 100);
+    delay_ms(1000);
+    delay_ms(1000);
+    Move(5, 100);
 }
