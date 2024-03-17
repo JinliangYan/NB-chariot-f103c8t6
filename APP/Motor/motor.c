@@ -24,11 +24,13 @@ Motor_GPIO_Init(void) {
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
 
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8;
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP; //推挽输出
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-
     GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_12;
+    GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
 
 /**************************************************
@@ -44,13 +46,16 @@ STBY_Init(void) {
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
     GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); //禁用JTAG
 
-    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_9;
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_12;
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP; //推挽输出
     GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
-
     GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-    GPIO_ResetBits(GPIOB, GPIO_Pin_4 | GPIO_Pin_9);
+    GPIO_InitStruct.GPIO_Pin = GPIO_Pin_15;
+    GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    GPIO_ResetBits(GPIOB, GPIO_Pin_12);
+    GPIO_ResetBits(GPIOA, GPIO_Pin_15);
 }
 
 /**************************************************
