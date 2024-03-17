@@ -41,16 +41,19 @@
 #include "stm32f10x.h"
 #include "usart.h"
 #include "ws2812b.h"
+#include "usart.h"
 
 void sysinit();
 void test_bt();
 void test_motor_pwm();
+void test_usart1();
+void test();
 
-    int debug_test() {
+
+int debug_test() {
     sysinit();
-    delay_init();
-    // test_bt();
-    test_motor_pwm();
+    delay_ms(100);
+    test();
     printf_("HELLO\r\n");
 
     while (1) {
@@ -65,14 +68,20 @@ sysinit() {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
-    USART1_Init(9600); //串口初始化为9600
+    usart1_init_remap(9600); //串口初始化为9600
     Motor_Init();      //电机初始化
-    Hcsr04_Init();     //超声波初始化
+    // Hcsr04_Init();     //超声波初始化
     Motion_State(OFF); //关闭电机驱动失能
     RGB_LED_Init();    //RGB彩灯初始化
     printf_init();
-    // dlc_init();
+    dlc_init();
     delay_ms(1000);
+}
+
+void test() {
+    // test_bt();
+    // test_motor_pwm();
+    test_usart1();
 }
 
 void
@@ -113,4 +122,8 @@ test_motor_pwm() {
     delay_ms(1000);
     delay_ms(1000);
     Move(5, 100);
+}
+
+void test_usart1() {
+    test_bt();
 }

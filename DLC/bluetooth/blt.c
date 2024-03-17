@@ -18,7 +18,7 @@ bt_init(void) {
     GPIO_InitStructure.GPIO_Pin = BT_STATA_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_Init(BT_SATAT_PORT, &GPIO_InitStructure);
-    USART1_Init(BLT_USART_BAUD_RATE);
+    usart1_init_remap(BLT_USART_BAUD_RATE);
     delay_ms(100);
     return bt_send_atcmd_with_check("AT+BAUD4\r\n", 1);
 }
