@@ -29,24 +29,28 @@ USART_SendByte(USART_TypeDef* USARTx, uint16_t Data) //发送一个字节
 返回参数：无
 ***************************************************/
 void
-USART1_Init(u32 bound) {
+usart1_init_remap(u32 bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE); //使能USART1，GPIOA时钟
+    /* 使能AFIO时钟。重映射必须使能AFIO时钟 */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    /* 选择重映射 */
+    GPIO_PinRemapConfig(GPIO_Remap_USART1, ENABLE);
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE); //使能USART1，GPIOA时钟
     //USART1_TX   GPIOA.9
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;         //PA9
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;   //复用推挽输出
-    GPIO_Init(GPIOA, &GPIO_InitStructure);            //初始化GPIOA.9
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     //USART1_RX	  GPIOA.10初始化
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;            //PA10
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; //浮空输入
-    GPIO_Init(GPIOA, &GPIO_InitStructure);                //初始化GPIOA.10
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     //Usart1 NVIC 配置
     NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
