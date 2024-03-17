@@ -41,13 +41,13 @@ usart1_init_remap(u32 bound) {
     GPIO_PinRemapConfig(GPIO_Remap_USART1, ENABLE);
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE); //使能USART1，GPIOA时钟
-    //USART1_TX   GPIOA.9
+    //USART1_TX 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;   //复用推挽输出
     GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-    //USART1_RX	  GPIOA.10初始化
+    //USART1_RX
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
