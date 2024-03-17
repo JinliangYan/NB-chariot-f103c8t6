@@ -3,9 +3,10 @@
 #include "sys.h"
 
 // void PWM1_Init(u32 arr, u32 psc);
-// void PWM2_Init(u32 arr, u32 psc);
-// void PWM3_Init(u32 arr, u32 psc);
-void PWM4_Init(u32 arr, u32 psc);
+void pwm2_init(u32 arr, u32 psc);
+void pwm3_init(u32 arr, u32 psc);
+void pwm3_init_remap(u32 arr, u32 psc);
+void pwm4_init(u32 arr, u32 psc);
 // void PWM_Init(u32 arr, u32 psc);
 // void PWM_Text(void);
 // int PWM(int angle);

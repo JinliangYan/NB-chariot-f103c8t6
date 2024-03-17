@@ -27,6 +27,7 @@ set(cpu_PARAMS)
 set(sources_SRCS
     DLC/bluetooth/blt.c
     DLC/bluetooth/usart/usart_blt.c
+    HARDWARE/TIM/timer.c
 )
 
 # Include directories for all compilers
@@ -49,6 +50,7 @@ set(include_DIRS
     HARDWARE/LED
     HARDWARE/PWM
     HARDWARE/SPI
+    HARDWARE/TIM
     MALLOC
     STM32F10x_FWLib/inc
     SYSTEM/delay

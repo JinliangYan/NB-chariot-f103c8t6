@@ -1,4 +1,5 @@
 #include "motor.h"
+#include "pwm.h"
 
 /**************************************************
 函数名称：Motor_PWM_Init(u32 arr,u32 psc)
@@ -7,40 +8,8 @@
 返回参数：无
 ***************************************************/
 void
-Motor_PWM_Init(u32 arr, u32 psc) {
-    GPIO_InitTypeDef GPIO_InitStructure;
-    TIM_TimeBaseInitTypeDef TIM_InitStructure;
-    TIM_OCInitTypeDef TIM_OCInitStructure;
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE); //开启定时器2时钟
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;   //复用推挽输出
-    GPIO_Init(GPIOA, &GPIO_InitStructure);            //初始化GPIOA
-
-    TIM_InitStructure.TIM_Period = arr - 1;                 //自动重装载寄存器周期的值
-    TIM_InitStructure.TIM_Prescaler = psc - 1;              //设置预分频值
-    TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1;     //设置时钟分割:TDTS = Tck_tim
-    TIM_InitStructure.TIM_CounterMode = TIM_CounterMode_Up; //TIM向上计数模式
-    TIM_InitStructure.TIM_RepetitionCounter = 0;            //重复计数的值
-
-    TIM_TimeBaseInit(TIM2, &TIM_InitStructure);
-    TIM_Cmd(TIM2, ENABLE); //使能计数器
-
-    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;             //选择定时器模式:TIM脉冲宽度调制模式2
-    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
-    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
-
-    TIM_OC1Init(TIM2, &TIM_OCInitStructure);          //初始化外设TIM2 OC1
-    TIM_OC2Init(TIM2, &TIM_OCInitStructure);          //初始化外设TIM2 OC2
-    TIM_OC3Init(TIM2, &TIM_OCInitStructure);          //初始化外设TIM2 OC3
-    TIM_OC4Init(TIM2, &TIM_OCInitStructure);          //初始化外设TIM2 OC4
-    TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable); //使能TIM2在CCR2上的预装载寄存器
-    TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable); //使能TIM2在CCR2上的预装载寄存器
-    TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Enable); //使能TIM2在CCR2上的预装载寄存器
-    TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable); //使能TIM2在CCR2上的预装载寄存器
+Motor_PWM_Init(uint32_t arr, uint32_t psc) {
+    pwm2_init(arr, psc);
 }
 
 /**************************************************

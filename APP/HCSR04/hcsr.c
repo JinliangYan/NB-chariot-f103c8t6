@@ -1,24 +1,8 @@
 #include "hcsr.h"
+#include "timer.h"
 
 u16 msHcCount = 0;
 
-/**************************************************
-函数名称：Hcsr04_NVIC(void)
-函数功能：NVIC设置
-入口参数：无
-返回参数：无
-***************************************************/
-void
-Hcsr04_NVIC(void) {
-    NVIC_InitTypeDef NVIC_InitStructure;
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-
-    NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&NVIC_InitStructure);
-}
 
 /**************************************************
 函数名称：Hcsr04_Init(void)
@@ -28,8 +12,10 @@ Hcsr04_NVIC(void) {
 ***************************************************/
 void
 Hcsr04_Init(void) {
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
     GPIO_InitTypeDef GPIO_InitStructure;
+
+    tim4_init(1000, 72);
+
     RCC_APB2PeriphClockCmd(HCSR04_CLK, ENABLE);
 
     GPIO_InitStructure.GPIO_Pin = HCSR04_TRIG;
@@ -43,19 +29,6 @@ Hcsr04_Init(void) {
     GPIO_Init(HCSR04_PORT, &GPIO_InitStructure);
     GPIO_ResetBits(HCSR04_PORT, HCSR04_ECHO);
 
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
-
-    TIM_DeInit(TIM4);
-    TIM_TimeBaseStructure.TIM_Period = (1000 - 1);
-    TIM_TimeBaseStructure.TIM_Prescaler = (72 - 1);
-    TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-    TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
-
-    TIM_ClearFlag(TIM4, TIM_FLAG_Update);
-    TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
-    Hcsr04_NVIC();
-    TIM_Cmd(TIM4, DISABLE);
 }
 
 /**************************************************
