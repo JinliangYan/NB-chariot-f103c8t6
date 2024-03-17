@@ -2,12 +2,13 @@
  * \Author: Jinliang miku.cy@foxmail.com
  * \Date: 2024-03-08 22:22:28
  * \LastEditors: Jinliang miku.cy@foxmail.com
- * \LastEditTime: 2024-03-16 22:24:40
+ * \LastEditTime: 2024-03-17 11:10:26
  * \FilePath: \NB-chariot-f103c8t6\APP\Control\control.c
  * \Description: 
  * \symbol_custom_string_obkoro1: 
  * \symbol_custom_string_obkoro10001: Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
  */
+
 #include "control.h"
 #include "mode.h"
 #include "usart_blt.h"
