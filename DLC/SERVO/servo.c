@@ -41,17 +41,17 @@
 
 void
 servo_init() {
-    PWM4_Init(20000 - 1, 72 - 1);
+    pwm3_init(20000, 72);
 }
 
 void
 pwm_set_compare_1(uint16_t Compare) {
-  TIM_SetCompare1(TIM4, Compare);
+  TIM_SetCompare1(TIM3, Compare);
 }
 
 void
 pwm_set_compare_2(uint16_t Compare) {
-  TIM_SetCompare2(TIM4, Compare);
+  TIM_SetCompare2(TIM3, Compare);
 }
 
 /**
