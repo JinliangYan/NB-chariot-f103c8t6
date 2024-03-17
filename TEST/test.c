@@ -52,7 +52,7 @@ void test_bt();
     printf_("HELLO\r\n");
 
     while (1) {
-        APP_Joy_Mode();
+        joystick_mode();
         dlc_control();
     }
     return 0;
@@ -75,7 +75,6 @@ sysinit() {
 
 void
 test_bt() {
-    extern bt_received_data_t bt_received_data;
     if (is_bt_connected()) {
         printf_("BT CONNECTED\r\n");
         return;

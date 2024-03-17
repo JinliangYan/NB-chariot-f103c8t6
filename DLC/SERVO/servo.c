@@ -56,7 +56,7 @@ pwm_set_compare_2(uint16_t Compare) {
 
 /**
  * \brief 设置舵机转角, 该舵机控制武器左右转向
- * \param Angle:转向角, 范围0~180
+ * \param[in] Angle:转向角, 范围0~180
  */
 void
 servo_1_set_angle(float Angle) {
@@ -67,7 +67,7 @@ servo_1_set_angle(float Angle) {
 
 /**
  * \brief 设置舵机转角, 该舵机控制武器左右转向
- * \param Angle:转向角, 范围0~180
+ * \param[in] Angle:转向角, 范围0~180
  */
 void
 servo_2_set_angle(float Angle) {

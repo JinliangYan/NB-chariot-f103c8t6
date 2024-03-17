@@ -1,474 +1,114 @@
+/*
+ * \Author: Jinliang miku.cy@foxmail.com
+ * \Date: 2024-03-08 22:22:28
+ * \LastEditors: Jinliang miku.cy@foxmail.com
+ * \LastEditTime: 2024-03-17 11:10:26
+ * \FilePath: \NB-chariot-f103c8t6\APP\Control\control.c
+ * \Description: 
+ * \symbol_custom_string_obkoro1: 
+ * \symbol_custom_string_obkoro10001: Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
+ */
+
 #include "control.h"
+#include "mode.h"
 #include "usart_blt.h"
 
-u8 Joy_RxBuf[20];      //摇杆接收数据缓冲区
-u8 MPU_RxBuf[10];      //陀螺仪接收数据缓冲区
-u8 Joy_Lpos, Joy_Rpos; //摇杆坐标数据
-u8 MPU_Data[10];       //MPU接收数据滤波数组
-u8 Con_RxBuf[10];      //控制指令接收数组
-u8 Eva_RxBuf[4];       //避障停止指令数组
-u8 RGB_RxBuf[4];       //彩灯停止指令数组
-u8 mode = 1;           //模式，1默认为蓝牙模式
-extern u8 mode_flag;
-u8 NRF_flag = 0; //遥控模式判断循环退出标志位
-u8 MPU_flag = 0; //重力模式判断循环退出标志位
+static void pwm_data_process(int16_t pwm1, int16_t pwm2, int16_t pwm3, int16_t pwm4);
+static int Map(int val, int in_min, int in_max, int out_min, int out_max);
 
-u8 RGB_flag = 0;  //RGB彩灯标志位
-u8 RGB_mode = 0;  //RGB彩灯模式
-int HSV_H = 0;    //HSV的H数值
-u8 HSV_flag = 0;  //颜色转换时所用标志位
 u8 LED_Count = 0; //LED灯的个数
 
+/**
+ * \brief   蓝牙数据结构体
+ */
 extern bt_received_data_t bt_received_data;
 
-/**************************************************
-函数名称：Map(int val,int in_min,int in_max,int out_min,int out_max)
-函数功能：映射函数
-入口参数：val:需要映射的数值
-					in_min:输入值的范围最小值
-					in_max:输入值的范围最大值
-					out_min:输出值的范围最小值
-					out_max:输出值的范围最大值
+/**
+ * \brief: 小车行走控制模式, 默认位摇杆控制
+*/
+control_mode_t control_mode = CONTROL_MODE_JOYSTICK;
 
-返回参数：映射后的数值
-***************************************************/
-int
-Map(int val, int in_min, int in_max, int out_min, int out_max) {
-    return (int)(val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+/**
+ * \brief   彩灯显示模式, 默认关闭彩灯
+ */
+rgb_mode_t rgb_mode = RGB_MODE_OFF;
+
+/**
+ * \brief   小车全局控制函数
+*/
+void
+control(void) {
+    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == MESSAGE_MODE_SWITCH) {
+        mode_switch();
+    }
+    if (rgb_mode != RGB_MODE_OFF) {
+        rgb_show();
+    }
+    joystick_mode();
 }
 
-/**************************************************
-函数名称：Bluetooth_Mode(void)
-函数功能：蓝牙遥控模式
-入口参数：无
-返回参数：无
-***************************************************/
+/**
+ * \brief           Function for implementing mode switch
+*/
 void
-Bluetooth_Mode(void) {
-    if (mode_flag == 1) {
-        APP_Joy_Mode(); //APP摇锟斤拷模式
-    } else if (mode_flag == 2) {
-        APP_Gravity_Mode(); //APP锟斤拷锟斤拷模式
-    } else if (mode_flag == 3) {
-        Evadible_Mode();
-    } else if (mode_flag == 4) {
-        Follow_Mode();
-    } else if (mode_flag == 5) {
-        RGB_mode = 0; //锟斤拷锟斤拷锟斤拷
-    } else if (mode_flag == 6) {
-        RGB_mode = 1; //锟斤拷水锟斤拷
-    } else if (mode_flag == 7) {
-        RGB_mode = 2; //锟斤拷烁锟斤拷
-    } else {
-        Motion_State(ON);
+mode_switch(void) {
+    switch (control_mode) {
+        case CONTROL_MODE_JOYSTICK: joystick_mode(); break;
+        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
+        case CONTROL_MODE_EVADIBLE: evadible_mode(); break;
+        case CONTROL_MODE_FOLLOW: follow_mode(); break;
+        case CONTROL_MODE_RGB_MODE_OFF: rgb_mode = RGB_MODE_OFF; break;
+        case CONTROL_MODE_RGB_MODE_BREATHING: rgb_mode = RGB_MODE_BREATHING; break;
+        case CONTROL_MODE_RGB_MODE_RUNNING: rgb_mode = RGB_MODE_RUNNING; break;
+        case CONTROL_MODE_RGB_MODE_FLASHING: rgb_mode = RGB_MODE_FLASHING; break;
+        default:
+            // Handle default case if necessary
+            break;
     }
 }
 
-/**************************************************
-函数名称：Wireless_Mode(void)
-函数功能：遥控模式
-入口参数：无
-返回参数：无
-***************************************************/
+/**
+ * \brief           Function for implementing evadible mode
+ */
 void
-Wireless_Mode(void) {
-    int Joy_Lx = 50, Joy_Ly = 50, Joy_Rx = 50, Joy_Ry = 50;
-    int Map_Lx, Map_Ly, Map_Rx, Map_Ry;
-    int pwm1, pwm2, pwm3, pwm4;
-    static u8 RGB_mode1 = 0, i = 0;
-    static u8 RGB_mode2 = 0, j = 0;
-    NRF24L01_RX_Mode();
-    L_STBY_ON;
-    R_STBY_ON;
-    if (NRF24L01_RxPacket(Joy_RxBuf) == 0) {
-        Joy_Lx = (Joy_RxBuf[2] - '0') * 10 + (Joy_RxBuf[3] - '0');
-        Joy_Ly = (Joy_RxBuf[5] - '0') * 10 + (Joy_RxBuf[6] - '0');
-
-        Joy_Rx = (Joy_RxBuf[9] - '0') * 10 + (Joy_RxBuf[10] - '0');
-        Joy_Ry = (Joy_RxBuf[12] - '0') * 10 + (Joy_RxBuf[13] - '0');
-
-        Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
-        Map_Ly = Map(Joy_Ly, 10, 90, -127, 127);
-        Map_Rx = Map(Joy_Rx, 10, 90, -127, 127);
-        Map_Ry = Map(Joy_Ry, 10, 90, -127, 127);
-
-        pwm1 = -Map_Ly - Map_Lx - Map_Ry - Map_Rx;
-        pwm2 = -Map_Ly + Map_Lx - Map_Ry + Map_Rx;
-        pwm3 = -Map_Ly - Map_Lx - Map_Ry + Map_Rx;
-        pwm4 = -Map_Ly + Map_Lx - Map_Ry - Map_Rx;
-
-        pwm1 = Map(pwm1, -127, 127, -499, 499);
-        pwm2 = Map(pwm2, -127, 127, -499, 499);
-        pwm3 = Map(pwm3, -127, 127, -499, 499);
-        pwm4 = Map(pwm4, -127, 127, -499, 499);
-
-        if (pwm1 < 20 && pwm1 > -20) {
-            pwm1 = 0;
-        }
-        if (pwm2 < 20 && pwm2 > -20) {
-            pwm2 = 0;
-        }
-        if (pwm3 < 20 && pwm3 > -20) {
-            pwm3 = 0;
-        }
-        if (pwm4 < 20 && pwm4 > -20) {
-            pwm4 = 0;
-        }
-
-        if (pwm1 > 499) {
-            pwm1 = 499;
-        }
-        if (pwm2 > 499) {
-            pwm2 = 499;
-        }
-        if (pwm3 > 499) {
-            pwm3 = 499;
-        }
-        if (pwm4 > 499) {
-            pwm4 = 499;
-        }
-
-        if (pwm1 < -499) {
-            pwm1 = -499;
-        }
-        if (pwm2 < -499) {
-            pwm2 = -499;
-        }
-        if (pwm3 < -499) {
-            pwm3 = -499;
-        }
-        if (pwm4 < -499) {
-            pwm4 = -499;
-        }
-
-        if (pwm1 >= 0) {
-            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:左上轮
-            L_BIN2_ON;
-
-        } else if (pwm1 < 0) {
-            pwm1 = abs(pwm1);
-            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:左上轮
-            L_BIN2_OFF;
-        }
-
-        if (pwm2 >= 0) {
-            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:右上轮
-            L_AIN2_OFF;
-        } else if (pwm2 < 0) {
-            pwm2 = abs(pwm2);
-            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:右上轮
-            L_AIN2_ON;
-        }
-
-        if (pwm3 >= 0) {
-            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:右下轮
-            R_AIN2_ON;
-        } else if (pwm3 < 0) {
-            pwm3 = abs(pwm3);
-            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:右下轮
-            R_AIN2_OFF;
-        }
-
-        if (pwm4 >= 0) {
-            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:左下轮
-            R_BIN2_OFF;
-        } else if (pwm4 < 0) {
-            pwm4 = abs(pwm4);
-            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:左下轮
-            R_BIN2_ON;
-        }
-
-        if (Joy_RxBuf[0] == 'L' && Joy_RxBuf[3] == 'R') {
-            Motion_State(ON);
-            NRF_flag = 1;
-        }
-        printf((char*)Joy_RxBuf);
-        printf("\n");
-    } else {
-        printf("Receive failed !\n");
-    }
-
-    if (RGB_mode == 0) {
-        //RGB彩灯呼吸流水灯效果
-        hsv_to_rgb(HSV_H, 100, 100, &RGB_R, &RGB_G, &RGB_B);
-        if (HSV_H == 360) {
-            HSV_flag = 1;
-        } else if (HSV_H == 0) {
-            HSV_flag = 0;
-        }
-        if (HSV_flag == 0) {
-            HSV_H += 2;
-        } else if (HSV_flag == 1) {
-            HSV_H -= 2;
-        }
-        for (LED_Count = 0; LED_Count < 6; LED_Count++) {
-            RGB_LED_Write_24Bits(RGB_R, RGB_G, RGB_B);
-        }
-    } else if (RGB_mode == 1) {
-        if (i % 20 == 0) {
-            for (LED_Count = 0; LED_Count < 6; LED_Count++) {
-                hsv_to_rgb((RGB_mode1 % 360), 100, 100, &RGB_R, &RGB_G, &RGB_B);
-                RGB_LED_Write_24Bits(RGB_R, RGB_G, RGB_B);
-                RGB_mode1 += 60;
-                if (RGB_mode1 > 360) {
-                    RGB_mode1 = 0;
-                    i = 0;
-                }
-            }
-        }
-        i++;
-    } else if (RGB_mode == 2) {
-        RGB_Circulation(RGB_mode2);
-        if (j % 20 == 0) {
-            RGB_mode2++;
-        }
-        if (RGB_mode2 > 8) {
-            j = 0;
-            RGB_mode2 = 0;
-        }
-        j++;
-    }
-
-    delay_ms(10);
-}
-
-/**************************************************
-函数名称：Evadible_Mode(void)
-函数功能：避障模式
-入口参数：无
-返回参数：无
-***************************************************/
-void
-Evadible_Mode(void) {
+evadible_mode(void) {
     float Dis;
-    Dis = Hcsr04GetLength(); //锟斤拷锟斤拷锟斤拷模锟斤拷锟饺★拷锟斤拷锟?
-    forward(200);            //前锟斤拷
-
+    Dis = Hcsr04GetLength();
+    forward(200);
     if (Dis <= 15) {
-        backward(200); //锟斤拷锟斤拷
+        backward(200);
         delay_ms(400);
-        Left_Turn(200); //锟斤拷转
+        Left_Turn(200);
         delay_ms(400);
     }
 }
 
-/**************************************************
-函数名称：Gravity_Mode(void)
-函数功能：重力模式
-入口参数：无
-返回参数：无
-***************************************************/
+/**
+ * \brief           Function for implementing follow mode
+ */
 void
-Gravity_Mode(void) {
-    int MPU_pitch = 50, MPU_roll = 50;
-    int Map_pitch, Map_roll;
-    int pwm1, pwm2, pwm3, pwm4;
-    static u8 RGB_mode1 = 0, i = 0;
-    static u8 RGB_mode2 = 0, j = 0;
-    NRF24L01_RX_Mode();
-    L_STBY_ON;
-    R_STBY_ON;
-    if (NRF24L01_RxPacket(MPU_RxBuf) == 0) {
-        MPU_pitch = (MPU_RxBuf[1] - '0') * 10 + (MPU_RxBuf[2] - '0');
-        MPU_roll = (MPU_RxBuf[4] - '0') * 10 + (MPU_RxBuf[5] - '0');
-
-        Map_pitch = Map(MPU_pitch, 10, 90, -127, 127);
-        Map_roll = Map(MPU_roll, 10, 90, -127, 127);
-
-        pwm1 = Map_pitch + Map_roll;
-        pwm2 = Map_pitch - Map_roll;
-        pwm3 = Map_pitch + Map_roll;
-        pwm4 = Map_pitch - Map_roll;
-
-        pwm1 = Map(pwm1, -127, 127, -499, 499);
-        pwm2 = Map(pwm2, -127, 127, -499, 499);
-        pwm3 = Map(pwm3, -127, 127, -499, 499);
-        pwm4 = Map(pwm4, -127, 127, -499, 499);
-
-        if (pwm1 < 20 && pwm1 > -20) {
-            pwm1 = 0;
-        }
-        if (pwm2 < 20 && pwm2 > -20) {
-            pwm2 = 0;
-        }
-        if (pwm3 < 20 && pwm3 > -20) {
-            pwm3 = 0;
-        }
-        if (pwm4 < 20 && pwm4 > -20) {
-            pwm4 = 0;
-        }
-
-        if (pwm1 > 499) {
-            pwm1 = 499;
-        }
-        if (pwm2 > 499) {
-            pwm2 = 499;
-        }
-        if (pwm3 > 499) {
-            pwm3 = 499;
-        }
-        if (pwm4 > 499) {
-            pwm4 = 499;
-        }
-
-        if (pwm1 < -499) {
-            pwm1 = -499;
-        }
-        if (pwm2 < -499) {
-            pwm2 = -499;
-        }
-        if (pwm3 < -499) {
-            pwm3 = -499;
-        }
-        if (pwm4 < -499) {
-            pwm4 = -499;
-        }
-
-        if (pwm1 >= 0) {
-            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:左上轮
-            L_BIN2_ON;
-
-        } else if (pwm1 < 0) {
-            pwm1 = abs(pwm1);
-            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:左上轮
-            L_BIN2_OFF;
-        }
-
-        if (pwm2 >= 0) {
-            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:右上轮
-            L_AIN2_OFF;
-        } else if (pwm2 < 0) {
-            pwm2 = abs(pwm2);
-            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:右上轮
-            L_AIN2_ON;
-        }
-
-        if (pwm3 >= 0) {
-            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:右下轮
-            R_AIN2_ON;
-        } else if (pwm3 < 0) {
-            pwm3 = abs(pwm3);
-            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:右下轮
-            R_AIN2_OFF;
-        }
-
-        if (pwm4 >= 0) {
-            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:左下轮
-            R_BIN2_OFF;
-        } else if (pwm4 < 0) {
-            pwm4 = abs(pwm4);
-            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:左下轮
-            R_BIN2_ON;
-        }
-
-        if (MPU_RxBuf[0] == 'M' && MPU_RxBuf[1] == 'P' && MPU_RxBuf[2] == 'U') {
-            Motion_State(ON);
-            MPU_flag = 1;
-        }
-    } else {
-        printf("Receive failed !\n");
-    }
-
-    if (RGB_mode == 0) {
-        //RGB彩灯呼吸流水灯效果
-        hsv_to_rgb(HSV_H, 100, 100, &RGB_R, &RGB_G, &RGB_B);
-        if (HSV_H == 360) {
-            HSV_flag = 1;
-        } else if (HSV_H == 0) {
-            HSV_flag = 0;
-        }
-        if (HSV_flag == 0) {
-            HSV_H += 2;
-        } else if (HSV_flag == 1) {
-            HSV_H -= 2;
-        }
-        for (LED_Count = 0; LED_Count < 6; LED_Count++) {
-            RGB_LED_Write_24Bits(RGB_R, RGB_G, RGB_B);
-        }
-    } else if (RGB_mode == 1) {
-        if (i % 20 == 0) {
-            for (LED_Count = 0; LED_Count < 6; LED_Count++) {
-                hsv_to_rgb((RGB_mode1 % 360), 100, 100, &RGB_R, &RGB_G, &RGB_B);
-                RGB_LED_Write_24Bits(RGB_R, RGB_G, RGB_B);
-                RGB_mode1 += 60;
-                if (RGB_mode1 > 360) {
-                    RGB_mode1 = 0;
-                    i = 0;
-                }
-            }
-        }
-        i++;
-    } else if (RGB_mode == 2) {
-        RGB_Circulation(RGB_mode2);
-        if (j % 20 == 0) {
-            RGB_mode2++;
-        }
-        if (RGB_mode2 > 8) {
-            j = 0;
-            RGB_mode2 = 0;
-        }
-        j++;
-    }
-
-    delay_ms(10);
-}
-
-/**************************************************
-函数名称：Follow_Mode(void)
-函数功能：跟随模式
-入口参数：无
-返回参数：无
-***************************************************/
-void
-Follow_Mode(void) {
+follow_mode(void) {
     float Dis;
-    Dis = Hcsr04GetLength(); //锟斤拷锟斤拷锟斤拷模锟斤拷锟饺★拷锟斤拷锟?
+    Dis = Hcsr04GetLength();
     if (Dis <= 10) {
-        backward(200); //锟斤拷锟斤拷
+        backward(200);
     } else if (Dis <= 30 && Dis >= 20) {
-        forward(200); //前锟斤拷
+        forward(200);
     } else {
         Motion_State(ON);
     }
 }
 
-/**************************************************
-函数名称：void RGB_Select(void)
-函数功能：彩灯模式灯类型选择
-入口参数：无
-返回参数：无
-***************************************************/
+/**
+ * \brief           Function to control RGB LEDs
+ */
 void
-RGB_Select(void) {
-    Motion_State(ON);
-    NRF24L01_RX_Mode();
-    if (NRF24L01_RxPacket(RGB_RxBuf) == 0 && RGB_RxBuf[0] != ' ') {
-        if (RGB_RxBuf[0] == 'S' && RGB_RxBuf[1] == 'T' && RGB_RxBuf[2] == 'O' && RGB_RxBuf[3] == 'P') {
-            RGB_flag = 1;
-        }
-        if (RGB_RxBuf[2] == '0') {
-            RGB_mode = 0; //呼吸灯
-        } else if (RGB_RxBuf[2] == '1') {
-            RGB_mode = 1; //流水灯
-        } else if (RGB_RxBuf[2] == '2') {
-            RGB_mode = 2; //闪烁灯
-        }
-    }
-    delay_ms(10);
-    printf("RGB_mode=%d\n", RGB_mode);
-}
-
-/**************************************************
-函数名称：RGB_Show(void)
-函数功能：彩灯显示
-入口参数：无
-返回参数：无
-***************************************************/
-void
-RGB_Show(void) {
-    static u8 RGB_mode1 = 0, i = 0;
-    static u8 RGB_mode2 = 0, j = 0;
-    if (RGB_mode == 0) {
+rgb_show(void) {
+    static int HSV_H = 0;   //HSV的H数值
+    static u8 HSV_flag = 0; //颜色转换时所用标志位
+    static uint16_t RGB_mode1 = 0, i = 0;
+    static uint16_t RGB_mode2 = 0, j = 0;
+    if (rgb_mode == RGB_MODE_BREATHING) {
         //RGB彩灯呼吸流水灯效果
         hsv_to_rgb(HSV_H, 100, 100, &RGB_R, &RGB_G, &RGB_B);
         if (HSV_H == 360) {
@@ -485,7 +125,7 @@ RGB_Show(void) {
             RGB_LED_Write_24Bits(RGB_R, RGB_G, RGB_B);
         }
         delay_ms(100);
-    } else if (RGB_mode == 1) {
+    } else if (rgb_mode == RGB_MODE_RUNNING) {
         if (i % 3 == 0) {
             for (LED_Count = 0; LED_Count < 6; LED_Count++) {
                 hsv_to_rgb((RGB_mode1 % 360), 100, 100, &RGB_R, &RGB_G, &RGB_B);
@@ -499,7 +139,7 @@ RGB_Show(void) {
         }
         i++;
         delay_ms(100);
-    } else if (RGB_mode == 2) {
+    } else if (rgb_mode == RGB_MODE_FLASHING) {
         RGB_Circulation(RGB_mode2);
         if (j % 3 == 0) {
             RGB_mode2++;
@@ -513,14 +153,11 @@ RGB_Show(void) {
     }
 }
 
-/**************************************************
-函数名称：Joy_Mode(void)
-函数功能：蓝牙模式的摇杆遥控
-入口参数：无
-返回参数：无
-***************************************************/
+/**
+ * \brief           Joystick mode control function
+ */
 void
-APP_Joy_Mode(void) {
+joystick_mode(void) {
     int Joy_Lx = 50, Joy_Ly = 50, Joy_Rx = 50, Joy_Ry = 50;
     int Map_Lx, Map_Ly, Map_Rx, Map_Ry;
     int pwm1, pwm2, pwm3, pwm4;
@@ -549,92 +186,16 @@ APP_Joy_Mode(void) {
     pwm3 = Map(pwm3, -127, 127, -499, 499);
     pwm4 = Map(pwm4, -127, 127, -499, 499);
 
-    if (pwm1 < 20 && pwm1 > -20) {
-        pwm1 = 0;
-    }
-    if (pwm2 < 20 && pwm2 > -20) {
-        pwm2 = 0;
-    }
-    if (pwm3 < 20 && pwm3 > -20) {
-        pwm3 = 0;
-    }
-    if (pwm4 < 20 && pwm4 > -20) {
-        pwm4 = 0;
-    }
+    pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 
-    if (pwm1 > 499) {
-        pwm1 = 499;
-    }
-    if (pwm2 > 499) {
-        pwm2 = 499;
-    }
-    if (pwm3 > 499) {
-        pwm3 = 499;
-    }
-    if (pwm4 > 499) {
-        pwm4 = 499;
-    }
-
-    if (pwm1 < -499) {
-        pwm1 = -499;
-    }
-    if (pwm2 < -499) {
-        pwm2 = -499;
-    }
-    if (pwm3 < -499) {
-        pwm3 = -499;
-    }
-    if (pwm4 < -499) {
-        pwm4 = -499;
-    }
-
-    if (pwm1 >= 0) {
-        TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:左上轮
-        L_BIN2_ON;
-
-    } else if (pwm1 < 0) {
-        pwm1 = abs(pwm1);
-        TIM_SetCompare4(TIM2, pwm1); //L_BIN2:左上轮
-        L_BIN2_OFF;
-    }
-
-    if (pwm2 >= 0) {
-        TIM_SetCompare3(TIM2, pwm2); //L_AIN2:右上轮
-        L_AIN2_OFF;
-    } else if (pwm2 < 0) {
-        pwm2 = abs(pwm2);
-        TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:右上轮
-        L_AIN2_ON;
-    }
-
-    if (pwm3 >= 0) {
-        TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:右下轮
-        R_AIN2_ON;
-    } else if (pwm3 < 0) {
-        pwm3 = abs(pwm3);
-        TIM_SetCompare1(TIM2, pwm3); //R_AIN2:右下轮
-        R_AIN2_OFF;
-    }
-
-    if (pwm4 >= 0) {
-        TIM_SetCompare2(TIM2, pwm4); //R_BIN2:左下轮
-        R_BIN2_OFF;
-    } else if (pwm4 < 0) {
-        pwm4 = abs(pwm4);
-        TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:左下轮
-        R_BIN2_ON;
-    }
     delay_ms(10);
 }
 
-/**************************************************
-函数名称：APP_Gravity_Mode(void)
-函数功能：APP重力模式
-入口参数：无
-返回参数：无
-***************************************************/
+/**
+ * \brief           Gravity mode control function
+ */
 void
-APP_Gravity_Mode(void) {
+gravity_mode(void) {
     int i, j = 0, Pitch_flag = 0;
     int APP_Pitch = 0, APP_Roll = 0;
     int Pitch_symbel = 1, Roll_symbel = 1; //偏航角符号
@@ -735,81 +296,7 @@ APP_Gravity_Mode(void) {
         pwm3 = Map(pwm3, -127, 127, -499, 499);
         pwm4 = Map(pwm4, -127, 127, -499, 499);
 
-        if (pwm1 < 20 && pwm1 > -20) {
-            pwm1 = 0;
-        }
-        if (pwm2 < 20 && pwm2 > -20) {
-            pwm2 = 0;
-        }
-        if (pwm3 < 20 && pwm3 > -20) {
-            pwm3 = 0;
-        }
-        if (pwm4 < 20 && pwm4 > -20) {
-            pwm4 = 0;
-        }
-
-        if (pwm1 > 499) {
-            pwm1 = 499;
-        }
-        if (pwm2 > 499) {
-            pwm2 = 499;
-        }
-        if (pwm3 > 499) {
-            pwm3 = 499;
-        }
-        if (pwm4 > 499) {
-            pwm4 = 499;
-        }
-
-        if (pwm1 < -499) {
-            pwm1 = -499;
-        }
-        if (pwm2 < -499) {
-            pwm2 = -499;
-        }
-        if (pwm3 < -499) {
-            pwm3 = -499;
-        }
-        if (pwm4 < -499) {
-            pwm4 = -499;
-        }
-
-        if (pwm1 >= 0) {
-            TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:左上轮
-            L_BIN2_ON;
-
-        } else if (pwm1 < 0) {
-            pwm1 = abs(pwm1);
-            TIM_SetCompare4(TIM2, pwm1); //L_BIN2:左上轮
-            L_BIN2_OFF;
-        }
-
-        if (pwm2 >= 0) {
-            TIM_SetCompare3(TIM2, pwm2); //L_AIN2:右上轮
-            L_AIN2_OFF;
-        } else if (pwm2 < 0) {
-            pwm2 = abs(pwm2);
-            TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:右上轮
-            L_AIN2_ON;
-        }
-
-        if (pwm3 >= 0) {
-            TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:右下轮
-            R_AIN2_ON;
-        } else if (pwm3 < 0) {
-            pwm3 = abs(pwm3);
-            TIM_SetCompare1(TIM2, pwm3); //R_AIN2:右下轮
-            R_AIN2_OFF;
-        }
-
-        if (pwm4 >= 0) {
-            TIM_SetCompare2(TIM2, pwm4); //R_BIN2:左下轮
-            R_BIN2_OFF;
-        } else if (pwm4 < 0) {
-            pwm4 = abs(pwm4);
-            TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:左下轮
-            R_BIN2_ON;
-        }
+        pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 
         memset(Smoothing_Pitch_Buf, 0, sizeof(Smoothing_Pitch_Buf));
         memset(Smoothing_Roll_Buf, 0, sizeof(Smoothing_Roll_Buf));
@@ -822,78 +309,104 @@ APP_Gravity_Mode(void) {
     delay_ms(1);
 }
 
-/**************************************************
-函数名称：void Control(void)
-函数功能：麦轮小车控制函数
-入口参数：无
-返回参数：无
-***************************************************/
-void
-Control(void) {
-
-    NRF24L01_RX_Mode();
-    if (NRF24L01_RxPacket(Con_RxBuf) == 0 && Con_RxBuf[0] != ' ') {
-        if (Con_RxBuf[0] == 'L' && Con_RxBuf[1] == 'Y') //蓝牙模式
-        {
-            mode = 1;
-        } else if (Con_RxBuf[0] == 'L' && Con_RxBuf[1] == 'X') //遥控模式
-        {
-            mode = 2;
-        } else if (Con_RxBuf[0] >= 'P' && Con_RxBuf[3] <= 'R') //重力感应模式
-        {
-            mode = 3;
-        } else if (Con_RxBuf[0] == 'B' && Con_RxBuf[1] == 'Z') //避障模式
-        {
-            mode = 4;
-        } else if (Con_RxBuf[0] == 'G' && Con_RxBuf[1] == 'S') //跟随模式
-        {
-            mode = 5;
-        } else if (Con_RxBuf[0] == 'C' && Con_RxBuf[1] == 'D') //RGB彩灯模式
-        {
-            mode = 6;
-        }
-        delay_ms(10);
-        //printf("mode=%d\n",mode);
-    } else {
-        mode = 1;
+/**
+ * \brief           Process PWM data and control motor movement
+ *
+ * \param[in]       pwm1: PWM value for motor 1
+ * \param[in]       pwm2: PWM value for motor 2
+ * \param[in]       pwm3: PWM value for motor 3
+ * \param[in]       pwm4: PWM value for motor 4
+ */
+static void
+pwm_data_process(int16_t pwm1, int16_t pwm2, int16_t pwm3, int16_t pwm4) {
+    if (pwm1 < 20 && pwm1 > -20) {
+        pwm1 = 0;
     }
-    delay_ms(10);
-
-    if (mode == 1) {
-        Bluetooth_Mode();
-    } else if (mode == 2) {
-        while (1) {
-            Wireless_Mode(); //遥控模式
-            if (NRF_flag == 1) {
-                mode = 1;
-                break;
-            }
-        }
-    } else if (mode == 3) {
-        while (1) {
-            Gravity_Mode(); //重力模式
-            if (MPU_flag == 1) {
-                mode = 1;
-                break;
-            }
-        }
-    } else if (mode == 4) {
-        Evadible_Mode(); //避障模式
-    } else if (mode == 5) {
-        Follow_Mode(); //跟随模式
-    } else if (mode == 6) {
-        while (1) {
-            RGB_Select(); //RGB彩灯选择
-            if (RGB_flag == 1) {
-                mode = 1;
-                break;
-            }
-        }
+    if (pwm2 < 20 && pwm2 > -20) {
+        pwm2 = 0;
+    }
+    if (pwm3 < 20 && pwm3 > -20) {
+        pwm3 = 0;
+    }
+    if (pwm4 < 20 && pwm4 > -20) {
+        pwm4 = 0;
     }
 
-    MPU_flag = 0;
-    NRF_flag = 0;
-    RGB_flag = 0;
+    if (pwm1 > 499) {
+        pwm1 = 499;
+    }
+    if (pwm2 > 499) {
+        pwm2 = 499;
+    }
+    if (pwm3 > 499) {
+        pwm3 = 499;
+    }
+    if (pwm4 > 499) {
+        pwm4 = 499;
+    }
 
-    RGB_Show(); //RGB彩灯显示
+    if (pwm1 < -499) {
+        pwm1 = -499;
+    }
+    if (pwm2 < -499) {
+        pwm2 = -499;
+    }
+    if (pwm3 < -499) {
+        pwm3 = -499;
+    }
+    if (pwm4 < -499) {
+        pwm4 = -499;
+    }
+
+    if (pwm1 >= 0) {
+        TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:左上轮
+        L_BIN2_ON;
+
+    } else if (pwm1 < 0) {
+        pwm1 = abs(pwm1);
+        TIM_SetCompare4(TIM2, pwm1); //L_BIN2:左上轮
+        L_BIN2_OFF;
+    }
+
+    if (pwm2 >= 0) {
+        TIM_SetCompare3(TIM2, pwm2); //L_AIN2:右上轮
+        L_AIN2_OFF;
+    } else if (pwm2 < 0) {
+        pwm2 = abs(pwm2);
+        TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:右上轮
+        L_AIN2_ON;
+    }
+
+    if (pwm3 >= 0) {
+        TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:右下轮
+        R_AIN2_ON;
+    } else if (pwm3 < 0) {
+        pwm3 = abs(pwm3);
+        TIM_SetCompare1(TIM2, pwm3); //R_AIN2:右下轮
+        R_AIN2_OFF;
+    }
+
+    if (pwm4 >= 0) {
+        TIM_SetCompare2(TIM2, pwm4); //R_BIN2:左下轮
+        R_BIN2_OFF;
+    } else if (pwm4 < 0) {
+        pwm4 = abs(pwm4);
+        TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:左下轮
+        R_BIN2_ON;
+    }
+}
+
+/**
+ * \brief           Map a value from one range to another
+ *
+ * \param[in]       val: Input value to map
+ * \param[in]       in_min: Minimum value of the input range
+ * \param[in]       in_max: Maximum value of the input range
+ * \param[in]       out_min: Minimum value of the output range
+ * \param[in]       out_max: Maximum value of the output range
+ * \return          Mapped value within the output range
+ */
+static int
+Map(int val, int in_min, int in_max, int out_min, int out_max) {
+    return (int)(val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }

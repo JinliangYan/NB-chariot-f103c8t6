@@ -248,44 +248,6 @@ USART1_IRQHandler(void) {
     }
 }
 
-/**************************************************
-函数名称：USART2_IRQHandler(void) 
-函数功能：串口2中断函数
-入口参数：无
-返回参数：无
-***************************************************/
-void
-USART2_IRQHandler(void) {
-    u8 temp = 0;
-    if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
-        temp = USART_ReceiveData(USART2);
-        switch (temp) {
-            // case 'a': flag = 1; break;
-            // case 'b': flag = 2; break;
-        }
-    }
-    USART_SendByte(USART2, temp);
-}
-
-/**************************************************
-函数名称：USART3_IRQHandler(void) 
-函数功能：串口3中断函数
-入口参数：无
-返回参数：无
-***************************************************/
-void
-USART3_IRQHandler(void) {
-    u8 temp;
-    if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
-        temp = USART_ReceiveData(USART3);
-        switch (temp) {
-            // case 'a': flag = 1; break;
-            // case 'b': flag = 2; break;
-        }
-    }
-    USART_SendByte(USART3, temp);
-}
-
 /*************************串口发送函数*************************************/
 
 void
