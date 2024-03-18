@@ -5,6 +5,21 @@
 定时时间=(arr+1)(psc+1)/72*10^6
 */
 
+void tim1_init(uint32_t arr, uint32_t psc) {
+    TIM_TimeBaseInitTypeDef TIM_InitStructure;
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); //开启定时器1时钟
+
+    TIM_InitStructure.TIM_Period = arr - 1;                     //自动重装载寄存器周期的值
+    TIM_InitStructure.TIM_Prescaler = psc - 1;                  //设置预分频值
+    TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1;     //设置时钟分割:TDTS = Tck_tim
+    TIM_InitStructure.TIM_CounterMode = TIM_CounterMode_Up; //TIM向上计数模式
+    TIM_InitStructure.TIM_RepetitionCounter = 0;            //重复计数的值
+
+    TIM_TimeBaseInit(TIM1, &TIM_InitStructure);
+    TIM_Cmd(TIM1, ENABLE); //使能计数器
+}
+
 /**************************************************
 函数名称：TIM2_Init(u32 arr,u32 psc)
 函数功能：定时器2初始化函数

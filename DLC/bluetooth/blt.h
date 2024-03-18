@@ -7,8 +7,8 @@
 
 #define bt_delay_ms             delay_ms
 #define BT_USART                USART1
-#define BT_STATA_PIN            GPIO_Pin_8
-#define BT_SATAT_PORT           GPIOA
+#define BT_STATA_PIN            GPIO_Pin_5
+#define BT_SATAT_PORT           GPIOB
 
 /**
  * \brief 检查模块是否处于配对状态

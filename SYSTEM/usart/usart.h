@@ -5,22 +5,22 @@
 
 //注意:使用蓝牙模块时波特率使用9600,不能超过9600波特率
 
-void USART_SendByte(USART_TypeDef* USARTx, uint16_t Data);
+void usart_send_byte(USART_TypeDef* USARTx, uint16_t data);
 
-void USART1_Init(u32 bound);
-void USART2_Init(u32 bound);
-void USART3_Init(u32 bound);
+void usart1_init_remap(u32 bound);
+void usart2_init(u32 bound);
+void usart3_init(u32 bound);
 
-void USART1_Send_Byte(u8 Data);
-void USART1_Send_nByte(u8* Data, u16 size);
-void USART1_Send_Str(u8* Data);
+void usart1_send_byte(u8 data);
+void usart1_send_nbyte(u8* data, u16 size);
+void usart1_send_str(u8* data);
 
-void USART2_Send_Byte(u8 Data);
-void USART2_Send_nByte(u8* Data, u16 size);
-void USART2_Send_Str(u8* Data);
+void usart2_send_byte(u8 data);
+void usart2_send_nbyte(u8* data, u16 size);
+void usart2_send_str(u8* data);
 
-void USART3_Send_Byte(u8 Data);
-void USART3_Send_nByte(u8* Data, u16 size);
-void USART3_Send_Str(u8* Data);
+void usart3_send_byte(u8 data);
+void usart3_send_nbyte(u8* data, u16 size);
+void usart3_send_str(u8* data);
 
 #endif

@@ -41,14 +41,19 @@
 #include "stm32f10x.h"
 #include "usart.h"
 #include "ws2812b.h"
+#include "usart.h"
 
 void sysinit();
 void test_bt();
+void test_motor_pwm();
+void test_usart1();
+void test();
 
-    int debug_test() {
+
+int debug_test() {
     sysinit();
-    delay_init();
-    test_bt();
+    delay_ms(100);
+    test();
     printf_("HELLO\r\n");
 
     while (1) {
@@ -63,7 +68,6 @@ sysinit() {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
-    USART1_Init(9600); //串口初始化为9600
     Motor_Init();      //电机初始化
     Hcsr04_Init();     //超声波初始化
     Motion_State(OFF); //关闭电机驱动失能
@@ -71,6 +75,12 @@ sysinit() {
     printf_init();
     dlc_init();
     delay_ms(1000);
+}
+
+void test() {
+    // test_bt();
+    test_motor_pwm();
+    // test_usart1();
 }
 
 void
@@ -82,4 +92,38 @@ test_bt() {
     if (!bt_reset()) {
         printf_("PASS:bt_reset()\r\n");
     }
+}
+
+void
+test_motor_pwm() {
+    printf_("MOTOR TEST START\r\n");
+    TIM_SetCompare1(TIM1, 300);
+    TIM_SetCompare2(TIM1, 300);
+    TIM_SetCompare3(TIM1, 300);
+    TIM_SetCompare4(TIM1, 300);
+    delay_ms(1000);
+    forward(100);
+    delay_ms(1000);
+    backward(100);
+    delay_ms(1000);
+    Left_Turn(100);
+    delay_ms(1000);
+    Right_Turn(100);
+    delay_ms(1000);
+    Move(0, 100);
+    delay_ms(1000);
+    Move(1, 100);
+    delay_ms(1000);
+    Move(2, 100);
+    delay_ms(1000);
+    Move(3, 100);
+    delay_ms(1000);
+    Move(4, 100);
+    delay_ms(1000);
+    delay_ms(1000);
+    Move(5, 100);
+}
+
+void test_usart1() {
+    test_bt();
 }

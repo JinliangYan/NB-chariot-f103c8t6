@@ -35,7 +35,7 @@ main(void) {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
-    USART1_Init(9600); //串口初始化为9600
+    usart1_init_remap(9600); //串口初始化为9600
     //    NRF24L01_Check_detection(); //NRF24L01等待应答
     Motor_Init();      //电机初始化
     Hcsr04_Init();     //超声波初始化

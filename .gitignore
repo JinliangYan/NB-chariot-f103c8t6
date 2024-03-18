@@ -6,6 +6,8 @@
 !.vscode/*.code-snippets
 !.vscode/c_cpp_properties.json
 
+task.txt
+
 # Local History for Visual Studio Code
 .history/
 

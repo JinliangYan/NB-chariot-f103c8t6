@@ -15,7 +15,7 @@ receive_state_t next_state = FINISH;
 bt_received_data_t bt_received_data;
 
 void
-USART_SendByte(USART_TypeDef* USARTx, uint16_t Data) //发送一个字节
+usart_send_byte(USART_TypeDef* USARTx, uint16_t Data) //发送一个字节
 {
     USARTx->DR = (Data & (uint16_t)0x01FF);
     while (USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET)
@@ -29,24 +29,28 @@ USART_SendByte(USART_TypeDef* USARTx, uint16_t Data) //发送一个字节
 返回参数：无
 ***************************************************/
 void
-USART1_Init(u32 bound) {
+usart1_init_remap(u32 bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE); //使能USART1，GPIOA时钟
+    /* 使能AFIO时钟。重映射必须使能AFIO时钟 */
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-    //USART1_TX   GPIOA.9
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;         //PA9
+    /* 选择重映射 */
+    GPIO_PinRemapConfig(GPIO_Remap_USART1, ENABLE);
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE); //使能USART1，GPIOA时钟
+    //USART1_TX 
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;   //复用推挽输出
-    GPIO_Init(GPIOA, &GPIO_InitStructure);            //初始化GPIOA.9
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-    //USART1_RX	  GPIOA.10初始化
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;            //PA10
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING; //浮空输入
-    GPIO_Init(GPIOA, &GPIO_InitStructure);                //初始化GPIOA.10
+    //USART1_RX
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_7;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     //Usart1 NVIC 配置
     NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;
@@ -76,7 +80,7 @@ USART1_Init(u32 bound) {
 返回参数：无
 ***************************************************/
 void
-USART2_Init(u32 bound) {
+usart2_init(u32 bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -124,7 +128,7 @@ USART2_Init(u32 bound) {
 返回参数：无
 ***************************************************/
 void
-USART3_Init(u32 bound) {
+usart3_init(u32 bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -251,13 +255,13 @@ USART1_IRQHandler(void) {
 /*************************串口发送函数*************************************/
 
 void
-USART1_Send_Byte(u8 Data) {
+usart1_send_byte(u8 Data) {
     USART_SendData(USART1, Data);
     return;
 }
 
 void
-USART1_Send_nByte(u8* Data, u16 size) {
+usart1_send_nbyte(u8* Data, u16 size) {
     u16 i = 0;
     for (i = 0; i < size; i++) {
         USART_SendData(USART1, Data[i]);
@@ -268,7 +272,7 @@ USART1_Send_nByte(u8* Data, u16 size) {
 }
 
 void
-USART1_Send_Str(u8* Data) {
+Uusart1_send_str(u8* Data) {
     while (*Data) {
         USART_SendData(USART1, *Data++);
         while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
@@ -278,13 +282,13 @@ USART1_Send_Str(u8* Data) {
 }
 
 void
-USART2_Send_Byte(u8 Data) {
+usart2_send_byte(u8 Data) {
     USART_SendData(USART2, Data);
     return;
 }
 
 void
-USART2_Send_nByte(u8* Data, u16 size) {
+usart2_send_nbyte(u8* Data, u16 size) {
     u16 i = 0;
     for (i = 0; i < size; i++) {
         USART_SendData(USART2, Data[i]);
@@ -295,7 +299,7 @@ USART2_Send_nByte(u8* Data, u16 size) {
 }
 
 void
-USART2_Send_Str(u8* Data) {
+usart2_send_str(u8* Data) {
     while (*Data) {
         USART_SendData(USART2, *Data++);
         while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
@@ -305,13 +309,13 @@ USART2_Send_Str(u8* Data) {
 }
 
 void
-USART3_Send_Byte(u8 Data) {
+usart3_send_byte(u8 Data) {
     USART_SendData(USART3, Data);
     return;
 }
 
 void
-USART3_Send_nByte(u8* Data, u16 size) {
+usart3_send_nbyte(u8* Data, u16 size) {
     u16 i = 0;
     for (i = 0; i < size; i++) {
         USART_SendData(USART3, Data[i]);
@@ -322,7 +326,7 @@ USART3_Send_nByte(u8* Data, u16 size) {
 }
 
 void
-USART3_Send_Str(u8* Data) {
+usart3_send_str(u8* Data) {
     while (*Data) {
         USART_SendData(USART3, *Data++);
         while (USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET)
