@@ -2,7 +2,7 @@
 #define __PWM_H
 #include "sys.h"
 
-// void PWM1_Init(u32 arr, u32 psc);
+void pwm1_init(u32 arr, u32 psc);
 void pwm2_init(u32 arr, u32 psc);
 void pwm3_init(u32 arr, u32 psc);
 void pwm3_init_remap(u32 arr, u32 psc);
