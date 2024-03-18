@@ -68,9 +68,8 @@ sysinit() {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
-    usart1_init_remap(9600); //串口初始化为9600
     Motor_Init();      //电机初始化
-    // Hcsr04_Init();     //超声波初始化
+    Hcsr04_Init();     //超声波初始化
     Motion_State(OFF); //关闭电机驱动失能
     RGB_LED_Init();    //RGB彩灯初始化
     printf_init();
@@ -80,8 +79,8 @@ sysinit() {
 
 void test() {
     // test_bt();
-    // test_motor_pwm();
-    test_usart1();
+    test_motor_pwm();
+    // test_usart1();
 }
 
 void
@@ -97,6 +96,7 @@ test_bt() {
 
 void
 test_motor_pwm() {
+    printf_("MOTOR TEST START\r\n");
     TIM_SetCompare1(TIM1, 300);
     TIM_SetCompare2(TIM1, 300);
     TIM_SetCompare3(TIM1, 300);
