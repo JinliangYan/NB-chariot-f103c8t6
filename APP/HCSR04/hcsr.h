@@ -14,7 +14,6 @@
 #define TRIG_Send   PBout(3)
 #define ECHO_Reci   PBin(4)
 
-void Hcsr04_NVIC(void);
 void Hcsr04_Init(void);
 u32 GetEchoTimer(void);            //获取定时器4计数器值
 float Hcsr04GetLength(void);       //通过定时器4计数器值推算距离
