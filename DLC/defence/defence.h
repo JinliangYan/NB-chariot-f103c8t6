@@ -1,6 +1,6 @@
 /**
- * \file            DLC_Control.h
- * \date            3/10/2024
+ * \file            defence.h
+ * \date            3/19/2024
  * \brief           
  */
 
@@ -32,26 +32,26 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#ifndef NB_CHARIOT_F103C8T6_DLC_H
-#define NB_CHARIOT_F103C8T6_DLC_H
+#ifndef NB_CHARIOT_F103C8T6_DEFENCE_H
+#define NB_CHARIOT_F103C8T6_DEFENCE_H
 
-#include "blt.h"
-#include "defence.h"
-#include "servo.h"
-#include "status.h"
 #include "stm32f10x.h"
-#include "usart_blt.h"
-#include "weapon.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-void dlc_init();
-void dlc_control();
+typedef struct {
+    uint8_t id;
+    uint8_t skill;
+    uint8_t power;
+} attacker_t;
+
+void defence_init(void);
+void defence_loop(void);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* NB_CHARIOT_F103C8T6_DLC_H */
+#endif /* NB_CHARIOT_F103C8T6_DEFENCE_H */

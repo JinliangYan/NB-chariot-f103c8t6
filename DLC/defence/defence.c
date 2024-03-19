@@ -1,6 +1,6 @@
 /**
- * \file            DLC_Control.h
- * \date            3/10/2024
+ * \file            defence.c
+ * \date            3/19/2024
  * \brief           
  */
 
@@ -32,26 +32,46 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#ifndef NB_CHARIOT_F103C8T6_DLC_H
-#define NB_CHARIOT_F103C8T6_DLC_H
-
-#include "blt.h"
 #include "defence.h"
-#include "servo.h"
+#include "irda.h"
+#include "printf.h"
 #include "status.h"
-#include "stm32f10x.h"
-#include "usart_blt.h"
-#include "weapon.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+#define DEFENCE_DEBUG
 
-void dlc_init();
-void dlc_control();
+static void clear_attacker_info(void);
+uint8_t defence_attacked_data[4];
+attacker_t attacker;
 
-#ifdef __cplusplus
+void
+defence_init(void) {
+    irda_init();
 }
-#endif /* __cplusplus */
 
-#endif /* NB_CHARIOT_F103C8T6_DLC_H */
+void
+defence_loop(void) {
+    if (irda_frame_flag == 1) {
+        irda_process(defence_attacked_data); /* 处理完后标志位置0了 */
+        attacker.id = defence_attacked_data[0];
+        attacker.skill = defence_attacked_data[1];
+        attacker.power = defence_attacked_data[2];
+        /* 最后一个字节为power反码, 这里不取 */
+    }
+    if (attacker.id) {
+        status_hp -= attacker.power;
+        clear_attacker_info();
+#ifdef DEFENCE_DEBUG
+        printf_("\r\n HP = %d \r\n", status_hp);
+        printf_("\r\n attacker_id = %d \r\n", attacker.id);
+        printf_("\r\n attacker_skill = %d \r\n", attacker.skill);
+        printf_("\r\n attacker_power = %d \r\n", attacker.power);
+#endif
+    }
+}
+
+static void
+clear_attacker_info(void) {
+    attacker.power = 0;
+    attacker.id = 0;
+    attacker.skill = 0;
+}

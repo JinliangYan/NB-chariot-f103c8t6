@@ -1,5 +1,5 @@
 /**
- * \file            id.h
+ * \file            status.c
  * \date            3/19/2024
  * \brief           
  */
@@ -32,19 +32,6 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#ifndef NB_CHARIOT_F103C8T6_ID_H
-#define NB_CHARIOT_F103C8T6_ID_H
+#include "status.h"
 
-#include "stm32f10x.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-#define CHARIOT_ID 0x00
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-#endif /* NB_CHARIOT_F103C8T6_ID_H */
+uint8_t status_hp = 100;
