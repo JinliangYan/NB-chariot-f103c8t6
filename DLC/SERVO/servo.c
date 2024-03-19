@@ -40,8 +40,10 @@
 #include "pwm.h"
 
 void
-servo_init() {
+servo_init(void) {
     pwm3_init(20000, 72);
+    servo_1_set_angle(90);
+    servo_2_set_angle(90);
 }
 
 void
