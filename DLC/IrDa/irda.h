@@ -2,10 +2,6 @@
 #define __IRDA_H
 
 #include "stm32f10x.h"
-void EXTI_PB11_Config(void);
-void irda_init(void);
-uint8_t get_pulse_time(void);
-uint8_t irda_process(uint8_t ir_byte[]);
 
 #define IRDA_ID                  0
 
@@ -23,5 +19,11 @@ uint8_t irda_process(uint8_t ir_byte[]);
 
 //读取引脚的电平
 #define IrDa_DATA_IN()           GPIO_ReadInputDataBit(IRDA_GPIO_PORT, IRDA_GPIO_PIN)
+
+extern uint8_t irda_frame_flag;
+
+void irda_init(void);
+uint8_t get_pulse_time(void);
+void irda_process(uint8_t ir_byte[]);
 
 #endif /* __IRDA_H */

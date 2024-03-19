@@ -39,7 +39,6 @@
 #include "motor.h"
 #include "printf.h"
 #include "stm32f10x.h"
-#include "usart.h"
 #include "ws2812b.h"
 
 void sysinit();

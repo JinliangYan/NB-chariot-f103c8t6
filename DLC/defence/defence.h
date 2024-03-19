@@ -41,6 +41,15 @@
 extern "C" {
 #endif /* __cplusplus */
 
+typedef struct {
+    uint8_t id;
+    uint8_t skill;
+    uint8_t power;
+} attacker_t;
+
+void defence_init(void);
+void defence_loop(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

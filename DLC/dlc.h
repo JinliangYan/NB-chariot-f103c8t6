@@ -36,7 +36,9 @@
 #define NB_CHARIOT_F103C8T6_DLC_H
 
 #include "blt.h"
+#include "defence.h"
 #include "servo.h"
+#include "status.h"
 #include "stm32f10x.h"
 #include "usart_blt.h"
 #include "weapon.h"
