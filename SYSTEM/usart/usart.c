@@ -1,10 +1,10 @@
 #include "usart.h"
-#include "usart_blt.h"
 #include "led.h"
 #include "mode.h"
 #include "printf.h"
 #include "string.h"
 #include "sys.h"
+#include "usart_blt.h"
 
 //注意:使用蓝牙模块时波特率使用9600,不能超过9600波特率
 
@@ -41,7 +41,7 @@ usart1_init_remap(u32 bound) {
     GPIO_PinRemapConfig(GPIO_Remap_USART1, ENABLE);
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE); //使能USART1，GPIOA时钟
-    //USART1_TX 
+    //USART1_TX
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;   //复用推挽输出
@@ -240,7 +240,6 @@ USART1_IRQHandler(void) {
             idx = 0;
             return;
         }
-
 
         if (next_state != MESSAGE) {
             next_state = NONE;

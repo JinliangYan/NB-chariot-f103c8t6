@@ -41,7 +41,6 @@
 #include "stm32f10x.h"
 #include "usart.h"
 #include "ws2812b.h"
-#include "usart.h"
 
 void sysinit();
 void test_bt();
@@ -49,8 +48,8 @@ void test_motor_pwm();
 void test_usart1();
 void test();
 
-
-int debug_test() {
+int
+debug_test() {
     sysinit();
     delay_ms(100);
     test();
@@ -77,7 +76,8 @@ sysinit() {
     delay_ms(1000);
 }
 
-void test() {
+void
+test() {
     // test_bt();
     test_motor_pwm();
     // test_usart1();
@@ -124,6 +124,7 @@ test_motor_pwm() {
     Move(5, 100);
 }
 
-void test_usart1() {
+void
+test_usart1() {
     test_bt();
 }

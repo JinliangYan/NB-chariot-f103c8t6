@@ -1,7 +1,7 @@
 #include "ir.h"
 
 void
-ir_init() {
+ir_init(void) {
     usart2_init(IR_BAUD_RATE);
 }
 

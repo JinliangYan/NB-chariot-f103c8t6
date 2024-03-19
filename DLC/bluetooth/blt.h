@@ -5,15 +5,15 @@
 #include "printf.h"
 #include "stm32f10x.h"
 
-#define bt_delay_ms             delay_ms
-#define BT_USART                USART1
-#define BT_STATA_PIN            GPIO_Pin_5
-#define BT_SATAT_PORT           GPIOB
+#define bt_delay_ms       delay_ms
+#define BT_USART          USART1
+#define BT_STATA_PIN      GPIO_Pin_5
+#define BT_SATAT_PORT     GPIOB
 
 /**
  * \brief 检查模块是否处于配对状态
  */
-#define is_bt_connected()       GPIO_ReadInputDataBit(BT_SATAT_PORT, BT_STATA_PIN)
+#define is_bt_connected() GPIO_ReadInputDataBit(BT_SATAT_PORT, BT_STATA_PIN)
 
 typedef struct {
     char addr; //蓝牙设备地址，字符串形式，方便扫描时和连接时使用
