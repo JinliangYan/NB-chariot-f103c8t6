@@ -1,5 +1,5 @@
 /**
- * \file            status.c
+ * \file            defence.h
  * \date            3/19/2024
  * \brief           
  */
@@ -32,6 +32,17 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#include "status.h"
+#ifndef NB_CHARIOT_F103C8T6_DEFENCE_H
+#define NB_CHARIOT_F103C8T6_DEFENCE_H
 
-uint8_t status_hp = 100;
+#include "stm32f10x.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+
+#endif /* NB_CHARIOT_F103C8T6_DEFENCE_H */
