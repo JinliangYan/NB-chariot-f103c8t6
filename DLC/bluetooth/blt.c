@@ -25,7 +25,7 @@ bt_init(void) {
 
 uint8_t
 bt_reset(void) {
-    uint32_t i = 500;         //初始化i，最长等待5秒
+    uint32_t i = 500; //初始化i，最长等待5秒
     bt_send_atcmd("RST", NULL);
     do {
         delay_ms(10);

@@ -1,7 +1,7 @@
 /**
- * \file            weapon.h
- * \date            3/9/2024
- * \brief
+ * \file            ir.h
+ * \date            3/19/2024
+ * \brief           
  */
 
 /*
@@ -32,26 +32,34 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#ifndef NB_CHARIOT_F103C8T6_WEAPON_H
-#define NB_CHARIOT_F103C8T6_WEAPON_H
+#ifndef NB_CHARIOT_F103C8T6_IR_H
+#define NB_CHARIOT_F103C8T6_IR_H
 
 #include "stm32f10x.h"
+#include "usart.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-/**
- * \brief 表示方向
- */
-#define WEAPON_TURN_LEFT  0x01
-#define WEAPON_TURN_RIGHT 0x02
-#define WEAPON_STATIC     0x00
 
-void weapon_init();
-void weapon_attack(uint8_t skill);
-void weapon_control_loop();
+#define IR_BAUD_RATE        9600
+#define IR_ADDRESS          0xFA
+
+#define IR_STAT_EMISSION    0xF1
+#define IR_STAT_CHANGE_ADDR 0xF2
+#define IR_STAT_BAUD_RATE   0xF3
+
+#define IR_BAUD_CODE_4800   0x01
+#define IR_BAUD_CODE_9600   0x02
+#define IR_BAUD_CODE_19200  0x03
+#define IR_BAUD_CODE_57600  0x04
+
+void ir_init();
+
+void ir_emission(uint8_t high, uint8_t low, uint8_t command);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* NB_CHARIOT_F103C8T6_WEAPON_H */
+#endif /* NB_CHARIOT_F103C8T6_IR_H */

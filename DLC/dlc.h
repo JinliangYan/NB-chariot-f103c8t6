@@ -35,11 +35,11 @@
 #ifndef NB_CHARIOT_F103C8T6_DLC_H
 #define NB_CHARIOT_F103C8T6_DLC_H
 
-#include "stm32f10x.h"
-#include "weapon.h"
-#include "servo.h"
-#include "usart_blt.h"
 #include "blt.h"
+#include "servo.h"
+#include "stm32f10x.h"
+#include "usart_blt.h"
+#include "weapon.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -5,13 +5,14 @@
 定时时间=(arr+1)(psc+1)/72*10^6
 */
 
-void tim1_init(uint32_t arr, uint32_t psc) {
+void
+tim1_init(uint32_t arr, uint32_t psc) {
     TIM_TimeBaseInitTypeDef TIM_InitStructure;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); //开启定时器1时钟
 
-    TIM_InitStructure.TIM_Period = arr - 1;                     //自动重装载寄存器周期的值
-    TIM_InitStructure.TIM_Prescaler = psc - 1;                  //设置预分频值
+    TIM_InitStructure.TIM_Period = arr - 1;                 //自动重装载寄存器周期的值
+    TIM_InitStructure.TIM_Prescaler = psc - 1;              //设置预分频值
     TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1;     //设置时钟分割:TDTS = Tck_tim
     TIM_InitStructure.TIM_CounterMode = TIM_CounterMode_Up; //TIM向上计数模式
     TIM_InitStructure.TIM_RepetitionCounter = 0;            //重复计数的值
@@ -26,8 +27,8 @@ void tim1_init(uint32_t arr, uint32_t psc) {
 入口参数：arr 重装载值    psc   预分频系数
 返回参数：无
 ***************************************************/
-void tim2_init(u32 arr,u32 psc)
-{
+void
+tim2_init(u32 arr, u32 psc) {
     TIM_DeInit(TIM2);
 
     TIM_TimeBaseInitTypeDef TIM_InitStructure;
@@ -54,15 +55,14 @@ void tim2_init(u32 arr,u32 psc)
     TIM_Cmd(TIM2, ENABLE); //使能计数器
 }
 
-
 /**************************************************
 函数名称：TIM3_Init(u32 arr,u32 psc)
 函数功能：定时器3初始化函数
 入口参数：arr 重装载值    psc   预分频系数
 返回参数：无
 ***************************************************/
-void tim3_init(u32 arr,u32 psc)
-{
+void
+tim3_init(u32 arr, u32 psc) {
     TIM_DeInit(TIM3);
 
     TIM_TimeBaseInitTypeDef TIM_InitStructure;
@@ -89,42 +89,40 @@ void tim3_init(u32 arr,u32 psc)
     TIM_Cmd(TIM3, ENABLE); //使能计数器
 }
 
-
 /**************************************************
 函数名称：TIM4_Init(u32 arr,u32 psc)
 函数功能：定时器4初始化函数
 入口参数：arr 重装载值    psc   预分频系数
 返回参数：无
 ***************************************************/
-void tim4_init(u32 arr,u32 psc)
-{
-	TIM_DeInit(TIM4);
-	TIM_TimeBaseInitTypeDef TIM_InitStructure;
-	NVIC_InitTypeDef NVIC_InitStructure;
-	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4,ENABLE);     //开启定时器4时钟
-	
-	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=0 ;//抢占优先级0
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;			//子优先级0
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;					//IRQ通道使能
-	NVIC_Init(&NVIC_InitStructure);				
-	
-	TIM_InitStructure.TIM_Period=arr - 1;                    //自动重装载寄存器周期的值        
-	TIM_InitStructure.TIM_Prescaler=psc - 1;                 //设置预分频值 
-	TIM_InitStructure.TIM_ClockDivision=TIM_CKD_DIV1;    //设置时钟分割:TDTS = Tck_tim
-	TIM_InitStructure.TIM_CounterMode=TIM_CounterMode_Up;//TIM向上计数模式
-	TIM_InitStructure.TIM_RepetitionCounter=0;           //重复计数的值
-	
-	TIM_TimeBaseInit(TIM4,&TIM_InitStructure);
+void
+tim4_init(u32 arr, u32 psc) {
+    TIM_DeInit(TIM4);
+    TIM_TimeBaseInitTypeDef TIM_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
 
-	TIM_ClearFlag(TIM4, TIM_FLAG_Update);
-	TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);           //使能计数器中断
+    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE); //开启定时器4时钟
+
+    NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; //抢占优先级0
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;        //子优先级0
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           //IRQ通道使能
+    NVIC_Init(&NVIC_InitStructure);
+
+    TIM_InitStructure.TIM_Period = arr - 1;                 //自动重装载寄存器周期的值
+    TIM_InitStructure.TIM_Prescaler = psc - 1;              //设置预分频值
+    TIM_InitStructure.TIM_ClockDivision = TIM_CKD_DIV1;     //设置时钟分割:TDTS = Tck_tim
+    TIM_InitStructure.TIM_CounterMode = TIM_CounterMode_Up; //TIM向上计数模式
+    TIM_InitStructure.TIM_RepetitionCounter = 0;            //重复计数的值
+
+    TIM_TimeBaseInit(TIM4, &TIM_InitStructure);
+
+    TIM_ClearFlag(TIM4, TIM_FLAG_Update);
+    TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE); //使能计数器中断
 
     // TIM_Cmd(TIM4, ENABLE); //使能计数器
     TIM_Cmd(TIM4, DISABLE); //使能计数器
 }
-
 
 /*****************************************************************************
 
@@ -159,4 +157,3 @@ void TIM4_IRQHandler(void)                             //TIM4中断函数
 }
 
 ************************************************************************************/
-

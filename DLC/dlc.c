@@ -33,16 +33,18 @@
  */
 
 #include "dlc.h"
+#include "blt.h"
+#include "delay.h"
 #include "servo.h"
 #include "weapon.h"
-#include "delay.h"
-#include "blt.h"
 
-void dlc_init() {
+void
+dlc_init() {
     weapon_init();
     bt_init();
 }
 
-void dlc_control() {
+void
+dlc_control() {
     weapon_control_loop();
 }

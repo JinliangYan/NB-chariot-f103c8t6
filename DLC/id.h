@@ -1,7 +1,7 @@
 /**
- * \file            weapon.h
- * \date            3/9/2024
- * \brief
+ * \file            id.h
+ * \date            3/19/2024
+ * \brief           
  */
 
 /*
@@ -32,26 +32,19 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#ifndef NB_CHARIOT_F103C8T6_WEAPON_H
-#define NB_CHARIOT_F103C8T6_WEAPON_H
+#ifndef NB_CHARIOT_F103C8T6_ID_H
+#define NB_CHARIOT_F103C8T6_ID_H
 
 #include "stm32f10x.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-/**
- * \brief 表示方向
- */
-#define WEAPON_TURN_LEFT  0x01
-#define WEAPON_TURN_RIGHT 0x02
-#define WEAPON_STATIC     0x00
 
-void weapon_init();
-void weapon_attack(uint8_t skill);
-void weapon_control_loop();
+#define CHARIOT_ID 0x00
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* NB_CHARIOT_F103C8T6_WEAPON_H */
+#endif /* NB_CHARIOT_F103C8T6_ID_H */
