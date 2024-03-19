@@ -35,8 +35,15 @@
 #include "printf.h"
 #include "servo.h"
 #include "usart_blt.h"
+#include "ir.h"
+#include "id.h"
 
 extern bt_received_data_t bt_received_data;
+
+/**
+ * \brief 武器攻击力, 0~255
+ */
+uint8_t weapon_power = 100;
 
 /**
  * \brief 手柄偏移量范围
@@ -73,20 +80,19 @@ void weapon_steering();
 void
 weapon_init() {
     servo_init();
-    servo_1_set_angle(90);
-    servo_2_set_angle(90);
+    ir_init();
 //    printf_("weapon initialized successful\r\n");
 }
 
 /**
  * \brief 攻击
+ * \param[in,out]   skill:技能参数, 可根据该参数计算总伤害, 或者发送至对方施加debuff(如果有该效果的话)
+ * TODO 伤害值计算
  */
 void
-weapon_attack() {
-    // TODO ATTACK LOGIC
-//    printf_("weapon attack\r\n");
+weapon_attack(uint8_t skill) {
+    ir_emission(CHARIOT_ID, skill, weapon_power);
 }
-
 
 /**
  * \brief 将摇杆的偏移量转换为舵机角度
@@ -142,7 +148,9 @@ weapon_control_loop() {
         weapon_steering();
         bt_received_data.receive_data_flag = 0;
     } else if (bt_received_data.message_type == MESSAGE_WEAPON_ATTACK) {
-        weapon_attack();
+        // TODO 解析出技能
+        uint8_t skill = 0;
+        weapon_attack(skill);
     }
 }
 
