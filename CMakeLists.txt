@@ -28,15 +28,19 @@ set(sources_SRCS
         DLC/bluetooth/blt.c
         DLC/bluetooth/usart/usart_blt.c
         HARDWARE/TIM/timer.c
-        DLC/IR/ir.c
+        DLC/ir/ir.c
+        DLC/irDa/irda.c
         DLC/status/status.c
+        DLC/defence/defence.c
 )
 
 # Include directories for all compilers
 set(include_DIRS
         DLC
         DLC/status
-        DLC/IR
+        DLC/defence
+        DLC/ir
+        DLC/irDa
         DLC/SERVO
         DLC/WEAPON
         DLC/bluetooth/
