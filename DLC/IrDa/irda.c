@@ -6,7 +6,7 @@ uint8_t frame_cnt = 0;
 uint8_t frame_flag = 0; /* 一帧数据接收完成标志 */
 
 void
-IrDa_Init(void) {
+irda_init(void) {
     GPIO_InitTypeDef GPIO_InitStructure;
     EXTI_InitTypeDef EXTI_InitStructure;
 
@@ -29,7 +29,7 @@ IrDa_Init(void) {
 
 /* 获取高电平的时间 */
 uint8_t
-Get_Pulse_Time(void) {
+get_pulse_time(void) {
     uint8_t time = 0;
     while (IrDa_DATA_IN()) {
         time++;
@@ -47,7 +47,7 @@ Get_Pulse_Time(void) {
  * 返回的是irbyte数组 第一位存的是id 第二位存的是键值
  */
 uint8_t
-IrDa_Process(uint8_t ir_data[]) {
+irda_process(uint8_t ir_data[]) {
     uint32_t data = 0, i;
     uint8_t first_byte, sec_byte, tir_byte, fou_byte;
     for (i = 0; i < 32; i++) {

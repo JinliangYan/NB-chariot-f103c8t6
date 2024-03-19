@@ -3,9 +3,9 @@
 
 #include "stm32f10x.h"
 void EXTI_PB11_Config(void);
-void IrDa_Init(void);
-uint8_t Get_Pulse_Time(void);
-uint8_t IrDa_Process(uint8_t ir_byte[]);
+void irda_init(void);
+uint8_t get_pulse_time(void);
+uint8_t irda_process(uint8_t ir_byte[]);
 
 #define IRDA_ID                  0
 
