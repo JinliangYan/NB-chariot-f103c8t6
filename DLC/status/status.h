@@ -41,7 +41,10 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define CHARIOT_ID 0x00
+/**
+ * \brief Õ½³µID, 1 ~ 255
+ */
+#define CHARIOT_ID 0x01
 
 extern uint8_t status_hp;
 
