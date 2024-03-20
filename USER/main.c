@@ -25,10 +25,11 @@ DI:PB0
 #include "control.h"
 #include "delay.h"
 #include "dlc.h"
-#include "stdio.h"
-#include "sys.h"
 #include "led.h"
+#include "sys.h"
 #include "usart.h"
+
+uint8_t status = STATUS_ALIVE;
 
 int
 main(void) {
@@ -36,15 +37,21 @@ main(void) {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
     usart1_init_remap(9600); //串口初始化为9600
-    //    NRF24L01_Check_detection(); //NRF24L01等待应答
-    Motor_Init();      //电机初始化
-    Hcsr04_Init();     //超声波初始化
-    Motion_State(OFF); //关闭电机驱动失能
-    RGB_LED_Init();    //RGB彩灯初始化
+    Motor_Init();            //电机初始化
+    Hcsr04_Init();           //超声波初始化
+    Motion_State(OFF);       //关闭电机驱动失能
+    RGB_LED_Init();          //RGB彩灯初始化
     dlc_init();
     delay_ms(1000);
     while (1) {
         control();
         dlc_control();
+        status = status_check();
+        if (status == STATUS_DEAD) {
+            status_control(status);
+            break;
+        }
     }
+
+    // TODO 死亡结算
 }

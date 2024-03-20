@@ -33,5 +33,24 @@
  */
 
 #include "status.h"
+#include "motor.h"
 
 uint8_t status_hp = 100;
+extern uint8_t defence_hp;
+
+uint8_t
+status_check(void) {
+    if (status_hp == 0) {
+        return STATUS_DEAD;
+    }
+    return STATUS_ALIVE;
+}
+
+void
+status_control(uint8_t status) {
+    switch (status) {
+        case STATUS_DEAD: Motion_State(OFF); break;
+        case STATUS_ALIVE:; break;
+        default: break;
+    }
+}

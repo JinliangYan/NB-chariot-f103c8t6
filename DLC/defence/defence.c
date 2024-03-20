@@ -39,6 +39,8 @@
 
 #define DEFENCE_DEBUG
 
+uint8_t defence_hp;
+
 static void clear_attacker_info(void);
 uint8_t defence_attacked_data[4];
 attacker_t attacker;
@@ -46,6 +48,7 @@ attacker_t attacker;
 void
 defence_init(void) {
     irda_init();
+    defence_hp = 100;
 }
 
 void
@@ -57,16 +60,27 @@ defence_loop(void) {
         attacker.power = defence_attacked_data[2];
         /* 最后一个字节为power反码, 这里不取 */
     }
-    if (attacker.id) {
-        status_hp -= attacker.power;
-        clear_attacker_info();
-#ifdef DEFENCE_DEBUG
-        printf_("\r\n HP = %d \r\n", status_hp);
-        printf_("\r\n attacker_id = %d \r\n", attacker.id);
-        printf_("\r\n attacker_skill = %d \r\n", attacker.skill);
-        printf_("\r\n attacker_power = %d \r\n", attacker.power);
-#endif
+    if (attacker.id != 0) {
+        if (defence_hp) {
+            if (attacker.power > defence_hp) {
+                // TODO 装甲脱落
+                defence_hp = 0;
+                status_hp -= attacker.power - defence_hp;
+            } else {
+                defence_hp -= attacker.power;
+            }
+        } else {
+            status_hp -= attacker.power;
+        }
     }
+
+#ifdef DEFENCE_DEBUG
+    printf_("\r\n HP = %d \r\n", status_hp);
+    printf_("\r\n attacker_id = %d \r\n", attacker.id);
+    printf_("\r\n attacker_skill = %d \r\n", attacker.skill);
+    printf_("\r\n attacker_power = %d \r\n", attacker.power);
+#endif
+    clear_attacker_info();
 }
 
 static void

@@ -44,10 +44,22 @@ extern "C" {
 /**
  * \brief 战车ID, 1 ~ 255
  */
-#define CHARIOT_ID 0x01
+#define CHARIOT_ID        0x01
+
+/**
+ * \brief 存活标志, 由status_check_loop返回
+ */
+#define STATUS_ALIVE      0
+
+/**
+ * \brief 失败标志, 由status_check_loop返回
+ */
+#define STATUS_DEAD       1
 
 extern uint8_t status_hp;
 
+uint8_t status_check(void);
+void status_control(uint8_t status);
 
 #ifdef __cplusplus
 }
