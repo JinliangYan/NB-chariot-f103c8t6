@@ -37,7 +37,7 @@
 #include "printf.h"
 #include "status.h"
 
-#define DEFENCE_DEBUG
+//#define DEFENCE_DEBUG
 
 uint8_t defence_hp;
 
@@ -72,14 +72,14 @@ defence_loop(void) {
         } else {
             status_hp -= attacker.power;
         }
+#ifdef DEFENCE_DEBUG
+        printf_("\r\n HP = %d \r\n", status_hp);
+        printf_("\r\n attacker_id = %d \r\n", attacker.id);
+        printf_("\r\n attacker_skill = %d \r\n", attacker.skill);
+        printf_("\r\n attacker_power = %d \r\n", attacker.power);
+#endif
     }
 
-#ifdef DEFENCE_DEBUG
-    printf_("\r\n HP = %d \r\n", status_hp);
-    printf_("\r\n attacker_id = %d \r\n", attacker.id);
-    printf_("\r\n attacker_skill = %d \r\n", attacker.skill);
-    printf_("\r\n attacker_power = %d \r\n", attacker.power);
-#endif
     clear_attacker_info();
 }
 
