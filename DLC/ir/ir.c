@@ -7,10 +7,6 @@ ir_init(void) {
 
 void
 ir_emission(uint8_t high, uint8_t low, uint8_t command) {
-    usart2_send_byte(IR_ADDRESS);
-    usart2_send_byte(IR_STAT_EMISSION);
-
-    usart2_send_byte(high);
-    usart2_send_byte(low);
-    usart2_send_byte(command);
+    uint8_t command_arr[5] = {IR_ADDRESS, IR_STAT_EMISSION, high, low, command};
+    usart2_send_nbyte(command_arr, 5);
 }
