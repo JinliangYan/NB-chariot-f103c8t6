@@ -41,28 +41,37 @@
 #include "stm32f10x.h"
 #include "ws2812b.h"
 
-void sysinit();
-void test_bt();
-void test_motor_pwm();
-void test_usart1();
-void test();
+static uint8_t status_test;
+
+void sysinit(void);
+void test_bt(void);
+void test_motor_pwm(void);
+void test_usart1(void);
+void test(void);
 
 int
-debug_test() {
+debug_test(void) {
     sysinit();
     delay_ms(100);
     test();
     printf_("HELLO\r\n");
 
     while (1) {
-        joystick_mode();
+        control();
         dlc_control();
+        status_test = status_check();
+        if (status_test == STATUS_DEAD) {
+            status_control(status_test);
+            break;
+        }
     }
+
+    // TODO 死亡结算
     return 0;
 }
 
 void
-sysinit() {
+sysinit(void) {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
@@ -76,14 +85,14 @@ sysinit() {
 }
 
 void
-test() {
+test(void) {
     // test_bt();
     test_motor_pwm();
     // test_usart1();
 }
 
 void
-test_bt() {
+test_bt(void) {
     if (is_bt_connected()) {
         printf_("BT CONNECTED\r\n");
         return;
@@ -94,36 +103,15 @@ test_bt() {
 }
 
 void
-test_motor_pwm() {
+test_motor_pwm(void) {
     printf_("MOTOR TEST START\r\n");
     TIM_SetCompare1(TIM1, 300);
     TIM_SetCompare2(TIM1, 300);
     TIM_SetCompare3(TIM1, 300);
     TIM_SetCompare4(TIM1, 300);
-    delay_ms(1000);
-    forward(100);
-    delay_ms(1000);
-    backward(100);
-    delay_ms(1000);
-    Left_Turn(100);
-    delay_ms(1000);
-    Right_Turn(100);
-    delay_ms(1000);
-    Move(0, 100);
-    delay_ms(1000);
-    Move(1, 100);
-    delay_ms(1000);
-    Move(2, 100);
-    delay_ms(1000);
-    Move(3, 100);
-    delay_ms(1000);
-    Move(4, 100);
-    delay_ms(1000);
-    delay_ms(1000);
-    Move(5, 100);
 }
 
 void
-test_usart1() {
+test_usart1(void) {
     test_bt();
 }
