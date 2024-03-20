@@ -1,12 +1,33 @@
 #include "irda.h"
 #include "delay.h"
 #include "stm32f10x.h"
+#include "printf.h"
+
+#define IRDA_DEBUG
 
 uint8_t isr_cnt; /* 用于计算进了多少次中断 */
 
 uint32_t frame_data = 0; /* 一帧数据缓存 */
 uint8_t frame_cnt = 0;
 uint8_t irda_frame_flag = 0; /* 一帧数据接收完成标志 */
+
+/**
+  * \brief  配置嵌套向量中断控制器NVIC
+  */
+static void NVIC_Configuration(void)
+{
+    NVIC_InitTypeDef NVIC_InitStructure;
+
+    /* Configure one bit for preemption priority */
+    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+
+    /* 配置P[A|B|C|D|E]11为中断源 */
+    NVIC_InitStructure.NVIC_IRQChannel = IRDA_EXTI_IRQN;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 5;
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    NVIC_Init(&NVIC_InitStructure);
+}
 
 void
 irda_init(void) {
@@ -15,6 +36,9 @@ irda_init(void) {
 
     /* config the extiline clock and AFIO clock */
     RCC_APB2PeriphClockCmd(IRDA_GPIO_CLK | RCC_APB2Periph_AFIO, ENABLE);
+
+    /* config the NVIC */
+    NVIC_Configuration();
 
     /* EXTI line gpio config */
     GPIO_InitStructure.GPIO_Pin = IRDA_GPIO_PIN;
@@ -28,6 +52,8 @@ irda_init(void) {
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling; //下降沿中断
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
     EXTI_Init(&EXTI_InitStructure);
+
+//    EXTI_GenerateSWInterrupt(IRDA_EXTI_LINE);
 }
 
 /* 获取高电平的时间 */
@@ -75,6 +101,10 @@ irda_process(uint8_t ir_data[]) {
 // IO 线中断, 接红外接收头的数据管脚
 void
 IRDA_EXTI_IRQHANDLER_FUN(void) {
+#ifdef IRDA_DEBUG
+    printf_("IRDA\r\n");
+#endif
+
     uint8_t pulse_time = 0;
     uint8_t leader_code_flag = 0; /* 引导码标志位，当引导码出现时，表示一帧数据开始 */
     uint8_t irda_data = 0;        /* 数据暂存位 */
