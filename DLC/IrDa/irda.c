@@ -62,7 +62,7 @@ get_pulse_time(void) {
     uint8_t time = 0;
     while (IrDa_DATA_IN()) {
         time++;
-        delay_ms(2); // 延时 20us
+        delay_us(20); // 延时 20us
         if (time == 250) {
             return time; // 超时溢出
         }
