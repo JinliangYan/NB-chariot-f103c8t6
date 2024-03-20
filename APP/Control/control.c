@@ -54,7 +54,7 @@ void
 mode_switch(void) {
     switch (control_mode) {
         case CONTROL_MODE_JOYSTICK: joystick_mode(); break;
-        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
+//        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
         case CONTROL_MODE_EVADIBLE: evadible_mode(); break;
         case CONTROL_MODE_FOLLOW: follow_mode(); break;
         case CONTROL_MODE_RGB_MODE_OFF: rgb_mode = RGB_MODE_OFF; break;
@@ -194,120 +194,120 @@ joystick_mode(void) {
 /**
  * \brief           Gravity mode control function
  */
-void
-gravity_mode(void) {
-    int i, j = 0, Pitch_flag = 0;
-    int APP_Pitch = 0, APP_Roll = 0;
-    int Pitch_symbel = 1, Roll_symbel = 1; //偏航角符号
-    char Pitch_Buf[10], Roll_Buf[10];
-    int Map_pitch, Map_roll; //映射后的偏航角
-    int pwm1, pwm2, pwm3, pwm4;
-    static int Smoothing_Pitch_Buf[5]; //中值滤波数组
-    static int Smoothing_Roll_Buf[5];  //中值滤波数组
-    static int Smoothing_Count = 0;    //中值滤波采样个数
-    int Pitch_temp, Roll_temp;         //选择排序变量
-
-    L_STBY_ON;
-    R_STBY_ON;
-
-    //提取Roll
-    for (i = 1; i < 20; i++) {
-        if (Pitch_Roll_Buf[i] == '.') {
-            break;
-        }
-        Roll_Buf[i - 1] = Pitch_Roll_Buf[i];
-    }
-    //提取Pitch
-    for (i = 0; i < 20; i++) {
-        if (Pitch_Roll_Buf[i] == ',') {
-            Pitch_flag = 1;
-            i++;
-        }
-        if (Pitch_flag == 1) {
-            if (Pitch_Roll_Buf[i] == '.') {
-                j = 0;
-                break;
-            }
-            Pitch_Buf[j] = Pitch_Roll_Buf[i];
-            j++;
-        }
-    }
-    //将Roll字符串转换为整形数据
-    j = 0;
-    for (i = 10; i >= 0; i--) {
-        if (Roll_Buf[i] >= '0' && Roll_Buf[i] <= '9') {
-            APP_Roll += (Roll_Buf[i] - '0') * pow(10, j);
-            j++;
-        }
-        if (Roll_Buf[0] == '-') {
-            Roll_symbel = -1;
-        }
-    }
-    //将Pitch字符串转换为整形数据
-    j = 0;
-    for (i = 10; i >= 0; i--) {
-        if (Pitch_Buf[i] >= '0' && Pitch_Buf[i] <= '9') {
-            APP_Pitch += (Pitch_Buf[i] - '0') * pow(10, j);
-            j++;
-        }
-        if (Pitch_Buf[0] == '-') {
-            Pitch_symbel = -1;
-        }
-    }
-    //得到整形偏航角数据
-    APP_Pitch = Pitch_symbel * APP_Pitch;
-    APP_Roll = Roll_symbel * APP_Roll;
-    //采样五次
-    Smoothing_Pitch_Buf[Smoothing_Count] = APP_Pitch;
-    Smoothing_Roll_Buf[Smoothing_Count] = APP_Roll;
-    Smoothing_Count++;
-    //选择排序
-    if (Smoothing_Count == 5) {
-        Smoothing_Count = 0;
-
-        for (j = 0; j < 5 - 1; j++) {
-            for (i = 0; i < 5 - j; i++) {
-                if (Smoothing_Pitch_Buf[i] > Smoothing_Pitch_Buf[i + 1]) {
-                    Pitch_temp = Smoothing_Pitch_Buf[i];
-                    Smoothing_Pitch_Buf[i] = Smoothing_Pitch_Buf[i + 1];
-                    Smoothing_Pitch_Buf[i + 1] = Pitch_temp;
-                }
-                if (Smoothing_Roll_Buf[i] > Smoothing_Roll_Buf[i + 1]) {
-                    Roll_temp = Smoothing_Roll_Buf[i];
-                    Smoothing_Roll_Buf[i] = Smoothing_Roll_Buf[i + 1];
-                    Smoothing_Roll_Buf[i + 1] = Roll_temp;
-                }
-            }
-        }
-        //中值滤波
-        APP_Pitch = Smoothing_Pitch_Buf[2];
-        APP_Roll = Smoothing_Roll_Buf[2];
-
-        Map_pitch = Map(APP_Pitch, -90, 90, -127, 127);
-        Map_roll = Map(APP_Roll, -90, 90, -127, 127);
-
-        pwm1 = -Map_pitch + Map_roll;
-        pwm2 = -Map_pitch - Map_roll;
-        pwm3 = -Map_pitch + Map_roll;
-        pwm4 = -Map_pitch - Map_roll;
-
-        pwm1 = Map(pwm1, -127, 127, -499, 499);
-        pwm2 = Map(pwm2, -127, 127, -499, 499);
-        pwm3 = Map(pwm3, -127, 127, -499, 499);
-        pwm4 = Map(pwm4, -127, 127, -499, 499);
-
-        pwm_data_process(pwm1, pwm2, pwm3, pwm4);
-
-        memset(Smoothing_Pitch_Buf, 0, sizeof(Smoothing_Pitch_Buf));
-        memset(Smoothing_Roll_Buf, 0, sizeof(Smoothing_Roll_Buf));
-        delay_ms(1);
-    }
-
-    memset(Roll_Buf, 0, 10);
-    memset(Pitch_Buf, 0, 10);
-
-    delay_ms(1);
-}
+//void
+//gravity_mode(void) {
+//    int i, j = 0, Pitch_flag = 0;
+//    int APP_Pitch = 0, APP_Roll = 0;
+//    int Pitch_symbel = 1, Roll_symbel = 1; //偏航角符号
+//    char Pitch_Buf[10], Roll_Buf[10];
+//    int Map_pitch, Map_roll; //映射后的偏航角
+//    int pwm1, pwm2, pwm3, pwm4;
+//    static int Smoothing_Pitch_Buf[5]; //中值滤波数组
+//    static int Smoothing_Roll_Buf[5];  //中值滤波数组
+//    static int Smoothing_Count = 0;    //中值滤波采样个数
+//    int Pitch_temp, Roll_temp;         //选择排序变量
+//
+//    L_STBY_ON;
+//    R_STBY_ON;
+//
+//    //提取Roll
+//    for (i = 1; i < 20; i++) {
+//        if (Pitch_Roll_Buf[i] == '.') {
+//            break;
+//        }
+//        Roll_Buf[i - 1] = Pitch_Roll_Buf[i];
+//    }
+//    //提取Pitch
+//    for (i = 0; i < 20; i++) {
+//        if (Pitch_Roll_Buf[i] == ',') {
+//            Pitch_flag = 1;
+//            i++;
+//        }
+//        if (Pitch_flag == 1) {
+//            if (Pitch_Roll_Buf[i] == '.') {
+//                j = 0;
+//                break;
+//            }
+//            Pitch_Buf[j] = Pitch_Roll_Buf[i];
+//            j++;
+//        }
+//    }
+//    //将Roll字符串转换为整形数据
+//    j = 0;
+//    for (i = 10; i >= 0; i--) {
+//        if (Roll_Buf[i] >= '0' && Roll_Buf[i] <= '9') {
+//            APP_Roll += (Roll_Buf[i] - '0') * pow(10, j);
+//            j++;
+//        }
+//        if (Roll_Buf[0] == '-') {
+//            Roll_symbel = -1;
+//        }
+//    }
+//    //将Pitch字符串转换为整形数据
+//    j = 0;
+//    for (i = 10; i >= 0; i--) {
+//        if (Pitch_Buf[i] >= '0' && Pitch_Buf[i] <= '9') {
+//            APP_Pitch += (Pitch_Buf[i] - '0') * pow(10, j);
+//            j++;
+//        }
+//        if (Pitch_Buf[0] == '-') {
+//            Pitch_symbel = -1;
+//        }
+//    }
+//    //得到整形偏航角数据
+//    APP_Pitch = Pitch_symbel * APP_Pitch;
+//    APP_Roll = Roll_symbel * APP_Roll;
+//    //采样五次
+//    Smoothing_Pitch_Buf[Smoothing_Count] = APP_Pitch;
+//    Smoothing_Roll_Buf[Smoothing_Count] = APP_Roll;
+//    Smoothing_Count++;
+//    //选择排序
+//    if (Smoothing_Count == 5) {
+//        Smoothing_Count = 0;
+//
+//        for (j = 0; j < 5 - 1; j++) {
+//            for (i = 0; i < 5 - j; i++) {
+//                if (Smoothing_Pitch_Buf[i] > Smoothing_Pitch_Buf[i + 1]) {
+//                    Pitch_temp = Smoothing_Pitch_Buf[i];
+//                    Smoothing_Pitch_Buf[i] = Smoothing_Pitch_Buf[i + 1];
+//                    Smoothing_Pitch_Buf[i + 1] = Pitch_temp;
+//                }
+//                if (Smoothing_Roll_Buf[i] > Smoothing_Roll_Buf[i + 1]) {
+//                    Roll_temp = Smoothing_Roll_Buf[i];
+//                    Smoothing_Roll_Buf[i] = Smoothing_Roll_Buf[i + 1];
+//                    Smoothing_Roll_Buf[i + 1] = Roll_temp;
+//                }
+//            }
+//        }
+//        //中值滤波
+//        APP_Pitch = Smoothing_Pitch_Buf[2];
+//        APP_Roll = Smoothing_Roll_Buf[2];
+//
+//        Map_pitch = Map(APP_Pitch, -90, 90, -127, 127);
+//        Map_roll = Map(APP_Roll, -90, 90, -127, 127);
+//
+//        pwm1 = -Map_pitch + Map_roll;
+//        pwm2 = -Map_pitch - Map_roll;
+//        pwm3 = -Map_pitch + Map_roll;
+//        pwm4 = -Map_pitch - Map_roll;
+//
+//        pwm1 = Map(pwm1, -127, 127, -499, 499);
+//        pwm2 = Map(pwm2, -127, 127, -499, 499);
+//        pwm3 = Map(pwm3, -127, 127, -499, 499);
+//        pwm4 = Map(pwm4, -127, 127, -499, 499);
+//
+//        pwm_data_process(pwm1, pwm2, pwm3, pwm4);
+//
+//        memset(Smoothing_Pitch_Buf, 0, sizeof(Smoothing_Pitch_Buf));
+//        memset(Smoothing_Roll_Buf, 0, sizeof(Smoothing_Roll_Buf));
+//        delay_ms(1);
+//    }
+//
+//    memset(Roll_Buf, 0, 10);
+//    memset(Pitch_Buf, 0, 10);
+//
+//    delay_ms(1);
+//}
 
 /**
  * \brief           Process PWM data and control motor movement
