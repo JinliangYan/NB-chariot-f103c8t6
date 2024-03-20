@@ -45,6 +45,7 @@ static uint8_t status_test;
 
 void sysinit(void);
 void test_bt(void);
+void test_weapon(void);
 void test_motor_pwm(void);
 void test_usart1(void);
 void test(void);
@@ -52,7 +53,6 @@ void test(void);
 int
 debug_test(void) {
     sysinit();
-    delay_ms(100);
     test();
     printf_("HELLO\r\n");
 
@@ -87,8 +87,9 @@ sysinit(void) {
 void
 test(void) {
     // test_bt();
-    test_motor_pwm();
+    //    test_motor_pwm();
     // test_usart1();
+    test_weapon();
 }
 
 void
@@ -114,4 +115,9 @@ test_motor_pwm(void) {
 void
 test_usart1(void) {
     test_bt();
+}
+
+void
+test_weapon(void) {
+    weapon_attack(0);
 }

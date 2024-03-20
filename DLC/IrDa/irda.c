@@ -3,8 +3,6 @@
 #include "stm32f10x.h"
 #include "printf.h"
 
-#define IRDA_DEBUG
-
 uint8_t isr_cnt; /* 用于计算进了多少次中断 */
 
 uint32_t frame_data = 0; /* 一帧数据缓存 */
@@ -101,10 +99,6 @@ irda_process(uint8_t ir_data[]) {
 // IO 线中断, 接红外接收头的数据管脚
 void
 IRDA_EXTI_IRQHANDLER_FUN(void) {
-#ifdef IRDA_DEBUG
-    printf_("IRDA\r\n");
-#endif
-
     uint8_t pulse_time = 0;
     uint8_t leader_code_flag = 0; /* 引导码标志位，当引导码出现时，表示一帧数据开始 */
     uint8_t irda_data = 0;        /* 数据暂存位 */
