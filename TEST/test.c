@@ -72,6 +72,10 @@ debug_test(void) {
 
 void
 sysinit(void) {
+    /* 释放PB3、PB4、PA15引脚 */
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);
+
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
