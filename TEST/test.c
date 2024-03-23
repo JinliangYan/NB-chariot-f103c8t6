@@ -48,6 +48,7 @@ void test_bt(void);
 void test_weapon(void);
 void test_motor_pwm(void);
 void test_usart1(void);
+void test_remap(void);
 void test(void);
 
 int
@@ -73,8 +74,8 @@ debug_test(void) {
 void
 sysinit(void) {
     /* 释放PB3、PB4、PA15引脚 */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO,ENABLE);
-    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable,ENABLE);
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
 
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
@@ -90,10 +91,11 @@ sysinit(void) {
 
 void
 test(void) {
-    // test_bt();
-    //    test_motor_pwm();
-    // test_usart1();
-    test_weapon();
+//    test_bt();
+//    test_motor_pwm();
+//    test_usart1();
+//    test_weapon();
+    test_remap();
 }
 
 void
@@ -124,4 +126,31 @@ test_usart1(void) {
 void
 test_weapon(void) {
     weapon_attack(0);
+}
+
+void
+test_remap(void) {
+    GPIO_InitTypeDef GPIO_InitStructure;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_3 | GPIO_Pin_4;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+    PAout(15) = 0;
+    delay_ms(1000);
+    PAout(15) = 1;
+    delay_ms(1000);
+    PBout(3) = 0;
+    delay_ms(1000);
+    PBout(3) = 1;
+    delay_ms(1000);
+    PBout(4) = 0;
+    delay_ms(1000);
+    PBout(4) = 1;
+    delay_ms(1000);
 }
