@@ -32,6 +32,7 @@ set(sources_SRCS
         DLC/irDa/irda.c
         DLC/status/status.c
         DLC/defence/defence.c
+        CORE/sysmem.c
 )
 
 # Include directories for all compilers
