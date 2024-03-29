@@ -79,8 +79,8 @@ sysinit(void) {
 
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-    LED_Init();
     Motor_Init();      //电机初始化
+    LED_Init();
     Hcsr04_Init();     //超声波初始化
     Motion_State(OFF); //关闭电机驱动失能
     RGB_LED_Init();    //RGB彩灯初始化
@@ -92,10 +92,10 @@ sysinit(void) {
 void
 test(void) {
 //    test_bt();
-//    test_motor_pwm();
+    test_motor_pwm();
 //    test_usart1();
 //    test_weapon();
-    test_remap();
+//    test_remap();
 }
 
 void
