@@ -43,7 +43,7 @@
 
 static uint8_t status_test;
 
-void sysinit(void);
+void base_init(void);
 void test_bt(void);
 void test_weapon(void);
 void test_motor_pwm(void);
@@ -51,9 +51,13 @@ void test_usart1(void);
 void test_remap(void);
 void test(void);
 
+void pin_remap(void);
+
 int
 debug_test(void) {
-    sysinit();
+    pin_remap();
+    base_init();
+    dlc_init();
     test();
     printf_("HELLO\r\n");
 
@@ -69,24 +73,6 @@ debug_test(void) {
 
     // TODO 死亡结算
     return 0;
-}
-
-void
-sysinit(void) {
-    /* 释放PB3、PB4、PA15引脚 */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE);
-
-    delay_init(); //延时函数初始化
-    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-    Motor_Init();      //电机初始化
-    LED_Init();
-    Hcsr04_Init();     //超声波初始化
-    Motion_State(OFF); //关闭电机驱动失能
-    RGB_LED_Init();    //RGB彩灯初始化
-    printf_init();
-    dlc_init();
-    delay_ms(1000);
 }
 
 void
@@ -112,10 +98,11 @@ test_bt(void) {
 void
 test_motor_pwm(void) {
     printf_("MOTOR TEST START\r\n");
-    TIM_SetCompare1(TIM1, 300);
-    TIM_SetCompare2(TIM1, 300);
-    TIM_SetCompare3(TIM1, 300);
-    TIM_SetCompare4(TIM1, 300);
+    uint16_t tmp = 100;
+    TIM_SetCompare1(TIM1, tmp);
+    TIM_SetCompare2(TIM1, tmp);
+    TIM_SetCompare3(TIM1, tmp);
+    TIM_SetCompare4(TIM1, tmp);
 }
 
 void

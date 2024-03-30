@@ -44,7 +44,6 @@ STBY_Init(void) {
     GPIO_InitTypeDef GPIO_InitStruct;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-    GPIO_PinRemapConfig(GPIO_Remap_SWJ_JTAGDisable, ENABLE); //½ûÓÃJTAG
 
     GPIO_InitStruct.GPIO_Pin = GPIO_Pin_12;
     GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP; //ÍÆÍìÊä³ö

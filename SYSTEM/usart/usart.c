@@ -35,12 +35,7 @@ usart1_init_remap(u32 bound) {
     USART_InitTypeDef USART_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
 
-    /* 使能AFIO时钟。重映射必须使能AFIO时钟 */
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
-    /* 选择重映射 */
-    GPIO_PinRemapConfig(GPIO_Remap_USART1, ENABLE);
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE); //使能USART1，GPIOA时钟
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOB, ENABLE); //使能USART1，GPIOB 时钟
     //USART1_TX
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //频率50ZMHZ
