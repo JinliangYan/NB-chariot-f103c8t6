@@ -3,20 +3,20 @@
 #include "delay.h"
 #include "sys.h"
 
-#define L_AIN2_ON  GPIO_SetBits(GPIOB, GPIO_Pin_5)   //输出高电平
-#define L_AIN2_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_5) //输出低电平
-#define R_AIN2_ON  GPIO_SetBits(GPIOB, GPIO_Pin_8)   //输出高电平
-#define R_AIN2_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_8) //输出低电平
+#define L_AIN2_ON  GPIO_SetBits(GPIOB, GPIO_Pin_13)   //输出高电平
+#define L_AIN2_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_13) //输出低电平
+#define R_AIN2_ON  GPIO_SetBits(GPIOA, GPIO_Pin_12)   //输出高电平
+#define R_AIN2_OFF GPIO_ResetBits(GPIOA, GPIO_Pin_12) //输出低电平
 
-#define L_BIN2_ON  GPIO_SetBits(GPIOB, GPIO_Pin_6)   //输出高电平
-#define L_BIN2_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_6) //输出低电平
-#define R_BIN2_ON  GPIO_SetBits(GPIOB, GPIO_Pin_7)   //输出高电平
-#define R_BIN2_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_7) //输出低电平
+#define L_BIN2_ON  GPIO_SetBits(GPIOB, GPIO_Pin_14)   //输出高电平
+#define L_BIN2_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_14) //输出低电平
+#define R_BIN2_ON  GPIO_SetBits(GPIOB, GPIO_Pin_15)   //输出高电平
+#define R_BIN2_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_15) //输出低电平
 
-#define L_STBY_ON  GPIO_SetBits(GPIOB, GPIO_Pin_4)   //输出高电平,电机工作
-#define L_STBY_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_4) //输出低电平,电机停止
-#define R_STBY_ON  GPIO_SetBits(GPIOB, GPIO_Pin_9)   //输出高电平,电机工作
-#define R_STBY_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_9) //输出低电平,电机停止
+#define L_STBY_ON  GPIO_SetBits(GPIOB, GPIO_Pin_12)   //输出高电平,电机工作
+#define L_STBY_OFF GPIO_ResetBits(GPIOB, GPIO_Pin_12) //输出低电平,电机停止
+#define R_STBY_ON  GPIO_SetBits(GPIOA, GPIO_Pin_15)   //输出高电平,电机工作
+#define R_STBY_OFF GPIO_ResetBits(GPIOA, GPIO_Pin_15) //输出低电平,电机停止
 
 #define L_Move     0
 #define R_Move     1

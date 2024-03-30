@@ -68,7 +68,6 @@ base_init(void) {
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
     Hcsr04_Init();     //超声波初始化
-    Motion_State(OFF); //关闭电机驱动失能
     RGB_LED_Init();    //RGB彩灯初始化
     printf_init();
     Motor_Init(); //电机初始化
