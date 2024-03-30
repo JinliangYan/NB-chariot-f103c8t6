@@ -359,39 +359,39 @@ pwm_data_process(int16_t pwm1, int16_t pwm2, int16_t pwm3, int16_t pwm4) {
     }
 
     if (pwm1 >= 0) {
-        TIM_SetCompare4(TIM2, 500 - pwm1); //L_BIN2:вСиобж
+        TIM_SetCompare4(TIM1, 500 - pwm1); //L_BIN2:вСиобж
         L_BIN2_ON;
 
     } else if (pwm1 < 0) {
         pwm1 = abs(pwm1);
-        TIM_SetCompare4(TIM2, pwm1); //L_BIN2:вСиобж
+        TIM_SetCompare4(TIM1, pwm1); //L_BIN2:вСиобж
         L_BIN2_OFF;
     }
 
     if (pwm2 >= 0) {
-        TIM_SetCompare3(TIM2, pwm2); //L_AIN2:сриобж
+        TIM_SetCompare3(TIM1, pwm2); //L_AIN2:сриобж
         L_AIN2_OFF;
     } else if (pwm2 < 0) {
         pwm2 = abs(pwm2);
-        TIM_SetCompare3(TIM2, 500 - pwm2); //L_AIN2:сриобж
+        TIM_SetCompare3(TIM1, 500 - pwm2); //L_AIN2:сриобж
         L_AIN2_ON;
     }
 
     if (pwm3 >= 0) {
-        TIM_SetCompare1(TIM2, 500 - pwm3); //R_AIN2:сроббж
+        TIM_SetCompare1(TIM1, 500 - pwm3); //R_AIN2:сроббж
         R_AIN2_ON;
     } else if (pwm3 < 0) {
         pwm3 = abs(pwm3);
-        TIM_SetCompare1(TIM2, pwm3); //R_AIN2:сроббж
+        TIM_SetCompare1(TIM1, pwm3); //R_AIN2:сроббж
         R_AIN2_OFF;
     }
 
     if (pwm4 >= 0) {
-        TIM_SetCompare2(TIM2, pwm4); //R_BIN2:вСоббж
+        TIM_SetCompare2(TIM1, pwm4); //R_BIN2:вСоббж
         R_BIN2_OFF;
     } else if (pwm4 < 0) {
         pwm4 = abs(pwm4);
-        TIM_SetCompare2(TIM2, 500 - pwm4); //R_BIN2:вСоббж
+        TIM_SetCompare2(TIM1, 500 - pwm4); //R_BIN2:вСоббж
         R_BIN2_ON;
     }
 }
