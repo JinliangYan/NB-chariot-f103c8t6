@@ -42,7 +42,10 @@ main(void) {
     dlc_init();
 
     while (is_bt_connected() != 1) {
-        // 等待手机连接
+        LED = 1;
+        delay_ms(500);
+        LED = 0;
+        delay_ms(500);
     }
     clean_rebuff();
 

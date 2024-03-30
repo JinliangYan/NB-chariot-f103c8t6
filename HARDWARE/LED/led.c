@@ -19,4 +19,6 @@ LED_Init(void) {
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; //рЩ╫екыбй50MHZ
 
     GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+    LED = 0;
 }
