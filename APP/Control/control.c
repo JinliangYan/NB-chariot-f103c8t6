@@ -13,7 +13,10 @@
 #include "mode.h"
 #include "usart_blt.h"
 
-static void pwm_data_process(int16_t pwm1, int16_t pwm2, int16_t pwm3, int16_t pwm4);
+#define PWM_MIN (-199)
+#define PWM_MAX (199)
+
+static void pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4);
 static int Map(int val, int in_min, int in_max, int out_min, int out_max);
 
 u8 LED_Count = 0; //LED灯的个数
@@ -181,10 +184,10 @@ joystick_mode(void) {
     pwm3 = -Map_Ly + Map_Lx - Map_Ry - Map_Rx;
     pwm4 = -Map_Ly - Map_Lx - Map_Ry + Map_Rx;
 
-    pwm1 = Map(pwm1, -127, 127, -499, 499);
-    pwm2 = Map(pwm2, -127, 127, -499, 499);
-    pwm3 = Map(pwm3, -127, 127, -499, 499);
-    pwm4 = Map(pwm4, -127, 127, -499, 499);
+    pwm1 = Map(pwm1, -127, 127, PWM_MIN, PWM_MAX);
+    pwm2 = Map(pwm2, -127, 127, PWM_MIN, PWM_MAX);
+    pwm3 = Map(pwm3, -127, 127, PWM_MIN, PWM_MAX);
+    pwm4 = Map(pwm4, -127, 127, PWM_MIN, PWM_MAX);
 
     pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 
@@ -318,7 +321,10 @@ joystick_mode(void) {
  * \param[in]       pwm4: PWM value for motor 4
  */
 static void
-pwm_data_process(int16_t pwm1, int16_t pwm2, int16_t pwm3, int16_t pwm4) {
+pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4) {
+    L_STBY_ON;
+    R_STBY_ON;
+
     if (pwm1 < 20 && pwm1 > -20) {
         pwm1 = 0;
     }
@@ -359,40 +365,39 @@ pwm_data_process(int16_t pwm1, int16_t pwm2, int16_t pwm3, int16_t pwm4) {
     }
 
     if (pwm1 >= 0) {
-        TIM_SetCompare4(TIM1, 500 - pwm1); //L_BIN2:左上轮
-        L_BIN2_ON;
-
-    } else if (pwm1 < 0) {
-        pwm1 = abs(pwm1);
         TIM_SetCompare4(TIM1, pwm1); //L_BIN2:左上轮
         L_BIN2_OFF;
+    } else if (pwm1 < 0) {
+        pwm1 = abs(pwm1);
+        TIM_SetCompare4(TIM1, 500 - pwm1); //L_BIN2:左上轮
+        L_BIN2_ON;
     }
 
     if (pwm2 >= 0) {
-        TIM_SetCompare3(TIM1, pwm2); //L_AIN2:右上轮
-        L_AIN2_OFF;
-    } else if (pwm2 < 0) {
-        pwm2 = abs(pwm2);
         TIM_SetCompare3(TIM1, 500 - pwm2); //L_AIN2:右上轮
         L_AIN2_ON;
+    } else if (pwm2 < 0) {
+        pwm2 = abs(pwm2);
+        TIM_SetCompare3(TIM1, pwm2); //L_AIN2:右上轮
+        L_AIN2_OFF;
     }
 
     if (pwm3 >= 0) {
-        TIM_SetCompare1(TIM1, 500 - pwm3); //R_AIN2:右下轮
-        R_AIN2_ON;
-    } else if (pwm3 < 0) {
-        pwm3 = abs(pwm3);
         TIM_SetCompare1(TIM1, pwm3); //R_AIN2:右下轮
         R_AIN2_OFF;
+    } else if (pwm3 < 0) {
+        pwm3 = abs(pwm3);
+        TIM_SetCompare1(TIM1, 500 - pwm3); //R_AIN2:右下轮
+        R_AIN2_ON;
     }
 
     if (pwm4 >= 0) {
-        TIM_SetCompare2(TIM1, pwm4); //R_BIN2:左下轮
-        R_BIN2_OFF;
-    } else if (pwm4 < 0) {
-        pwm4 = abs(pwm4);
         TIM_SetCompare2(TIM1, 500 - pwm4); //R_BIN2:左下轮
         R_BIN2_ON;
+    } else if (pwm4 < 0) {
+        pwm4 = abs(pwm4);
+        TIM_SetCompare2(TIM1, pwm4); //R_BIN2:左下轮
+        R_BIN2_OFF;
     }
 }
 

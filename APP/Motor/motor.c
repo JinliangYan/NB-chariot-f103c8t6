@@ -68,7 +68,7 @@ Motor_Init(void) {
     Motor_PWM_Init(500, 72);
     Motor_GPIO_Init();
     STBY_Init();
-    Motion_State(ON); //关闭电机驱动失能
+    Motion_State(OFF); //关闭电机驱动失能
 }
 
 /**************************************************
@@ -79,6 +79,9 @@ Motor_Init(void) {
 ***************************************************/
 void
 forward(u16 speed) {
+    L_STBY_ON;
+    R_STBY_ON;
+
     TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
     R_AIN2_ON;
 
@@ -100,6 +103,9 @@ forward(u16 speed) {
 ***************************************************/
 void
 backward(u16 speed) {
+    L_STBY_ON;
+    R_STBY_ON;
+
     TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
     R_AIN2_OFF;
 
@@ -121,6 +127,9 @@ backward(u16 speed) {
 ***************************************************/
 void
 Left_Turn(u16 speed) {
+    L_STBY_ON;
+    R_STBY_ON;
+
     TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
     R_AIN2_ON;
 
@@ -142,6 +151,9 @@ Left_Turn(u16 speed) {
 ***************************************************/
 void
 Right_Turn(u16 speed) {
+    L_STBY_ON;
+    R_STBY_ON;
+
     TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
     R_AIN2_OFF;
 
@@ -166,6 +178,9 @@ void
 Move(u16 Dir, u16 speed) {
     if (Dir == 0) //左移
     {
+        L_STBY_ON;
+        R_STBY_ON;
+
         TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
         R_AIN2_OFF;
 
@@ -179,6 +194,9 @@ Move(u16 Dir, u16 speed) {
         L_BIN2_OFF;
     } else if (Dir == 1) //右移
     {
+        L_STBY_ON;
+        R_STBY_ON;
+
         TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
         R_AIN2_ON;
 
@@ -192,6 +210,9 @@ Move(u16 Dir, u16 speed) {
         L_BIN2_ON;
     } else if (Dir == 2) //左上移动
     {
+        L_STBY_ON;
+        R_STBY_ON;
+
         TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
         R_AIN2_OFF;
 
@@ -205,6 +226,9 @@ Move(u16 Dir, u16 speed) {
         L_BIN2_OFF;
     } else if (Dir == 3) //右上移动
     {
+        L_STBY_ON;
+        R_STBY_ON;
+
         TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
         R_AIN2_ON;
 
@@ -218,6 +242,9 @@ Move(u16 Dir, u16 speed) {
         L_BIN2_ON;
     } else if (Dir == 4) //左下移动
     {
+        L_STBY_ON;
+        R_STBY_ON;
+
         TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
         R_AIN2_OFF;
 
@@ -231,6 +258,9 @@ Move(u16 Dir, u16 speed) {
         L_BIN2_OFF;
     } else if (Dir == 5) //右下移动
     {
+        L_STBY_ON;
+        R_STBY_ON;
+
         TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
         R_AIN2_OFF;
 
