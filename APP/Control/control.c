@@ -77,12 +77,8 @@ void
 evadible_mode(void) {
     float Dis;
     Dis = Hcsr04GetLength();
-    forward(200);
     if (Dis <= 15) {
-        backward(200);
-        delay_ms(400);
-        Left_Turn(200);
-        delay_ms(400);
+        Motion_State(OFF);
     }
 }
 
@@ -161,6 +157,8 @@ rgb_show(void) {
  */
 void
 joystick_mode(void) {
+    evadible_mode(); /* ±ÜÕÏ */
+
     int Joy_Lx = 50, Joy_Ly = 50, Joy_Rx = 50, Joy_Ry = 50;
     int Map_Lx, Map_Ly, Map_Rx, Map_Ry;
     int pwm1, pwm2, pwm3, pwm4;
