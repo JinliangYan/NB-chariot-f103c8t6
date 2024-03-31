@@ -48,17 +48,17 @@ uint8_t weapon_power = 100;
 /**
  * \brief 手柄偏移量范围
  */
-#define JOYSTICK_MIN             (10)
-#define JOYSTICK_MAX             (90)
+#define JOYSTICK_MIN (10)
+#define JOYSTICK_MAX (90)
 
 /**
  * \brief 舵机角度范围
  * \note  应保证 (SERVO_MIN + SERVO_MAX) / 2 == 90
  */
-#define SERVO_X_MIN                (0)
-#define SERVO_X_MAX                (180)
-#define SERVO_Y_MIN                (50)
-#define SERVO_Y_MAX                (130)
+#define SERVO_X_MIN  (0)
+#define SERVO_X_MAX  (180)
+#define SERVO_Y_MIN  (50)
+#define SERVO_Y_MAX  (130)
 
 /**
  * \brief 武器方向数据接收缓冲区
@@ -81,7 +81,6 @@ void
 weapon_init() {
     servo_init();
     ir_init();
-//    printf_("weapon initialized successful\r\n");
 }
 
 /**
@@ -108,10 +107,12 @@ map_joystick_to_servos(float x_offset, float y_offset, float* servo1_angle, floa
     y_offset = (y_offset < JOYSTICK_MIN) ? JOYSTICK_MIN : (y_offset > JOYSTICK_MAX) ? JOYSTICK_MAX : y_offset;
 
     // 将手柄的x偏移量映射到第一个舵机的角度范围
-    *servo1_angle = SERVO_X_MIN + (SERVO_X_MAX - SERVO_X_MIN) * (x_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
+    *servo1_angle =
+        SERVO_X_MIN + (SERVO_X_MAX - SERVO_X_MIN) * (x_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
 
     // 将手柄的y偏移量映射到第二个舵机的角度范围
-    *servo2_angle = SERVO_Y_MIN + (SERVO_Y_MAX - SERVO_Y_MIN) * (y_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
+    *servo2_angle =
+        SERVO_Y_MIN + (SERVO_Y_MAX - SERVO_Y_MIN) * (y_offset - JOYSTICK_MIN) / (JOYSTICK_MAX - JOYSTICK_MIN);
 }
 
 /**
@@ -119,28 +120,26 @@ map_joystick_to_servos(float x_offset, float y_offset, float* servo1_angle, floa
  */
 void
 weapon_steering() {
-    float weapon_x = (float )((bt_received_data.uart_buff[1] - '0') * 10 + bt_received_data.uart_buff[2] - '0');
-    float weapon_y = (float )((bt_received_data.uart_buff[4] - '0') * 10 + bt_received_data.uart_buff[5] - '0');
+    float weapon_x = (float)((bt_received_data.uart_buff[1] - '0') * 10 + bt_received_data.uart_buff[2] - '0');
+    float weapon_y = (float)((bt_received_data.uart_buff[4] - '0') * 10 + bt_received_data.uart_buff[5] - '0');
     float w_angle_x;
     float w_angle_y;
     map_joystick_to_servos(weapon_x, weapon_y, &w_angle_x, &w_angle_y);
 
     /* 指令方向与现在方向相同, 直接返回 */
-    if (w_angle_x == weapon_x_angle && w_angle_y == weapon_y_angle)
+    if (w_angle_x == weapon_x_angle && w_angle_y == weapon_y_angle) {
         return;
+    }
 
     weapon_x_angle = w_angle_x;
     weapon_y_angle = w_angle_y;
-//    printf_("%.2f --> %.2f\r\n", weapon_x, w_angle_x);
-//    printf_("%.2f --> %.2f\r\n", weapon_y, w_angle_y);
     servo_1_set_angle(w_angle_x);
     servo_2_set_angle(w_angle_y);
 }
 
 void
 weapon_control_loop() {
-    if (bt_received_data.receive_data_flag == 0)
-    {
+    if (bt_received_data.receive_data_flag == 0) {
         return;
     }
 
@@ -153,4 +152,3 @@ weapon_control_loop() {
         weapon_attack(skill);
     }
 }
-
