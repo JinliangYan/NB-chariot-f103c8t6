@@ -56,9 +56,11 @@ control(void) {
 void
 mode_switch(void) {
     switch (control_mode) {
-        case CONTROL_MODE_JOYSTICK: joystick_mode(); break;
-//        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
-        case CONTROL_MODE_EVADIBLE: evadible_mode(); break;
+        case CONTROL_MODE_JOYSTICK:
+            joystick_mode();
+            break;
+            //        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
+        case CONTROL_MODE_EVADIBLE: get_dis_and_avoid(); break;
         case CONTROL_MODE_FOLLOW: follow_mode(); break;
         case CONTROL_MODE_RGB_MODE_OFF: rgb_mode = RGB_MODE_OFF; break;
         case CONTROL_MODE_RGB_MODE_BREATHING: rgb_mode = RGB_MODE_BREATHING; break;
@@ -73,13 +75,17 @@ mode_switch(void) {
 /**
  * \brief           Function for implementing evadible mode
  */
-void
-evadible_mode(void) {
+float
+get_dis_and_avoid(void) {
     float Dis;
     Dis = Hcsr04GetLength();
     if (Dis <= 15) {
-        Motion_State(OFF);
+        //        Motion_State(OFF);
+        backward(0);
+        Left_Turn(200);
+        delay_ms(400);
     }
+    return Dis;
 }
 
 /**
@@ -157,7 +163,9 @@ rgb_show(void) {
  */
 void
 joystick_mode(void) {
-    evadible_mode(); /* ±ÜÕÏ */
+    if (get_dis_and_avoid() <= 15) {
+        return; /* ±ÜÕÏ */
+    }
 
     int Joy_Lx = 50, Joy_Ly = 50, Joy_Rx = 50, Joy_Ry = 50;
     int Map_Lx, Map_Ly, Map_Rx, Map_Ry;

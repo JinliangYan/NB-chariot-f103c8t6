@@ -34,7 +34,7 @@ void joystick_mode(void);
 void gravity_mode(void);
 
 void mode_switch(void);
-void evadible_mode(void);
+float get_dis_and_avoid(void);
 void gravity_mode(void);
 void follow_mode(void);
 void rgb_select(void);
