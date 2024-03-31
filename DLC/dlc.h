@@ -37,6 +37,7 @@
 
 #include "blt.h"
 #include "defence.h"
+#include "electromagnet.h"
 #include "servo.h"
 #include "status.h"
 #include "stm32f10x.h"

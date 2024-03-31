@@ -32,25 +32,52 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#include "status.h"
+#include <stdlib.h>
+#include "electromagnet.h"
 #include "motor.h"
+#include "status.h"
 
-uint8_t status_hp = 100;
-extern uint8_t defence_hp;
+status_t chariot_status;
 
-uint8_t
-status_check(void) {
-    if (status_hp == 0) {
-        return STATUS_DEAD;
-    }
-    return STATUS_ALIVE;
+static void chariot_hp_handler(void);
+static void defence_hp_handler(void);
+static void weapon_hp_handler(void);
+
+void
+status_init(void) {
+    chariot_status.chariot_hp = 100;
+    chariot_status.weapon_hp = 100;
+    chariot_status.defence_hp = 100;
 }
 
 void
-status_control(uint8_t status) {
-    switch (status) {
-        case STATUS_DEAD: Motion_State(OFF); break;
-        case STATUS_ALIVE:; break;
-        default: break;
+status_handler(void) {
+    chariot_hp_handler();
+    defence_hp_handler();
+    weapon_hp_handler();
+}
+
+static void
+chariot_hp_handler(void) {
+    if (chariot_status.chariot_hp <= 0) {
+        // TODO 游戏结束, 收尾任务, 待完善
+        Motion_State(OFF);
+        exit(0);
+    }
+}
+
+static void
+defence_hp_handler(void) {
+    if (chariot_status.defence_hp <= 0) {
+        // TODO 防御模块被击破反应, 待完善
+    }
+}
+
+static void
+weapon_hp_handler(void) {
+    if (chariot_status.weapon_hp <= 0) {
+        // TODO 武器模块被击破反应, 待完善
+        /* 武器掉落 */
+        electromagnet_off();
     }
 }

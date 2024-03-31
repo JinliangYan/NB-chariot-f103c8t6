@@ -44,22 +44,18 @@ extern "C" {
 /**
  * \brief 战车ID, 1 ~ 255
  */
-#define CHARIOT_ID        0x01
+#define CHARIOT_ID 0x01
 
-/**
- * \brief 存活标志, 由status_check_loop返回
- */
-#define STATUS_ALIVE      0
+typedef struct {
+    uint8_t chariot_hp;
+    uint8_t weapon_hp;
+    uint8_t defence_hp;
+} status_t;
 
-/**
- * \brief 失败标志, 由status_check_loop返回
- */
-#define STATUS_DEAD       1
+extern status_t chariot_status;
 
-extern uint8_t status_hp;
-
-uint8_t status_check(void);
-void status_control(uint8_t status);
+void status_init(void);
+void status_handler(void);
 
 #ifdef __cplusplus
 }

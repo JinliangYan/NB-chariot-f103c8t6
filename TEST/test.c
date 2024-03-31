@@ -64,14 +64,9 @@ debug_test(void) {
     while (1) {
         control();
         dlc_control();
-        status_test = status_check();
-        if (status_test == STATUS_DEAD) {
-            status_control(status_test);
-            break;
-        }
+        status_handler();
     }
 
-    // TODO ËÀÍö½áËã
     return 0;
 }
 

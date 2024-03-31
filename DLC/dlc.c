@@ -33,12 +33,11 @@
  */
 
 #include "dlc.h"
-#include "blt.h"
-#include "defence.h"
-#include "weapon.h"
 
 void
 dlc_init(void) {
+    status_init();
+    electromagnet_init();
     weapon_init();
     defence_init();
     bt_init();

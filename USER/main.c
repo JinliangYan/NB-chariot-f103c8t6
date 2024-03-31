@@ -27,10 +27,6 @@ DI:PB0
 #include "dlc.h"
 #include "led.h"
 #include "sys.h"
-#include "usart.h"
-
-uint8_t status = STATUS_ALIVE;
-extern bt_received_data_t bt_received_data;
 
 void pin_remap(void);
 void base_init(void);
@@ -52,14 +48,8 @@ main(void) {
     while (1) {
         control();
         dlc_control();
-        status = status_check();
-        if (status == STATUS_DEAD) {
-            status_control(status);
-            break;
-        }
+        status_handler();
     }
-
-    // TODO 死亡结算
 }
 
 void
@@ -67,8 +57,8 @@ base_init(void) {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     LED_Init();
-    Hcsr04_Init();     //超声波初始化
-    RGB_LED_Init();    //RGB彩灯初始化
+    Hcsr04_Init();  //超声波初始化
+    RGB_LED_Init(); //RGB彩灯初始化
     printf_init();
     Motor_Init(); //电机初始化
     delay_ms(1000);

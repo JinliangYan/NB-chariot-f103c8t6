@@ -39,7 +39,6 @@
 
 //#define DEFENCE_DEBUG
 
-uint8_t defence_hp;
 
 static void clear_attacker_info(void);
 uint8_t defence_attacked_data[4];
@@ -48,7 +47,6 @@ attacker_t attacker;
 void
 defence_init(void) {
     irda_init();
-    defence_hp = 100;
 }
 
 void
@@ -61,16 +59,15 @@ defence_loop(void) {
         /* 最后一个字节为power反码, 这里不取 */
     }
     if (attacker.id != 0) {
-        if (defence_hp) {
-            if (attacker.power > defence_hp) {
-                // TODO 装甲脱落
-                defence_hp = 0;
-                status_hp -= attacker.power - defence_hp;
+        if (chariot_status.defence_hp != 0) {
+            if (attacker.power > chariot_status.defence_hp) {
+                chariot_status.defence_hp = 0;
+                chariot_status.defence_hp -= attacker.power - chariot_status.defence_hp;
             } else {
-                defence_hp -= attacker.power;
+                chariot_status.defence_hp -= attacker.power;
             }
         } else {
-            status_hp -= attacker.power;
+            chariot_status.chariot_hp -= attacker.power;
         }
 #ifdef DEFENCE_DEBUG
         printf_("\r\n HP = %d \r\n", status_hp);
