@@ -13,6 +13,7 @@ typedef enum { NONE, START, TYPE_COMMON, TYPE_AT, MESSAGE, FINISH } receive_stat
 receive_state_t next_state = FINISH;
 
 bt_received_data_t bt_received_data;
+weapon_received_data_t weapon_received_data;
 
 void
 usart_send_byte(USART_TypeDef* USARTx, uint16_t Data) //发送一个字节
@@ -96,11 +97,11 @@ usart2_init(u32 bound) {
     GPIO_Init(GPIOA, &GPIO_InitStructure);                //初始化GPIOA.3
 
     //Usart2 NVIC 配置
-//    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
-//    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3; //抢占优先级3
-//    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;        //子优先级3
-//    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           //IRQ通道使能
-//    NVIC_Init(&NVIC_InitStructure);                           //初始化NVIC寄存器
+    NVIC_InitStructure.NVIC_IRQChannel = USART2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3; //抢占优先级3
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;        //子优先级3
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           //IRQ通道使能
+    NVIC_Init(&NVIC_InitStructure);                           //初始化NVIC寄存器
 
     //USART 初始化设置
 
@@ -112,7 +113,7 @@ usart2_init(u32 bound) {
     USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;                 //收发模式
 
     USART_Init(USART2, &USART_InitStructure);      //初始化串口2
-//    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE); //开启串口接受中断
+    USART_ITConfig(USART2, USART_IT_RXNE, ENABLE); //开启串口接受中断
     USART_Cmd(USART2, ENABLE);                     //使能串口2
 }
 
@@ -243,6 +244,21 @@ USART1_IRQHandler(void) {
 
         /* 接收消息内容 */
         temp_buf1[idx++] = temp;
+    }
+}
+
+/**
+ * \brief 处理武器模块接收到的红外数据
+ */
+void
+USART2_IRQHandler(void) {
+    if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
+        uint8_t temp = USART_ReceiveData(USART2);
+        weapon_received_data.uart_buff[bt_received_data.datanum++] = temp;
+
+        if (weapon_received_data.datanum == 3) {
+            weapon_received_data.receive_data_flag = 1;
+        }
     }
 }
 

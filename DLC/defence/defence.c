@@ -42,7 +42,7 @@
 
 static void clear_attacker_info(void);
 uint8_t defence_attacked_data[4];
-attacker_t attacker;
+static attacker_t attacker;
 
 void
 defence_init(void) {

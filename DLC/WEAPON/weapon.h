@@ -48,7 +48,6 @@ extern "C" {
 #define WEAPON_STATIC     0x00
 
 void weapon_init();
-void weapon_attack(uint8_t skill);
 void weapon_control_loop();
 #ifdef __cplusplus
 }

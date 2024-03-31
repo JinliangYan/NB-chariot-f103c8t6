@@ -32,18 +32,28 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 #include "weapon.h"
+#include "defence.h"
+#include "ir.h"
 #include "printf.h"
 #include "servo.h"
-#include "usart_blt.h"
-#include "ir.h"
 #include "status.h"
+#include "usart.h"
+#include "usart_blt.h"
 
-extern bt_received_data_t bt_received_data;
+/**
+ * \brief 武器攻击者
+ */
+static attacker_t attacker;
 
 /**
  * \brief 武器攻击力, 0~255
  */
 uint8_t weapon_power = 100;
+
+/**
+ * \brief 武器生命值
+ */
+uint8_t weapon_hp = 100;
 
 /**
  * \brief 手柄偏移量范围
@@ -61,18 +71,14 @@ uint8_t weapon_power = 100;
 #define SERVO_Y_MAX  (130)
 
 /**
- * \brief 武器方向数据接收缓冲区
- * \ref usart.c
- */
-extern char Weapon_Buf[10];
-
-/**
  * \brief 武器当前方向
  */
 float weapon_x_angle = 90;
 float weapon_y_angle = 90;
 
-void weapon_steering();
+static void weapon_steering(void);
+static void weapon_attack(uint8_t skill);
+static void clear_attacker(void);
 
 /**
  * \brief 武器初始化
@@ -88,7 +94,7 @@ weapon_init() {
  * \param[in,out]   skill:技能参数, 可根据该参数计算总伤害, 或者发送至对方施加debuff(如果有该效果的话)
  * TODO 伤害值计算
  */
-void
+static void
 weapon_attack(uint8_t skill) {
     ir_emission(CHARIOT_ID, skill, weapon_power);
 }
@@ -118,8 +124,8 @@ map_joystick_to_servos(float x_offset, float y_offset, float* servo1_angle, floa
 /**
  * \brief 武器转向
  */
-void
-weapon_steering() {
+static void
+weapon_steering(void) {
     float weapon_x = (float)((bt_received_data.uart_buff[1] - '0') * 10 + bt_received_data.uart_buff[2] - '0');
     float weapon_y = (float)((bt_received_data.uart_buff[4] - '0') * 10 + bt_received_data.uart_buff[5] - '0');
     float w_angle_x;
@@ -139,7 +145,7 @@ weapon_steering() {
 
 void
 weapon_control_loop() {
-    if (bt_received_data.receive_data_flag == 0) {
+    if (bt_received_data.receive_data_flag == 0 && weapon_received_data.receive_data_flag == 0) {
         return;
     }
 
@@ -151,4 +157,22 @@ weapon_control_loop() {
         uint8_t skill = 0;
         weapon_attack(skill);
     }
+
+    if (weapon_received_data.receive_data_flag == 1) {
+        /* 解码攻击者信息 */
+        attacker.id = weapon_received_data.uart_buff[0];
+        attacker.skill = weapon_received_data.uart_buff[1];
+        attacker.power = weapon_received_data.uart_buff[2];
+    }
+    if (attacker.id != 0) {
+        chariot_status.chariot_hp -= attacker.power;
+        clear_attacker();
+    }
+}
+
+static void
+clear_attacker(void) {
+    attacker.power = 0;
+    attacker.skill = 0;
+    attacker.id = 0;
 }

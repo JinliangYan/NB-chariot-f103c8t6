@@ -22,11 +22,6 @@ static int Map(int val, int in_min, int in_max, int out_min, int out_max);
 u8 LED_Count = 0; //LED灯的个数
 
 /**
- * \brief   蓝牙数据结构体
- */
-extern bt_received_data_t bt_received_data;
-
-/**
  * \brief: 小车行走控制模式, 默认位摇杆控制
 */
 control_mode_t control_mode = CONTROL_MODE_JOYSTICK;

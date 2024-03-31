@@ -41,8 +41,6 @@
 #include "stm32f10x.h"
 #include "ws2812b.h"
 
-static uint8_t status_test;
-
 void base_init(void);
 void test_bt(void);
 void test_weapon(void);
@@ -107,7 +105,6 @@ test_usart1(void) {
 
 void
 test_weapon(void) {
-    weapon_attack(0);
 }
 
 void

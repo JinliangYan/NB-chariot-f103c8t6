@@ -9,9 +9,7 @@
   */
 
 #include "usart_blt.h"
-#include <stdarg.h>
-
-extern bt_received_data_t bt_received_data;
+#include "usart.h"
 
 /***************** ·¢ËÍÒ»¸ö×Ö·û  **********************/
 static void
