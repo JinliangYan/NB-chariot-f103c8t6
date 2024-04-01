@@ -51,11 +51,6 @@ static attacker_t attacker;
 uint8_t weapon_power = 100;
 
 /**
- * \brief 武器生命值
- */
-uint8_t weapon_hp = 100;
-
-/**
  * \brief 手柄偏移量范围
  */
 #define JOYSTICK_MIN (10)
@@ -84,9 +79,10 @@ static void clear_attacker(void);
  * \brief 武器初始化
  */
 void
-weapon_init() {
+weapon_init(void) {
     servo_init();
     ir_init();
+    clear_attacker();
 }
 
 /**
@@ -165,7 +161,7 @@ weapon_control_loop() {
         attacker.power = weapon_received_data.uart_buff[2];
     }
     if (attacker.id != 0) {
-        chariot_status.chariot_hp -= attacker.power;
+        chariot_status.weapon_hp -= attacker.power;
         clear_attacker();
     }
 }
