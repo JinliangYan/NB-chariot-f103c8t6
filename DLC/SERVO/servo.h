@@ -41,10 +41,6 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define SERVO_RCC  RCC_APB2Periph_GPIOA
-#define SERVO_GPIO GPIOA
-#define SERVO_PIN  GPIO_Pin_6
-
 void servo_init(void);
 void servo_1_set_angle(float Angle);
 void servo_2_set_angle(float Angle);
