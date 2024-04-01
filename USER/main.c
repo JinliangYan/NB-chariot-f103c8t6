@@ -37,18 +37,10 @@ main(void) {
     base_init();
     dlc_init();
 
-    while (is_bt_connected() != 1) {
-        LED = 1;
-        delay_ms(500);
-        LED = 0;
-        delay_ms(500);
-    }
-    clean_rebuff();
-
     while (1) {
+        status_handler();
         control();
         dlc_control();
-        status_handler();
     }
 }
 

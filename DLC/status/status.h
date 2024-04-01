@@ -50,6 +50,7 @@ typedef struct {
     uint8_t chariot_hp;
     uint8_t weapon_hp;
     uint8_t defence_hp;
+    uint8_t is_connected;
 } status_t;
 
 extern status_t chariot_status;

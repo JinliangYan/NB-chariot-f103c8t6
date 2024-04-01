@@ -33,7 +33,9 @@
  */
 
 #include <stdlib.h>
+#include "blt.h"
 #include "electromagnet.h"
+#include "led.h"
 #include "motor.h"
 #include "status.h"
 
@@ -42,19 +44,35 @@ status_t chariot_status;
 static void chariot_hp_handler(void);
 static void defence_hp_handler(void);
 static void weapon_hp_handler(void);
+static void bt_connect_handler(void);
 
 void
 status_init(void) {
     chariot_status.chariot_hp = 100;
     chariot_status.weapon_hp = 100;
     chariot_status.defence_hp = 100;
+    chariot_status.is_connected = is_bt_connected();
 }
 
+/**
+ * \brief 检查蓝牙是否连接, 如果没有连接则在此循环
+ */
 void
 status_handler(void) {
+    bt_connect_handler();
     chariot_hp_handler();
     defence_hp_handler();
     weapon_hp_handler();
+}
+
+static void
+bt_connect_handler(void) {
+    while ((chariot_status.is_connected = is_bt_connected()) != 1) {
+        LED = 1;
+        delay_ms(500);
+        LED = 0;
+        delay_ms(500);
+    }
 }
 
 static void
