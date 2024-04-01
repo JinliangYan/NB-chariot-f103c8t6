@@ -40,15 +40,39 @@
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-/**
- * \brief 表示方向
- */
-#define WEAPON_TURN_LEFT  0x01
-#define WEAPON_TURN_RIGHT 0x02
-#define WEAPON_STATIC     0x00
 
-void weapon_init();
-void weapon_control_loop();
+typedef enum {
+    WEAPON_TYPE_GUN,
+    WEAPON_TYPE_OTHER,
+    // TODO 补充武器类型
+} weapon_type_t;
+
+typedef enum {
+    WEAPON_SKILL_INCREASE_DAMAGE, /* 增加攻击力 */
+    //TODO 补充技能类型
+} skill_t;
+
+typedef struct {
+    skill_t skill_type;         /*!< 技能类型 */
+    uint8_t cooldown_time;      /*!< 技能冷却时间 */
+    uint8_t activated_times;    /*!< 技能可发动次数 */
+    uint8_t duration;           /*!< 技能持续时间 */
+    uint8_t remaining_duration; /*!< 技能剩余持续时间 */
+} weapon_skill_t;
+
+typedef struct {
+    weapon_type_t type; /*!< 武器类型 */
+    skill_t skill_type; /*!< 技能类型 */
+    uint8_t power;      /*!< 攻击力 */
+    uint8_t weight;     /*!< 重量 */
+    uint8_t steerable;  /*!< 能(1)否(0)转向 */
+    float x_angle;      /*!< 武器当前X偏移角, 当steerable为0时无用 */
+    float y_angle;      /*!< 武器当前Y偏移角, 当steerable为0时无用 */
+} weapon_t;
+
+void weapon_init(void);
+void weapon_control_loop(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

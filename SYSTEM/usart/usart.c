@@ -197,12 +197,27 @@ USART1_IRQHandler(void) {
         if (next_state == TYPE_COMMON) {
             /* 匹配消息类型 */
             switch (temp) {
-                case 'L': bt_received_data.message_type = MESSAGE_LEFT_JOYSTICK; break;
-                case 'R': bt_received_data.message_type = MESSAGE_RIGHT_JOYSTICK; break;
-                case 'W': bt_received_data.message_type = MESSAGE_WEAPON_JOYSTICK; break;
-                case 'T': bt_received_data.message_type = MESSAGE_TEXT; break;
-                case 'M': bt_received_data.message_type = MESSAGE_MODE_SWITCH; break;
-                case 'A': bt_received_data.message_type = MESSAGE_WEAPON_ATTACK; break;
+                case 'L':
+                    bt_received_data.message_type = MESSAGE_LEFT_JOYSTICK;
+                    break;
+                case 'R':
+                    bt_received_data.message_type = MESSAGE_RIGHT_JOYSTICK;
+                    break;
+                case 'W':
+                    bt_received_data.message_type = MESSAGE_WEAPON_JOYSTICK;
+                    break;
+                case 'A':
+                    bt_received_data.message_type = MESSAGE_WEAPON_ATTACK;
+                    break;
+                case 'S':
+                    bt_received_data.message_type = MESSAGE_WEAPON_SKILL;
+                    break;
+                case 'T':
+                    bt_received_data.message_type = MESSAGE_TEXT;
+                    break;
+                case 'M':
+                    bt_received_data.message_type = MESSAGE_MODE_SWITCH;
+                    break;
                 default: break;
             }
             next_state = MESSAGE;

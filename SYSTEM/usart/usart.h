@@ -1,5 +1,5 @@
-#ifndef __USART_H
-#define __USART_H
+#ifndef USART_H
+#define USART_H
 #include "stdio.h"
 #include "sys.h"
 
@@ -17,7 +17,8 @@ typedef enum {
     MESSAGE_LEFT_JOYSTICK,   /*!< ×óÒ¡¸ËÊý¾Ý */
     MESSAGE_RIGHT_JOYSTICK,  /*!< ÓÒÒ¡¸ËÊý¾Ý */
     MESSAGE_WEAPON_JOYSTICK, /*!< ÎäÆ÷Ò¡¸ËÊý¾Ý */
-    MESSAGE_WEAPON_ATTACK,   /*!< ÎäÆ÷¹¥»÷Ãü    Áî */
+    MESSAGE_WEAPON_ATTACK,   /*!< ÎäÆ÷¹¥»÷ÃüÁî */
+    MESSAGE_WEAPON_SKILL,    /*!< ÎäÆ÷¼¼ÄÜÊÍ·ÅÃüÁî */
     MESSAGE_TEXT,            /*!< ÎÄ±¾Êý¾Ý */
     MESSAGE_AT_COMMAND       /*!< ATÖ¸Áî»Ø¸´ */
 } receiving_message_type_t;
