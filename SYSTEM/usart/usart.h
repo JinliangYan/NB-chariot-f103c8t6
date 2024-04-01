@@ -48,20 +48,20 @@ extern weapon_received_data_t weapon_received_data;
 
 void usart_send_byte(USART_TypeDef* USARTx, uint16_t data);
 
-void usart1_init_remap(u32 bound);
-void usart2_init(u32 bound);
-void usart3_init(u32 bound);
+void usart1_init_remap(uint32_t bound);
+void usart2_init(uint32_t bound);
+void usart3_init(uint32_t bound);
 
-void usart1_send_byte(u8 data);
-void usart1_send_nbyte(u8* data, u16 size);
-void usart1_send_str(u8* data);
+void usart1_send_byte(uint8_t data);
+void usart1_send_nbyte(uint8_t* data, uint16_t size);
+void usart1_send_str(uint8_t* data);
 
-void usart2_send_byte(u8 data);
-void usart2_send_nbyte(u8* data, u16 size);
-void usart2_send_str(u8* data);
+void usart2_send_byte(uint8_t data);
+void usart2_send_nbyte(uint8_t* data, uint16_t size);
+void usart2_send_str(uint8_t* data);
 
-void usart3_send_byte(u8 data);
-void usart3_send_nbyte(u8* data, u16 size);
-void usart3_send_str(u8* data);
+void usart3_send_byte(uint8_t data);
+void usart3_send_nbyte(uint8_t* data, uint16_t size);
+void usart3_send_str(uint8_t* data);
 
 #endif

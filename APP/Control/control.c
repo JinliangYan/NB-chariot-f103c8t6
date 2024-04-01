@@ -11,7 +11,6 @@
 
 #include "control.h"
 #include "mode.h"
-#include "usart_blt.h"
 
 #define PWM_MIN (-199)
 #define PWM_MAX (199)
@@ -54,13 +53,25 @@ mode_switch(void) {
         case CONTROL_MODE_JOYSTICK:
             joystick_mode();
             break;
-            //        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
-        case CONTROL_MODE_EVADIBLE: get_dis_and_avoid(); break;
-        case CONTROL_MODE_FOLLOW: follow_mode(); break;
-        case CONTROL_MODE_RGB_MODE_OFF: rgb_mode = RGB_MODE_OFF; break;
-        case CONTROL_MODE_RGB_MODE_BREATHING: rgb_mode = RGB_MODE_BREATHING; break;
-        case CONTROL_MODE_RGB_MODE_RUNNING: rgb_mode = RGB_MODE_RUNNING; break;
-        case CONTROL_MODE_RGB_MODE_FLASHING: rgb_mode = RGB_MODE_FLASHING; break;
+//        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
+        case CONTROL_MODE_EVADIBLE:
+            get_dis_and_avoid();
+            break;
+        case CONTROL_MODE_FOLLOW:
+            follow_mode();
+            break;
+        case CONTROL_MODE_RGB_MODE_OFF:
+            rgb_mode = RGB_MODE_OFF;
+            break;
+        case CONTROL_MODE_RGB_MODE_BREATHING:
+            rgb_mode = RGB_MODE_BREATHING;
+            break;
+        case CONTROL_MODE_RGB_MODE_RUNNING:
+            rgb_mode = RGB_MODE_RUNNING;
+            break;
+        case CONTROL_MODE_RGB_MODE_FLASHING:
+            rgb_mode = RGB_MODE_FLASHING;
+            break;
         default:
             // Handle default case if necessary
             break;

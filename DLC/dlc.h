@@ -41,7 +41,6 @@
 #include "servo.h"
 #include "status.h"
 #include "stm32f10x.h"
-#include "usart_blt.h"
 #include "weapon.h"
 
 #ifdef __cplusplus

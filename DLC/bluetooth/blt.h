@@ -1,19 +1,38 @@
-#ifndef __HC05_H
-#define __HC05_H
+#ifndef HC05_H
+#define HC05_H
 
 #include "delay.h"
 #include "printf.h"
 #include "stm32f10x.h"
 
-#define bt_delay_ms       delay_ms
-#define BT_USART          USART1
-#define BT_STATA_PIN      GPIO_Pin_5
-#define BT_SATAT_PORT     GPIOB
+/**
+ * \brief   蓝牙串口波特率
+ */
+#define BLT_USART_BAUD_RATE 9600
+
+/**
+ * \brief   数据包起始位
+ */
+#define PACKAGE_START_FLAG  '$'
+
+/**
+ * \brief   数据包结束位
+ */
+#define PACKAGE_END_FLAG    '*'
+
+/**
+ * \brief   AT指令回复起始位
+ */
+#define PACKAGE_AT_FLAG     '+'
+
+#define bt_delay_ms         delay_ms
+#define BT_STATA_PIN        GPIO_Pin_5
+#define BT_SATAT_PORT       GPIOB
 
 /**
  * \brief 检查模块是否处于配对状态
  */
-#define is_bt_connected() GPIO_ReadInputDataBit(BT_SATAT_PORT, BT_STATA_PIN)
+#define is_bt_connected()   GPIO_ReadInputDataBit(BT_SATAT_PORT, BT_STATA_PIN)
 
 typedef struct {
     char addr; //蓝牙设备地址，字符串形式，方便扫描时和连接时使用
@@ -38,9 +57,7 @@ uint8_t bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms); //D
 uint8_t bt_reset(void);
 void bt_send_atcmd(const char* command, const char* arg);
 void bt_send_str(char* str);
-
-uint8_t get_remote_device_name(void);
-
-int get_line(char* line, char* stream, int max_size);
+void clean_rebuff(void);
+int get_line(char* line, char* stream, size_t max_size);
 
 #endif /* _HC05_H */

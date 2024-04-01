@@ -199,7 +199,7 @@ weapon_attack(void) {
  */
 static uint8_t
 weapon_activate_skill(void) {
-    if (weapon_skill.activated_times <= 0 | weapon_skill.cooldown_time > 0) {
+    if (weapon_skill.activated_times <= 0 || weapon_skill.cooldown_time > 0) {
         /* 技能可释放次数不足或正在冷却, 无法释放 */
         //TODO 做出反应, 例如告诉小程序技能正在冷却, 也可以在小程序端计时
         return 1;

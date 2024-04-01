@@ -27,7 +27,6 @@ set(cpu_PARAMS)
 set(sources_SRCS
         DLC/electromagnet/electromagnet.c
         DLC/bluetooth/blt.c
-        DLC/bluetooth/usart/usart_blt.c
         HARDWARE/TIM/timer.c
         DLC/ir/ir.c
         DLC/irDa/irda.c
@@ -47,7 +46,6 @@ set(include_DIRS
         DLC/SERVO
         DLC/WEAPON
         DLC/bluetooth/
-        DLC/bluetooth/usart
         APP/Control
         APP/HCSR04
         APP/Motor

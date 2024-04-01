@@ -8,8 +8,8 @@
  * @
  * @Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
  */
-#ifndef __CONTROL_H
-#define __CONTROL_H
+#ifndef CONTROL_H
+#define CONTROL_H
 #include "delay.h"
 #include "hcsr.h"
 #include "math.h"

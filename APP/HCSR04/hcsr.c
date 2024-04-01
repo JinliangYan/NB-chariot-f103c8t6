@@ -109,10 +109,10 @@ Hcsr04GetLength(void) {
             ;
         CloseTimerForHc();
         t = GetEchoTimer();
-        lengthTemp = ((float)t / 58.0); //cm
+        lengthTemp = ((float)t / 58.0f); //cm
         sum = lengthTemp + sum;
     }
-    lengthTemp = sum / 5.0;
+    lengthTemp = sum / 5.0f;
     return lengthTemp;
 }
 

@@ -1,10 +1,8 @@
 #include "usart.h"
-#include "led.h"
+#include "blt.h"
 #include "mode.h"
-#include "printf.h"
 #include "string.h"
 #include "sys.h"
-#include "usart_blt.h"
 
 //注意:使用蓝牙模块时波特率使用9600,不能超过9600波特率
 
@@ -15,22 +13,15 @@ receive_state_t next_state = FINISH;
 bt_received_data_t bt_received_data;
 weapon_received_data_t weapon_received_data;
 
-void
-usart_send_byte(USART_TypeDef* USARTx, uint16_t Data) //发送一个字节
-{
-    USARTx->DR = (Data & (uint16_t)0x01FF);
-    while (USART_GetFlagStatus(USARTx, USART_FLAG_TXE) == RESET)
-        ;
-}
 
 /**************************************************
-函数名称：USART1_Init(u32 bound)
+函数名称：USART1_Init(uint32_t bound)
 函数功能：串口1初始化
 入口参数：bound  波特率
 返回参数：无
 ***************************************************/
 void
-usart1_init_remap(u32 bound) {
+usart1_init_remap(uint32_t bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -70,13 +61,13 @@ usart1_init_remap(u32 bound) {
 }
 
 /**************************************************
-函数名称：USART2_Init(u32 bound)
+函数名称：USART2_Init(uint32_t bound)
 函数功能：串口2初始化
 入口参数：bound  波特率
 返回参数：无
 ***************************************************/
 void
-usart2_init(u32 bound) {
+usart2_init(uint32_t bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -118,13 +109,13 @@ usart2_init(u32 bound) {
 }
 
 /**************************************************
-函数名称：USART3_Init(u32 bound)
+函数名称：USART3_Init(uint32_t bound)
 函数功能：串口3初始化
 入口参数：bound  波特率
 返回参数：无
 ***************************************************/
 void
-usart3_init(u32 bound) {
+usart3_init(uint32_t bound) {
     //GPIO端口设置
     GPIO_InitTypeDef GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
@@ -171,10 +162,10 @@ usart3_init(u32 bound) {
 入口参数：无
 返回参数：无
 ***************************************************/
-void
+__attribute__((unused)) void
 USART1_IRQHandler(void) {
-    u8 temp;
-    static u8 idx = 0;
+    uint8_t temp;
+    static uint8_t idx = 0;
     static uint8_t temp_buf1[UART_BUFF_SIZE];
 
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
@@ -245,7 +236,7 @@ USART1_IRQHandler(void) {
         if (temp == PACKAGE_END_FLAG) {
             bt_received_data.receive_data_flag = 1;
             next_state = START;
-            strcpy(bt_received_data.uart_buff, temp_buf1);
+            strcpy((char *)bt_received_data.uart_buff, (char *)temp_buf1);
             bt_received_data.datanum = idx;
             bt_received_data.receive_data_flag = 1;
             idx = 0;
@@ -265,7 +256,7 @@ USART1_IRQHandler(void) {
 /**
  * \brief 处理武器模块接收到的红外数据
  */
-void
+__attribute__((unused)) void
 USART2_IRQHandler(void) {
     if (USART_GetITStatus(USART2, USART_IT_RXNE) != RESET) {
         uint8_t temp = USART_ReceiveData(USART2);
@@ -280,82 +271,76 @@ USART2_IRQHandler(void) {
 /*************************串口发送函数*************************************/
 
 void
-usart1_send_byte(u8 Data) {
-    USART_SendData(USART1, Data);
-    return;
+usart1_send_byte(uint8_t data) {
+    USART_SendData(USART1, data);
+    while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
+        ;
 }
 
 void
-usart1_send_nbyte(u8* Data, u16 size) {
-    u16 i = 0;
-    for (i = 0; i < size; i++) {
-        USART_SendData(USART1, Data[i]);
+usart1_send_nbyte(uint8_t* data, uint16_t size) {
+    for (uint16_t i = 0; i < size; i++) {
+        USART_SendData(USART1, data[i]);
         while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
             ;
     }
-    return;
 }
 
 void
-Uusart1_send_str(u8* Data) {
-    while (*Data) {
-        USART_SendData(USART1, *Data++);
+usart1_send_str(uint8_t* data) {
+    while (*data) {
+        USART_SendData(USART1, *data++);
         while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
             ;
     }
-    return;
 }
 
 void
-usart2_send_byte(u8 Data) {
-    USART_SendData(USART2, Data);
-    return;
+usart2_send_byte(uint8_t data) {
+    USART_SendData(USART2, data);
+    while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
+        ;
 }
 
 void
-usart2_send_nbyte(u8* Data, u16 size) {
-    u16 i = 0;
-    for (i = 0; i < size; i++) {
-        USART_SendData(USART2, Data[i]);
+usart2_send_nbyte(uint8_t* data, uint16_t size) {
+    for (uint16_t i = 0; i < size; i++) {
+        USART_SendData(USART2, data[i]);
         while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
             ;
     }
-    return;
 }
 
 void
-usart2_send_str(u8* Data) {
-    while (*Data) {
-        USART_SendData(USART2, *Data++);
+usart2_send_str(uint8_t* data) {
+    while (*data) {
+        USART_SendData(USART2, *data++);
         while (USART_GetFlagStatus(USART2, USART_FLAG_TXE) == RESET)
             ;
     }
-    return;
 }
 
 void
-usart3_send_byte(u8 Data) {
-    USART_SendData(USART3, Data);
-    return;
+usart3_send_byte(uint8_t data) {
+    USART_SendData(USART3, data);
+    while (USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET)
+        ;
 }
 
 void
-usart3_send_nbyte(u8* Data, u16 size) {
-    u16 i = 0;
-    for (i = 0; i < size; i++) {
-        USART_SendData(USART3, Data[i]);
+usart3_send_nbyte(uint8_t* data, uint16_t size) {
+    for (uint16_t i = 0; i < size; i++) {
+        USART_SendData(USART3, data[i]);
         while (USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET)
             ;
     }
-    return;
 }
 
 void
-usart3_send_str(u8* Data) {
-    while (*Data) {
-        USART_SendData(USART3, *Data++);
+usart3_send_str(uint8_t* data) {
+    while (*data) {
+        USART_SendData(USART3, *data++);
         while (USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET)
             ;
     }
-    return;
 }
