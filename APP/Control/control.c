@@ -37,6 +37,7 @@ void
 control(void) {
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == MESSAGE_MODE_SWITCH) {
         mode_switch();
+        bt_received_data.receive_data_flag = 0;
     }
     if (rgb_mode != RGB_MODE_OFF) {
         rgb_show();
