@@ -60,9 +60,10 @@ debug_test(void) {
     printf_("HELLO\r\n");
 
     while (1) {
-        control();
-        dlc_control();
-        status_handler();
+//        control();
+//        dlc_control();
+//        status_handler();
+        joystick_mode();
     }
 
     return 0;
@@ -92,10 +93,13 @@ void
 test_motor_pwm(void) {
     printf_("MOTOR TEST START\r\n");
     uint16_t tmp = 100;
-    TIM_SetCompare1(TIM1, tmp);
-    TIM_SetCompare2(TIM1, tmp);
-    TIM_SetCompare3(TIM1, tmp);
-    TIM_SetCompare4(TIM1, tmp);
+    Motion_State(ON);
+    forward(100);
+    backward(100);
+    Left_Turn(100);
+
+    Move(0, 0);
+
 }
 
 void

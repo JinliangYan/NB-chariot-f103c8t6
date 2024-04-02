@@ -54,25 +54,13 @@ mode_switch(void) {
         case CONTROL_MODE_JOYSTICK:
             joystick_mode();
             break;
-//        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
-        case CONTROL_MODE_EVADIBLE:
-            get_dis_and_avoid();
-            break;
-        case CONTROL_MODE_FOLLOW:
-            follow_mode();
-            break;
-        case CONTROL_MODE_RGB_MODE_OFF:
-            rgb_mode = RGB_MODE_OFF;
-            break;
-        case CONTROL_MODE_RGB_MODE_BREATHING:
-            rgb_mode = RGB_MODE_BREATHING;
-            break;
-        case CONTROL_MODE_RGB_MODE_RUNNING:
-            rgb_mode = RGB_MODE_RUNNING;
-            break;
-        case CONTROL_MODE_RGB_MODE_FLASHING:
-            rgb_mode = RGB_MODE_FLASHING;
-            break;
+            //        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
+        case CONTROL_MODE_EVADIBLE: get_dis_and_avoid(); break;
+        case CONTROL_MODE_FOLLOW: follow_mode(); break;
+        case CONTROL_MODE_RGB_MODE_OFF: rgb_mode = RGB_MODE_OFF; break;
+        case CONTROL_MODE_RGB_MODE_BREATHING: rgb_mode = RGB_MODE_BREATHING; break;
+        case CONTROL_MODE_RGB_MODE_RUNNING: rgb_mode = RGB_MODE_RUNNING; break;
+        case CONTROL_MODE_RGB_MODE_FLASHING: rgb_mode = RGB_MODE_FLASHING; break;
         default:
             // Handle default case if necessary
             break;
@@ -192,10 +180,10 @@ joystick_mode(void) {
     Map_Rx = Map(Joy_Rx, 10, 90, -127, 127);
     Map_Ry = Map(Joy_Ry, 10, 90, -127, 127);
 
-    pwm1 = -Map_Ly + Map_Lx - Map_Ry + Map_Rx;
-    pwm2 = -Map_Ly - Map_Lx - Map_Ry - Map_Rx;
-    pwm3 = -Map_Ly + Map_Lx - Map_Ry - Map_Rx;
-    pwm4 = -Map_Ly - Map_Lx - Map_Ry + Map_Rx;
+    pwm1 = -Map_Ly - Map_Lx - Map_Ry + Map_Rx;
+    pwm2 = -Map_Ly + Map_Lx - Map_Ry - Map_Rx;
+    pwm3 = -Map_Ly - Map_Lx - Map_Ry - Map_Rx;
+    pwm4 = -Map_Ly + Map_Lx - Map_Ry + Map_Rx;
 
     pwm1 = Map(pwm1, -127, 127, PWM_MIN, PWM_MAX);
     pwm2 = Map(pwm2, -127, 127, PWM_MIN, PWM_MAX);
@@ -307,10 +295,10 @@ joystick_mode(void) {
 //        pwm3 = -Map_pitch + Map_roll;
 //        pwm4 = -Map_pitch - Map_roll;
 //
-//        pwm1 = Map(pwm1, -127, 127, -499, 499);
-//        pwm2 = Map(pwm2, -127, 127, -499, 499);
-//        pwm3 = Map(pwm3, -127, 127, -499, 499);
-//        pwm4 = Map(pwm4, -127, 127, -499, 499);
+//        pwm1 = Map(pwm1, -127, 127, -PWM_MAX, PWM_MAX);
+//        pwm2 = Map(pwm2, -127, 127, -PWM_MAX, PWM_MAX);
+//        pwm3 = Map(pwm3, -127, 127, -PWM_MAX, PWM_MAX);
+//        pwm4 = Map(pwm4, -127, 127, -PWM_MAX, PWM_MAX);
 //
 //        pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 //
@@ -335,9 +323,6 @@ joystick_mode(void) {
  */
 static void
 pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4) {
-    L_STBY_ON;
-    R_STBY_ON;
-
     if (pwm1 < 20 && pwm1 > -20) {
         pwm1 = 0;
     }
@@ -351,65 +336,66 @@ pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4) {
         pwm4 = 0;
     }
 
-    if (pwm1 > 499) {
-        pwm1 = 499;
+    if (pwm1 > PWM_MAX) {
+        pwm1 = PWM_MAX;
     }
-    if (pwm2 > 499) {
-        pwm2 = 499;
+    if (pwm2 > PWM_MAX) {
+        pwm2 = PWM_MAX;
     }
-    if (pwm3 > 499) {
-        pwm3 = 499;
+    if (pwm3 > PWM_MAX) {
+        pwm3 = PWM_MAX;
     }
-    if (pwm4 > 499) {
-        pwm4 = 499;
+    if (pwm4 > PWM_MAX) {
+        pwm4 = PWM_MAX;
     }
 
-    if (pwm1 < -499) {
-        pwm1 = -499;
+    if (pwm1 < PWM_MIN) {
+        pwm1 = PWM_MIN;
     }
-    if (pwm2 < -499) {
-        pwm2 = -499;
+    if (pwm2 < PWM_MIN) {
+        pwm2 = PWM_MIN;
     }
-    if (pwm3 < -499) {
-        pwm3 = -499;
+    if (pwm3 < PWM_MIN) {
+        pwm3 = PWM_MIN;
     }
-    if (pwm4 < -499) {
-        pwm4 = -499;
+    if (pwm4 < PWM_MIN) {
+        pwm4 = PWM_MIN;
     }
 
     if (pwm1 >= 0) {
         TIM_SetCompare4(TIM1, pwm1); //L_BIN2:◊Û…œ¬÷
-        L_BIN2_OFF;
+        L_BIN2_ON;
+
     } else if (pwm1 < 0) {
         pwm1 = abs(pwm1);
         TIM_SetCompare4(TIM1, 500 - pwm1); //L_BIN2:◊Û…œ¬÷
-        L_BIN2_ON;
+        L_BIN2_OFF;
     }
 
     if (pwm2 >= 0) {
         TIM_SetCompare3(TIM1, 500 - pwm2); //L_AIN2:”“…œ¬÷
-        L_AIN2_ON;
+        L_AIN2_OFF;
     } else if (pwm2 < 0) {
         pwm2 = abs(pwm2);
         TIM_SetCompare3(TIM1, pwm2); //L_AIN2:”“…œ¬÷
-        L_AIN2_OFF;
+        L_AIN2_ON;
     }
 
     if (pwm3 >= 0) {
-        TIM_SetCompare1(TIM1, pwm3); //R_AIN2:”“œ¬¬÷
+        TIM_SetCompare1(TIM1, 500 - pwm3); //R_AIN2:”“œ¬¬÷
         R_AIN2_OFF;
     } else if (pwm3 < 0) {
         pwm3 = abs(pwm3);
-        TIM_SetCompare1(TIM1, 500 - pwm3); //R_AIN2:”“œ¬¬÷
+        TIM_SetCompare1(TIM1, pwm3); //R_AIN2:”“œ¬¬÷
         R_AIN2_ON;
     }
 
     if (pwm4 >= 0) {
-        TIM_SetCompare2(TIM1, 500 - pwm4); //R_BIN2:◊Ûœ¬¬÷
+        TIM_SetCompare2(TIM1, pwm4); //R_BIN2:◊Ûœ¬¬÷
         R_BIN2_ON;
     } else if (pwm4 < 0) {
         pwm4 = abs(pwm4);
-        TIM_SetCompare2(TIM1, pwm4); //R_BIN2:◊Ûœ¬¬÷
+        TIM_SetCompare2(TIM1, 500 - pwm4); //R_BIN2:◊Ûœ¬¬÷
         R_BIN2_OFF;
     }
 }

@@ -41,7 +41,7 @@ pwm1_init(u32 arr, u32 psc) {
     TIM_OC3Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC3
     TIM_OC3PreloadConfig(TIM1, TIM_OCPreload_Enable);             //使能TIM1在CCR2上的预装载寄存器
 
-    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;             //选择定时器模式:TIM脉冲宽度调制模式1
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM2;             //选择定时器模式:TIM脉冲宽度调制模式1
     TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable; //比较输出使能
     TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;     //输出极性:TIM输出比较极性高
     TIM_OC4Init(TIM1, &TIM_OCInitStructure);                      //初始化外设TIM1 OC4
