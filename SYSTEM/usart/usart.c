@@ -1,6 +1,7 @@
 #include "usart.h"
 #include "blt.h"
 #include "mode.h"
+#include "slaver.h"
 #include "string.h"
 #include "sys.h"
 
@@ -8,10 +9,9 @@
 
 typedef enum { NONE, START, TYPE_COMMON, TYPE_AT, MESSAGE, FINISH } receive_state_t;
 
-receive_state_t next_state = FINISH;
-
 bt_received_data_t bt_received_data;
 weapon_received_data_t weapon_received_data;
+slaver_received_data_t slaver_received_data;
 
 
 /**************************************************
@@ -165,20 +165,21 @@ usart3_init(uint32_t bound) {
 __attribute__((unused)) void
 USART1_IRQHandler(void) {
     uint8_t temp;
+    static receive_state_t next_state = FINISH;
     static uint8_t idx = 0;
-    static uint8_t temp_buf1[BT_BUFF_SIZE];
+    static uint8_t temp_buf1[BUFF_SIZE];
 
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
         temp = USART_ReceiveData(USART1);
 
         /* 接收到起始位 */
         if (temp == PACKAGE_START_FLAG) {
-            clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
+            bt_clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
             next_state = TYPE_COMMON;
             return;
         }
         if (temp == PACKAGE_AT_FLAG) {
-            clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
+            bt_clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
             bt_received_data.message_type = BT_MESSAGE_AT_COMMAND;
             next_state = TYPE_AT;
             return;
@@ -268,6 +269,58 @@ USART2_IRQHandler(void) {
     }
 }
 
+/**
+ * \brief 处理从板发送的数据
+ */
+__attribute__((unused)) void
+USART3_IRQHandler(void) {
+    uint8_t temp;
+    static receive_state_t next_state = FINISH;
+    static uint8_t idx = 0;
+    static uint8_t temp_buf1[BUFF_SIZE];
+
+    if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
+        temp = USART_ReceiveData(USART3);
+
+        /* 接收到起始位 */
+        if (temp == PACKAGE_START_FLAG) {
+            slaver_clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
+            next_state = TYPE_COMMON;
+            return;
+        }
+
+        /* 接收消息类型 */
+        if (next_state == TYPE_COMMON) {
+            /* 匹配消息类型 */
+            switch (temp) {
+                case 'V': slaver_received_data.message_type = SLAVER_MESSAGE_VIDEO; break;
+                default: break;
+            }
+            next_state = MESSAGE;
+            return;
+        }
+
+        /* 接收到终止位 */
+        if (temp == PACKAGE_END_FLAG) {
+            slaver_received_data.receive_data_flag = 1;
+            next_state = START;
+            strcpy((char *)bt_received_data.uart_buff, (char *)temp_buf1);
+            slaver_received_data.datanum = idx;
+            slaver_received_data.receive_data_flag = 1;
+            idx = 0;
+            return;
+        }
+
+        if (next_state != MESSAGE) {
+            next_state = NONE;
+            return;
+        }
+
+        /* 接收消息内容 */
+        temp_buf1[idx++] = temp;
+    }
+}
+
 /*************************串口发送函数*************************************/
 
 void
@@ -337,7 +390,7 @@ usart3_send_nbyte(uint8_t* data, uint16_t size) {
 }
 
 void
-usart3_send_str(uint8_t* data) {
+usart3_send_str(char* data) {
     while (*data) {
         USART_SendData(USART3, *data++);
         while (USART_GetFlagStatus(USART3, USART_FLAG_TXE) == RESET)

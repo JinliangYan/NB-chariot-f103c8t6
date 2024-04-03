@@ -6,7 +6,7 @@
 /**
  * \brief   蓝牙串口接收缓冲区大小
  */
-#define BT_BUFF_SIZE 1024
+#define BUFF_SIZE 1024
 
 /**
  * \brief   蓝牙接收消息类型
@@ -23,12 +23,17 @@ typedef enum {
     BT_MESSAGE_AT_COMMAND       /*!< AT指令回复 */
 } bt_receiving_message_type_t;
 
+typedef enum {
+    SLAVER_MESSAGE_NONE,
+    SLAVER_MESSAGE_VIDEO,
+} slaver_board_message_type_t;
+
 /**
  * \brief   存储蓝牙接收数据
  */
 typedef struct {
     volatile uint16_t datanum;             /*!< 数据字节数 */
-    uint8_t uart_buff[BT_BUFF_SIZE];     /*!< 数据缓冲区 */
+    uint8_t uart_buff[BUFF_SIZE];     /*!< 数据缓冲区 */
     uint8_t receive_data_flag;             /*!< 接收完成标志位 */
     bt_receiving_message_type_t message_type; /*!< 消息类型 */
 } bt_received_data_t;
@@ -38,12 +43,23 @@ typedef struct {
  */
 typedef struct {
     volatile uint16_t datanum;         /*!< 数据字节数 */
-    uint8_t uart_buff[BT_BUFF_SIZE]; /*!< 数据缓冲区 */
+    uint8_t uart_buff[BUFF_SIZE]; /*!< 数据缓冲区 */
     uint8_t receive_data_flag;         /*!< 接收完成标志位 */
 } weapon_received_data_t;
 
+/**
+ * \brief   从板接收数据缓冲区
+ */
+typedef struct {
+    volatile uint16_t datanum;         /*!< 数据字节数 */
+    uint8_t uart_buff[BUFF_SIZE]; /*!< 数据缓冲区 */
+    uint8_t receive_data_flag;         /*!< 接收完成标志位 */
+    slaver_board_message_type_t message_type; /*!< 消息类型 */
+} slaver_received_data_t;
+
 extern bt_received_data_t bt_received_data;
 extern weapon_received_data_t weapon_received_data;
+extern slaver_received_data_t slaver_received_data;
 
 
 void usart_send_byte(USART_TypeDef* USARTx, uint16_t data);
@@ -62,6 +78,6 @@ void usart2_send_str(uint8_t* data);
 
 void usart3_send_byte(uint8_t data);
 void usart3_send_nbyte(uint8_t* data, uint16_t size);
-void usart3_send_str(uint8_t* data);
+void usart3_send_str(char* data);
 
 #endif

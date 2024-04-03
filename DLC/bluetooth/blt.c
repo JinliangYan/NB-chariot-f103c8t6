@@ -97,7 +97,7 @@ bt_send_atcmd_with_check(char* cmd, uint8_t clean) {
                     printf_("recv back: %s\r\n", redata);
 
                     if (clean == 1) {
-                        clean_rebuff();
+                        bt_clean_rebuff();
                     }
 
                     return 0; //AT指令成功
@@ -117,7 +117,7 @@ bt_send_atcmd_with_check(char* cmd, uint8_t clean) {
     printf_("BT send CMD fail \r\n");
 
     if (clean == 1) {
-        clean_rebuff();
+        bt_clean_rebuff();
     }
 
     return 1; //AT指令失败
@@ -156,7 +156,7 @@ bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms) //Debug
         if (strstr(redata, "OK")) {
 
             if (clean == 1) {
-                clean_rebuff();
+                bt_clean_rebuff();
             }
             return 0; //AT指令成功
         }
@@ -165,15 +165,15 @@ bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms) //Debug
     printf_("BT send CMD fail \r\n");
 
     if (clean == 1) {
-        clean_rebuff();
+        bt_clean_rebuff();
     }
 
     return 1; //AT指令失败
 }
 
 void
-clean_rebuff(void) {
-    uint16_t i = BT_BUFF_SIZE + 1;
+bt_clean_rebuff(void) {
+    uint16_t i = BUFF_SIZE + 1;
     bt_received_data.datanum = 0;
     bt_received_data.receive_data_flag = 0;
     bt_received_data.message_type = BT_MESSAGE_NONE;

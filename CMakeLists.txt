@@ -25,6 +25,7 @@ set(cpu_PARAMS)
 
 # Sources
 set(sources_SRCS
+        DLC/slaver/slaver.c
         DLC/electromagnet/electromagnet.c
         DLC/bluetooth/blt.c
         HARDWARE/TIM/timer.c
@@ -38,6 +39,7 @@ set(sources_SRCS
 # Include directories for all compilers
 set(include_DIRS
         DLC
+        DLC/slaver
         DLC/electromagnet
         DLC/status
         DLC/defence

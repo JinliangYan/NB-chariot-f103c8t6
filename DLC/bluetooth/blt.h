@@ -57,7 +57,7 @@ uint8_t bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms); //D
 uint8_t bt_reset(void);
 void bt_send_atcmd(const char* command, const char* arg);
 void bt_send_str(char* str);
-void clean_rebuff(void);
+void bt_clean_rebuff(void);
 int get_line(char* line, char* stream, size_t max_size);
 
 #endif /* _HC05_H */

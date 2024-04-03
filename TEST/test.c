@@ -40,6 +40,7 @@
 #include "printf.h"
 #include "stm32f10x.h"
 #include "ws2812b.h"
+#include "hcsr.h"
 
 void base_init(void);
 void test_bt(void);
@@ -48,14 +49,15 @@ void test_motor_pwm(void);
 void test_usart1(void);
 void test_remap(void);
 void test(void);
+void test_hcsr();
 
 void pin_remap(void);
 
 int
 debug_test(void) {
     pin_remap();
-    base_init();
-    dlc_init();
+//    base_init();
+//    dlc_init();
     test();
     printf_("HELLO\r\n");
 
@@ -72,10 +74,11 @@ debug_test(void) {
 void
 test(void) {
 //    test_bt();
-    test_motor_pwm();
+//    test_motor_pwm();
 //    test_usart1();
 //    test_weapon();
 //    test_remap();
+    test_hcsr();
 }
 
 void
@@ -136,4 +139,11 @@ test_remap(void) {
     delay_ms(1000);
     PBout(4) = 1;
     delay_ms(1000);
+}
+
+void
+test_hcsr() {
+    delay_init();
+    Hcsr04_Init();
+    Hcsr04_Text();
 }
