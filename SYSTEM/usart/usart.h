@@ -6,31 +6,31 @@
 /**
  * \brief   蓝牙串口接收缓冲区大小
  */
-#define UART_BUFF_SIZE      1024
+#define BT_BUFF_SIZE 1024
 
 /**
  * \brief   蓝牙接收消息类型
 */
 typedef enum {
-    MESSAGE_NONE,            /*!< 默认值 */
-    MESSAGE_MODE_SWITCH,     /*!< 模式切换命令 */
-    MESSAGE_LEFT_JOYSTICK,   /*!< 左摇杆数据 */
-    MESSAGE_RIGHT_JOYSTICK,  /*!< 右摇杆数据 */
-    MESSAGE_WEAPON_JOYSTICK, /*!< 武器摇杆数据 */
-    MESSAGE_WEAPON_ATTACK,   /*!< 武器攻击命令 */
-    MESSAGE_WEAPON_SKILL,    /*!< 武器技能释放命令 */
-    MESSAGE_TEXT,            /*!< 文本数据 */
-    MESSAGE_AT_COMMAND       /*!< AT指令回复 */
-} receiving_message_type_t;
+    BT_MESSAGE_NONE,            /*!< 默认值 */
+    BT_MESSAGE_MODE_SWITCH,     /*!< 模式切换命令 */
+    BT_MESSAGE_LEFT_JOYSTICK,   /*!< 左摇杆数据 */
+    BT_MESSAGE_RIGHT_JOYSTICK,  /*!< 右摇杆数据 */
+    BT_MESSAGE_WEAPON_JOYSTICK, /*!< 武器摇杆数据 */
+    BT_MESSAGE_WEAPON_ATTACK,   /*!< 武器攻击命令 */
+    BT_MESSAGE_WEAPON_SKILL,    /*!< 武器技能释放命令 */
+    BT_MESSAGE_TEXT,            /*!< 文本数据 */
+    BT_MESSAGE_AT_COMMAND       /*!< AT指令回复 */
+} bt_receiving_message_type_t;
 
 /**
  * \brief   存储蓝牙接收数据
  */
 typedef struct {
     volatile uint16_t datanum;             /*!< 数据字节数 */
-    uint8_t uart_buff[UART_BUFF_SIZE];     /*!< 数据缓冲区 */
+    uint8_t uart_buff[BT_BUFF_SIZE];     /*!< 数据缓冲区 */
     uint8_t receive_data_flag;             /*!< 接收完成标志位 */
-    receiving_message_type_t message_type; /*!< 消息类型 */
+    bt_receiving_message_type_t message_type; /*!< 消息类型 */
 } bt_received_data_t;
 
 /**
@@ -38,7 +38,7 @@ typedef struct {
  */
 typedef struct {
     volatile uint16_t datanum;         /*!< 数据字节数 */
-    uint8_t uart_buff[UART_BUFF_SIZE]; /*!< 数据缓冲区 */
+    uint8_t uart_buff[BT_BUFF_SIZE]; /*!< 数据缓冲区 */
     uint8_t receive_data_flag;         /*!< 接收完成标志位 */
 } weapon_received_data_t;
 

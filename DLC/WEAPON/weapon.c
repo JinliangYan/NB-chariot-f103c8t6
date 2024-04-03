@@ -151,11 +151,11 @@ bt_received_data_handler(void) {
         return;
     }
 
-    if (bt_received_data.message_type == MESSAGE_WEAPON_JOYSTICK) {
+    if (bt_received_data.message_type == BT_MESSAGE_WEAPON_JOYSTICK) {
         weapon_steering();
-    } else if (bt_received_data.message_type == MESSAGE_WEAPON_ATTACK) {
+    } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_ATTACK) {
         weapon_attack();
-    } else if (bt_received_data.message_type == MESSAGE_WEAPON_SKILL) {
+    } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_SKILL) {
         weapon_activate_skill();
     }
     bt_received_data.receive_data_flag = 0;

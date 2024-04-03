@@ -35,7 +35,7 @@ rgb_mode_t rgb_mode = RGB_MODE_OFF;
 */
 void
 control(void) {
-    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == MESSAGE_MODE_SWITCH) {
+    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_MODE_SWITCH) {
         mode_switch();
         bt_received_data.receive_data_flag = 0;
     }
@@ -158,19 +158,19 @@ rgb_show(void) {
  */
 void
 joystick_mode(void) {
-    if (get_dis_and_avoid() <= 15) {
-        return; /* ±ÜÕÏ */
-    }
+    //    if (get_dis_and_avoid() <= 15) {
+    //        return; /* ±ÜÕÏ */
+    //    }
 
     int Joy_Lx = 50, Joy_Ly = 50, Joy_Rx = 50, Joy_Ry = 50;
     int Map_Lx, Map_Ly, Map_Rx, Map_Ry;
     int pwm1, pwm2, pwm3, pwm4;
 
-    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == MESSAGE_LEFT_JOYSTICK) {
+    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_LEFT_JOYSTICK) {
         Joy_Lx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
         Joy_Ly = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
     }
-    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == MESSAGE_RIGHT_JOYSTICK) {
+    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_RIGHT_JOYSTICK) {
         Joy_Rx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
         Joy_Ry = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
     }

@@ -166,7 +166,7 @@ __attribute__((unused)) void
 USART1_IRQHandler(void) {
     uint8_t temp;
     static uint8_t idx = 0;
-    static uint8_t temp_buf1[UART_BUFF_SIZE];
+    static uint8_t temp_buf1[BT_BUFF_SIZE];
 
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
         temp = USART_ReceiveData(USART1);
@@ -179,7 +179,7 @@ USART1_IRQHandler(void) {
         }
         if (temp == PACKAGE_AT_FLAG) {
             clean_rebuff(); /* 清空接收缓冲区, 准备接收 */
-            bt_received_data.message_type = MESSAGE_AT_COMMAND;
+            bt_received_data.message_type = BT_MESSAGE_AT_COMMAND;
             next_state = TYPE_AT;
             return;
         }
@@ -189,25 +189,25 @@ USART1_IRQHandler(void) {
             /* 匹配消息类型 */
             switch (temp) {
                 case 'L':
-                    bt_received_data.message_type = MESSAGE_LEFT_JOYSTICK;
+                    bt_received_data.message_type = BT_MESSAGE_LEFT_JOYSTICK;
                     break;
                 case 'R':
-                    bt_received_data.message_type = MESSAGE_RIGHT_JOYSTICK;
+                    bt_received_data.message_type = BT_MESSAGE_RIGHT_JOYSTICK;
                     break;
                 case 'W':
-                    bt_received_data.message_type = MESSAGE_WEAPON_JOYSTICK;
+                    bt_received_data.message_type = BT_MESSAGE_WEAPON_JOYSTICK;
                     break;
                 case 'A':
-                    bt_received_data.message_type = MESSAGE_WEAPON_ATTACK;
+                    bt_received_data.message_type = BT_MESSAGE_WEAPON_ATTACK;
                     break;
                 case 'S':
-                    bt_received_data.message_type = MESSAGE_WEAPON_SKILL;
+                    bt_received_data.message_type = BT_MESSAGE_WEAPON_SKILL;
                     break;
                 case 'T':
-                    bt_received_data.message_type = MESSAGE_TEXT;
+                    bt_received_data.message_type = BT_MESSAGE_TEXT;
                     break;
                 case 'M':
-                    bt_received_data.message_type = MESSAGE_MODE_SWITCH;
+                    bt_received_data.message_type = BT_MESSAGE_MODE_SWITCH;
                     break;
                 default: break;
             }
@@ -216,7 +216,7 @@ USART1_IRQHandler(void) {
         }
 
         /* AT接收 */
-        if (bt_received_data.message_type == MESSAGE_AT_COMMAND) {
+        if (bt_received_data.message_type == BT_MESSAGE_AT_COMMAND) {
             /* 过滤0 */
             if (temp == 0) {
                 return;

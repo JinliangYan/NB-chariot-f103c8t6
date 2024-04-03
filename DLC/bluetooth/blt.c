@@ -173,10 +173,10 @@ bt_send_atcmd_with_wait(char* cmd, uint8_t clean, uint32_t delayms) //Debug
 
 void
 clean_rebuff(void) {
-    uint16_t i = UART_BUFF_SIZE + 1;
+    uint16_t i = BT_BUFF_SIZE + 1;
     bt_received_data.datanum = 0;
     bt_received_data.receive_data_flag = 0;
-    bt_received_data.message_type = MESSAGE_NONE;
+    bt_received_data.message_type = BT_MESSAGE_NONE;
     while (i) {
         bt_received_data.uart_buff[--i] = 0;
     }
