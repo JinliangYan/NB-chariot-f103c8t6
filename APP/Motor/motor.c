@@ -68,7 +68,7 @@ Motor_Init(void) {
     Motor_PWM_Init(500, 72);
     Motor_GPIO_Init();
     STBY_Init();
-    Motion_State(ON); //关闭电机驱动失能
+    motor_state(1);
 }
 
 /**************************************************
@@ -120,13 +120,13 @@ backward(u16 speed) {
 }
 
 /**************************************************
-函数名称：Left_Turn(u16 speed)
+函数名称：motor_turn_left(u16 speed)
 函数功能：小车左转
 入口参数：speed  0-500
 返回参数：无
 ***************************************************/
 void
-Left_Turn(u16 speed) {
+motor_turn_left(u16 speed) {
     L_STBY_ON;
     R_STBY_ON;
 
@@ -144,13 +144,13 @@ Left_Turn(u16 speed) {
 }
 
 /**************************************************
-函数名称：Right_Turn(u16 speed)
+函数名称：motor_turn_right(u16 speed)
 函数功能：小车右转
 入口参数：speed  0-500
 返回参数：无
 ***************************************************/
 void
-Right_Turn(u16 speed) {
+motor_turn_right(u16 speed) {
     L_STBY_ON;
     R_STBY_ON;
 
@@ -276,29 +276,34 @@ Move(u16 Dir, u16 speed) {
 }
 
 /**************************************************
-函数名称：Motion_State(u16 mode)
+函数名称：motor_state(u16 on)
 函数功能：小车关闭及打开
-入口参数：mode (ON OFF)
+入口参数：1(ON), 2(OFF)
 返回参数：无
 ***************************************************/
 void
-Motion_State(u16 mode) {
-    if (mode == ON) {
+motor_state(u16 on) {
+    if (on == 1) {
+        motor_reset();
         L_STBY_ON;
         R_STBY_ON;
-        TIM_SetCompare1(TIM1, 0); //R_AIN2:右下
-        R_AIN2_ON;
-
-        TIM_SetCompare2(TIM1, 500); //R_BIN2:左下
-        R_BIN2_OFF;
-
-        TIM_SetCompare3(TIM1, 0); //L_AIN2:右上
-        L_AIN2_ON;
-
-        TIM_SetCompare4(TIM1, 500); //L_BIN2:左上
-        L_BIN2_OFF;
-    } else if (mode == OFF) {
+    } else if (on == 0) {
         L_STBY_OFF;
         R_STBY_OFF;
     }
+}
+
+void
+motor_reset(void) {
+    TIM_SetCompare1(TIM1, 0); //R_AIN2:右下
+    R_AIN2_ON;
+
+    TIM_SetCompare2(TIM1, 500); //R_BIN2:左下
+    R_BIN2_OFF;
+
+    TIM_SetCompare3(TIM1, 0); //L_AIN2:右上
+    L_AIN2_ON;
+
+    TIM_SetCompare4(TIM1, 500); //L_BIN2:左上
+    L_BIN2_OFF;
 }

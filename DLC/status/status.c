@@ -79,7 +79,7 @@ static void
 chariot_hp_handler(void) {
     if (chariot_status.chariot_hp <= 0) {
         // TODO 游戏结束, 收尾任务, 待完善
-        Motion_State(OFF);
+        motor_state(0);
         exit(0);
     }
 }

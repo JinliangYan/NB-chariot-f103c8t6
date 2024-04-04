@@ -30,14 +30,10 @@ extern float RGB_R, RGB_G, RGB_B;
 */
 extern char Pitch_Roll_Buf[20];
 
-void joystick_mode(void);
-void gravity_mode(void);
-
+void movement_control(void);
 void mode_switch(void);
-float get_dis_and_avoid(void);
-void gravity_mode(void);
+void avoid(void);
 void follow_mode(void);
-void rgb_select(void);
 void rgb_show(void);
 void control(void);
 

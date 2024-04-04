@@ -42,7 +42,7 @@ control(void) {
     if (rgb_mode != RGB_MODE_OFF) {
         rgb_show();
     }
-    joystick_mode();
+    movement_control();
 }
 
 /**
@@ -52,15 +52,27 @@ void
 mode_switch(void) {
     switch (control_mode) {
         case CONTROL_MODE_JOYSTICK:
-            joystick_mode();
+            movement_control();
             break;
             //        case CONTROL_MODE_GRAVITY: gravity_mode(); break;
-        case CONTROL_MODE_EVADIBLE: get_dis_and_avoid(); break;
-        case CONTROL_MODE_FOLLOW: follow_mode(); break;
-        case CONTROL_MODE_RGB_MODE_OFF: rgb_mode = RGB_MODE_OFF; break;
-        case CONTROL_MODE_RGB_MODE_BREATHING: rgb_mode = RGB_MODE_BREATHING; break;
-        case CONTROL_MODE_RGB_MODE_RUNNING: rgb_mode = RGB_MODE_RUNNING; break;
-        case CONTROL_MODE_RGB_MODE_FLASHING: rgb_mode = RGB_MODE_FLASHING; break;
+        case CONTROL_MODE_EVADIBLE:
+            avoid();
+            break;
+        case CONTROL_MODE_FOLLOW:
+            follow_mode();
+            break;
+        case CONTROL_MODE_RGB_MODE_OFF:
+            rgb_mode = RGB_MODE_OFF;
+            break;
+        case CONTROL_MODE_RGB_MODE_BREATHING:
+            rgb_mode = RGB_MODE_BREATHING;
+            break;
+        case CONTROL_MODE_RGB_MODE_RUNNING:
+            rgb_mode = RGB_MODE_RUNNING;
+            break;
+        case CONTROL_MODE_RGB_MODE_FLASHING:
+            rgb_mode = RGB_MODE_FLASHING;
+            break;
         default:
             // Handle default case if necessary
             break;
@@ -70,17 +82,14 @@ mode_switch(void) {
 /**
  * \brief           Function for implementing evadible mode
  */
-float
-get_dis_and_avoid(void) {
-    float Dis;
-    Dis = Hcsr04GetLength();
-    if (Dis <= 15) {
-        //        Motion_State(OFF);
-        backward(0);
-        Left_Turn(200);
-        delay_ms(400);
-    }
-    return Dis;
+void
+avoid(void) {
+    float dis;
+    do {
+        dis = Hcsr04GetLength();
+        motor_turn_left(PWM_MAX);
+    } while (dis <= 15);
+    motor_reset();
 }
 
 /**
@@ -95,7 +104,7 @@ follow_mode(void) {
     } else if (Dis <= 30 && Dis >= 20) {
         forward(200);
     } else {
-        Motion_State(ON);
+        motor_state(1);
     }
 }
 
@@ -154,45 +163,50 @@ rgb_show(void) {
 }
 
 /**
- * \brief           Joystick mode control function
+ * \brief           Movement control function
  */
 void
-joystick_mode(void) {
-    //    if (get_dis_and_avoid() <= 15) {
-    //        return; /* ±ÜÕÏ */
-    //    }
-
+movement_control(void) {
+    avoid();
     int Joy_Lx = 50, Joy_Ly = 50, Joy_Rx = 50, Joy_Ry = 50;
-    int Map_Lx, Map_Ly, Map_Rx, Map_Ry;
+    int Map_Lx, Map_Ly;
     int pwm1, pwm2, pwm3, pwm4;
 
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_LEFT_JOYSTICK) {
         Joy_Lx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
         Joy_Ly = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
+
+        Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
+        Map_Ly = Map(Joy_Ly, 10, 90, -127, 127);
+
+        pwm1 = -Map_Ly - Map_Lx;
+        pwm2 = -Map_Ly + Map_Lx;
+        pwm3 = -Map_Ly - Map_Lx;
+        pwm4 = -Map_Ly + Map_Lx;
+
+        pwm1 = Map(pwm1, -127, 127, PWM_MIN, PWM_MAX);
+        pwm2 = Map(pwm2, -127, 127, PWM_MIN, PWM_MAX);
+        pwm3 = Map(pwm3, -127, 127, PWM_MIN, PWM_MAX);
+        pwm4 = Map(pwm4, -127, 127, PWM_MIN, PWM_MAX);
+
+        pwm_data_process(pwm1, pwm2, pwm3, pwm4);
+
+        bt_received_data.receive_data_flag = 0;
+
+        delay_ms(10);
     }
-    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_RIGHT_JOYSTICK) {
-        Joy_Rx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
-        Joy_Ry = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
+
+    if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_TURN) {
+        if (bt_received_data.uart_buff[0] == 'L') {
+            motor_turn_left(PWM_MAX);
+        } else if (bt_received_data.uart_buff[0] == 'R') {
+            motor_turn_right(PWM_MAX);
+        }
+
+        bt_received_data.receive_data_flag = 0;
+
+        delay_ms(10);
     }
-
-    Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
-    Map_Ly = Map(Joy_Ly, 10, 90, -127, 127);
-    Map_Rx = Map(Joy_Rx, 10, 90, -127, 127);
-    Map_Ry = Map(Joy_Ry, 10, 90, -127, 127);
-
-    pwm1 = -Map_Ly - Map_Lx - Map_Ry + Map_Rx;
-    pwm2 = -Map_Ly + Map_Lx - Map_Ry - Map_Rx;
-    pwm3 = -Map_Ly - Map_Lx - Map_Ry - Map_Rx;
-    pwm4 = -Map_Ly + Map_Lx - Map_Ry + Map_Rx;
-
-    pwm1 = Map(pwm1, -127, 127, PWM_MIN, PWM_MAX);
-    pwm2 = Map(pwm2, -127, 127, PWM_MIN, PWM_MAX);
-    pwm3 = Map(pwm3, -127, 127, PWM_MIN, PWM_MAX);
-    pwm4 = Map(pwm4, -127, 127, PWM_MIN, PWM_MAX);
-
-    pwm_data_process(pwm1, pwm2, pwm3, pwm4);
-
-    delay_ms(10);
 }
 
 /**

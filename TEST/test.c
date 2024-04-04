@@ -65,7 +65,7 @@ debug_test(void) {
 //        control();
 //        dlc_control();
 //        status_handler();
-        joystick_mode();
+        movement_control();
     }
 
     return 0;
@@ -96,10 +96,10 @@ void
 test_motor_pwm(void) {
     printf_("MOTOR TEST START\r\n");
     uint16_t tmp = 100;
-    Motion_State(ON);
+    motor_state(1);
     forward(100);
     backward(100);
-    Left_Turn(100);
+    motor_turn_left(100);
 
     Move(0, 0);
 

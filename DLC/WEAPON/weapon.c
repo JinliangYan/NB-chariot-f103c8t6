@@ -102,7 +102,7 @@ static weapon_t weapon;
 static weapon_skill_t weapon_skill;
 
 static void weapon_steering(void);
-static void weapon_attack(void);
+static void weapon_attack(uint8_t charged);
 static void clear_attacker(void);
 static uint8_t weapon_activate_skill(void);
 static void bt_received_data_handler(void);
@@ -150,12 +150,15 @@ bt_received_data_handler(void) {
     if (bt_received_data.receive_data_flag == 0) {
         return;
     }
-
     if (bt_received_data.message_type == BT_MESSAGE_WEAPON_JOYSTICK) {
         weapon_steering();
         bt_received_data.receive_data_flag = 0;
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_ATTACK) {
-        weapon_attack();
+        if (bt_received_data.uart_buff[0] == 'N') {
+            weapon_attack(0);
+        } else if (bt_received_data.uart_buff[0] == 'C') {
+            weapon_attack(1);
+        }
         bt_received_data.receive_data_flag = 0;
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_SKILL) {
         weapon_activate_skill();
@@ -186,12 +189,12 @@ weapon_received_data_handler(void) {
 }
 
 /**
- * \brief ¹¥»÷
- * TODO ÉËº¦Öµ¼ÆËã
+ * \brief: ¹¥»÷
+ * \param charged[in]: ÊÇ(1)·ñ(0)ÐîÁ¦
  */
 static void
-weapon_attack(void) {
-    ir_emission(CHARIOT_ID, 0, weapon.power);
+weapon_attack(uint8_t charged) {
+    ir_emission(CHARIOT_ID, 0, charged ? (uint8_t)(weapon.power * 1.5) : weapon.power);
 }
 
 /**

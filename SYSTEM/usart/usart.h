@@ -15,11 +15,10 @@ typedef enum {
     BT_MESSAGE_NONE,            /*!< 默认值 */
     BT_MESSAGE_MODE_SWITCH,     /*!< 模式切换命令 */
     BT_MESSAGE_LEFT_JOYSTICK,   /*!< 左摇杆数据 */
-    BT_MESSAGE_RIGHT_JOYSTICK,  /*!< 右摇杆数据 */
+    BT_MESSAGE_TURN,            /*!< 转向数据 */
     BT_MESSAGE_WEAPON_JOYSTICK, /*!< 武器摇杆数据 */
     BT_MESSAGE_WEAPON_ATTACK,   /*!< 武器攻击命令 */
     BT_MESSAGE_WEAPON_SKILL,    /*!< 武器技能释放命令 */
-    BT_MESSAGE_TEXT,            /*!< 文本数据 */
     BT_MESSAGE_AT_COMMAND       /*!< AT指令回复 */
 } bt_receiving_message_type_t;
 

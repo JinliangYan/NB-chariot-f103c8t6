@@ -192,8 +192,8 @@ USART1_IRQHandler(void) {
                 case 'L':
                     bt_received_data.message_type = BT_MESSAGE_LEFT_JOYSTICK;
                     break;
-                case 'R':
-                    bt_received_data.message_type = BT_MESSAGE_RIGHT_JOYSTICK;
+                case 'T':
+                    bt_received_data.message_type = BT_MESSAGE_TURN;
                     break;
                 case 'W':
                     bt_received_data.message_type = BT_MESSAGE_WEAPON_JOYSTICK;
@@ -203,9 +203,6 @@ USART1_IRQHandler(void) {
                     break;
                 case 'S':
                     bt_received_data.message_type = BT_MESSAGE_WEAPON_SKILL;
-                    break;
-                case 'T':
-                    bt_received_data.message_type = BT_MESSAGE_TEXT;
                     break;
                 case 'M':
                     bt_received_data.message_type = BT_MESSAGE_MODE_SWITCH;
@@ -293,7 +290,9 @@ USART3_IRQHandler(void) {
         if (next_state == TYPE_COMMON) {
             /* 匹配消息类型 */
             switch (temp) {
-                case 'V': slaver_received_data.message_type = SLAVER_MESSAGE_VIDEO; break;
+                case 'V':
+                    slaver_received_data.message_type = SLAVER_MESSAGE_VIDEO;
+                    break;
                 default: break;
             }
             next_state = MESSAGE;
