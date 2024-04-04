@@ -42,6 +42,7 @@
 #include "status.h"
 #include "stm32f10x.h"
 #include "weapon.h"
+#include "slaver.h"
 
 #ifdef __cplusplus
 extern "C" {

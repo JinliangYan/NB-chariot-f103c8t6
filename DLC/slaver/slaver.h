@@ -42,6 +42,9 @@ extern "C" {
 #endif /* __cplusplus */
 
 void slaver_init(void);
+void slaver_video_start(void);
+void slaver_video_restart(void);
+void slaver_video_disconnect(void);
 void slaver_clean_rebuff(void);
 
 #ifdef __cplusplus

@@ -37,14 +37,76 @@
 #include "usart.h"
 
 #define SLAVER_BAUD_RATE 9600
+#define SSID             ""
+#define PASSWORD         ""
+#define TIME_OUT         strstr(message, "Connect_TimeOut")
+
+static char message[1024];
+static void slaver_video_wifi_config_connect(const char* ssid, const char* pwd);
+static void slaver_video_quick_connect(void);
+static void get_video_message(void);
 
 void
 slaver_init(void) {
     usart3_init(SLAVER_BAUD_RATE);
-    usart3_send_str("$VSTART*");
-    while (slaver_received_data.receive_data_flag == 0 && strcmp((char*)slaver_received_data.uart_buff, "READY") != 0) {
-        // µÈ´ý»ØÓ¦
+    slaver_video_start();
+
+    slaver_video_wifi_config_connect(SSID, PASSWORD);
+}
+
+void
+slaver_video_start(void) {
+    usart3_send_str("$VStart*");
+    do {
+        get_video_message();
+    } while (!strstr(message, "READY"));
+}
+
+void
+slaver_video_restart(void) {
+    usart3_send_str("VRestart*");
+    do {
+        get_video_message();
+    } while (!strstr(message, "READY"));
+}
+
+void
+slaver_video_disconnect(void) {
+    usart3_send_str("$VDisconnect*");
+    do {
+        get_video_message();
+    } while (!strstr(message, "Disconnect_Finish"));
+}
+
+static void
+slaver_video_wifi_config_connect(const char* ssid, const char* pwd) {
+    char command[1024];
+    usart3_send_str("$VWificonfig*");
+    sprintf(command, "$V%sP%s\n", ssid, pwd);
+    usart3_send_str(command);
+    do {
+        get_video_message();
+    } while (!strstr(message, "Connect_OK") || TIME_OUT);
+    do {
+        get_video_message();
+    } while (!strstr(message, "Wificonfig_Finish"));
+}
+
+static void
+slaver_video_quick_connect(void) {
+    usart3_send_str("$VQuickconnect*");
+    do {
+        get_video_message();
+    } while (!strstr(message, "Quickconnect_Finish") || TIME_OUT);
+}
+
+static void
+get_video_message(void) {
+    while (slaver_received_data.receive_data_flag == 0 && slaver_received_data.message_type != SLAVER_MESSAGE_VIDEO) {
+        ;
     }
+    strcpy(message, (char*)slaver_received_data.uart_buff);
+    slaver_received_data.receive_data_flag = 0;
 }
 
 void
