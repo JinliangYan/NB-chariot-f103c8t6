@@ -1,7 +1,7 @@
 /**
  * \file            test.c
  * \date            3/10/2024
- * \brief           
+ * \brief
  */
 
 /*
@@ -56,8 +56,8 @@ void pin_remap(void);
 int
 debug_test(void) {
     pin_remap();
-//    base_init();
-//    dlc_init();
+    base_init();
+    dlc_init();
     test();
     printf_("HELLO\r\n");
 
@@ -74,11 +74,11 @@ debug_test(void) {
 void
 test(void) {
 //    test_bt();
-//    test_motor_pwm();
+    test_motor_pwm();
 //    test_usart1();
 //    test_weapon();
 //    test_remap();
-    test_hcsr();
+//    test_hcsr();
 }
 
 void
@@ -142,7 +142,7 @@ test_remap(void) {
 }
 
 void
-test_hcsr() {
+test_hcsr(void) {
     delay_init();
     Hcsr04_Init();
     Hcsr04_Text();

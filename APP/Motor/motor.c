@@ -68,7 +68,7 @@ Motor_Init(void) {
     Motor_PWM_Init(500, 72);
     Motor_GPIO_Init();
     STBY_Init();
-    Motion_State(OFF); //关闭电机驱动失能
+    Motion_State(ON); //关闭电机驱动失能
 }
 
 /**************************************************

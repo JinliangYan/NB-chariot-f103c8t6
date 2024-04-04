@@ -153,12 +153,14 @@ bt_received_data_handler(void) {
 
     if (bt_received_data.message_type == BT_MESSAGE_WEAPON_JOYSTICK) {
         weapon_steering();
+        bt_received_data.receive_data_flag = 0;
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_ATTACK) {
         weapon_attack();
+        bt_received_data.receive_data_flag = 0;
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_SKILL) {
         weapon_activate_skill();
+        bt_received_data.receive_data_flag = 0;
     }
-    bt_received_data.receive_data_flag = 0;
 }
 
 /**
@@ -179,9 +181,8 @@ weapon_received_data_handler(void) {
         //TODO 判断该红外是否来自敌方小车
         chariot_status.weapon_hp -= attacker.power;
         clear_attacker();
+        weapon_received_data.receive_data_flag = 0;
     }
-
-    weapon_received_data.receive_data_flag = 0;
 }
 
 /**
