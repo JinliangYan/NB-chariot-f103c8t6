@@ -168,21 +168,18 @@ rgb_show(void) {
 void
 movement_control(void) {
     avoid();
-    int Joy_Lx = 50, Joy_Ly = 50, Joy_Rx = 50, Joy_Ry = 50;
-    int Map_Lx, Map_Ly;
-    int pwm1, pwm2, pwm3, pwm4;
 
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_LEFT_JOYSTICK) {
-        Joy_Lx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
-        Joy_Ly = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
+        int Joy_Lx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
+        int Joy_Ly = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
 
-        Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
-        Map_Ly = Map(Joy_Ly, 10, 90, -127, 127);
+        int Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
+        int Map_Ly = Map(Joy_Ly, 10, 90, -127, 127);
 
-        pwm1 = -Map_Ly - Map_Lx;
-        pwm2 = -Map_Ly + Map_Lx;
-        pwm3 = -Map_Ly - Map_Lx;
-        pwm4 = -Map_Ly + Map_Lx;
+        int pwm1 = -Map_Ly - Map_Lx;
+        int pwm2 = -Map_Ly + Map_Lx;
+        int pwm3 = -Map_Ly - Map_Lx;
+        int pwm4 = -Map_Ly + Map_Lx;
 
         pwm1 = Map(pwm1, -127, 127, PWM_MIN, PWM_MAX);
         pwm2 = Map(pwm2, -127, 127, PWM_MIN, PWM_MAX);
