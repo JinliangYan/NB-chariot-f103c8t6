@@ -22,6 +22,8 @@ typedef enum {
     BT_MESSAGE_AT_COMMAND       /*!< AT指令回复 */
 } bt_receiving_message_type_t;
 
+typedef enum { WEAPON_MESSAGE_NONE, WEAPON_MESSAGE_IR_SIG, WEAPON_MESSAGE_FEEDBACK } weapon_receiving_message_type_t;
+
 typedef enum {
     SLAVER_MESSAGE_NONE,
     SLAVER_MESSAGE_VIDEO,
@@ -31,9 +33,9 @@ typedef enum {
  * \brief   存储蓝牙接收数据
  */
 typedef struct {
-    volatile uint16_t datanum;             /*!< 数据字节数 */
-    uint8_t uart_buff[BUFF_SIZE];     /*!< 数据缓冲区 */
-    uint8_t receive_data_flag;             /*!< 接收完成标志位 */
+    volatile uint16_t datanum;                /*!< 数据字节数 */
+    uint8_t uart_buff[BUFF_SIZE];             /*!< 数据缓冲区 */
+    uint8_t receive_data_flag;                /*!< 接收完成标志位 */
     bt_receiving_message_type_t message_type; /*!< 消息类型 */
 } bt_received_data_t;
 
@@ -41,25 +43,25 @@ typedef struct {
  * \brief   存储武器接收数据
  */
 typedef struct {
-    volatile uint16_t datanum;         /*!< 数据字节数 */
-    uint8_t uart_buff[BUFF_SIZE]; /*!< 数据缓冲区 */
-    uint8_t receive_data_flag;         /*!< 接收完成标志位 */
+    volatile uint16_t datanum;                    /*!< 数据字节数 */
+    uint8_t uart_buff[BUFF_SIZE];                 /*!< 数据缓冲区 */
+    uint8_t receive_data_flag;                    /*!< 接收完成标志位 */
+    weapon_receiving_message_type_t message_type; /*!< 消息类型 */
 } weapon_received_data_t;
 
 /**
  * \brief   从板接收数据缓冲区
  */
 typedef struct {
-    volatile uint16_t datanum;         /*!< 数据字节数 */
-    uint8_t uart_buff[BUFF_SIZE]; /*!< 数据缓冲区 */
-    uint8_t receive_data_flag;         /*!< 接收完成标志位 */
+    volatile uint16_t datanum;                /*!< 数据字节数 */
+    uint8_t uart_buff[BUFF_SIZE];             /*!< 数据缓冲区 */
+    uint8_t receive_data_flag;                /*!< 接收完成标志位 */
     slaver_board_message_type_t message_type; /*!< 消息类型 */
 } slaver_received_data_t;
 
 extern bt_received_data_t bt_received_data;
 extern weapon_received_data_t weapon_received_data;
 extern slaver_received_data_t slaver_received_data;
-
 
 void usart_send_byte(USART_TypeDef* USARTx, uint16_t data);
 

@@ -41,14 +41,25 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/**
+ * \brief   武器类型枚举
+ */
 typedef enum {
+    WEAPON_TYPE_BEGIN = 0xA0,
+
     WEAPON_TYPE_GUN,
     WEAPON_TYPE_OTHER,
     // TODO 补充武器类型
+
+    WEAPON_TYPE_END,
 } weapon_type_t;
 
+/**
+ * \brief 技能种类枚举
+ */
 typedef enum {
     WEAPON_SKILL_INCREASE_DAMAGE, /* 增加攻击力 */
+    WEAPON_SKILL_COUNT
     //TODO 补充技能类型
 } skill_t;
 

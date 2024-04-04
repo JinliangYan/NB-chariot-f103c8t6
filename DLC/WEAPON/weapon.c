@@ -93,6 +93,7 @@ static attacker_t attacker;
 
 /**
  * \brief 挂载的武器
+ * \note  可以视为红外的地址
  */
 static weapon_t weapon;
 
@@ -113,8 +114,18 @@ static void weapon_received_data_handler(void);
  */
 void
 weapon_init(void) {
-    //TODO 判断挂载的武器类型
-    weapon_type_t weapon_type = WEAPON_TYPE_GUN;
+    weapon_type_t weapon_type = WEAPON_TYPE_BEGIN;
+
+    ir_init();
+
+    /* 扫描武器库，确定武器类型 */
+    for (weapon_type_t i = WEAPON_TYPE_BEGIN + 1; i < WEAPON_TYPE_END; ++i) {
+        if (ir_addr_confirm(i)) {
+            weapon_type = i;
+            break;
+        }
+    }
+
     weapon = weapons[weapon_type];
 
     /* 武器初始化角度, 不可更改! */
@@ -125,7 +136,6 @@ weapon_init(void) {
     /* 绑定武器技能 */
     weapon_skill = weapon_skills[weapon.skill_type];
 
-    ir_init();
     clear_attacker();
 }
 
@@ -194,7 +204,7 @@ weapon_received_data_handler(void) {
  */
 static void
 weapon_attack(uint8_t charged) {
-    ir_emission(CHARIOT_ID, 0, charged ? (uint8_t)(weapon.power * 1.5) : weapon.power);
+    ir_emission(weapon.type, CHARIOT_ID, 0, charged ? (uint8_t)(weapon.power * 1.5) : weapon.power);
 }
 
 /**

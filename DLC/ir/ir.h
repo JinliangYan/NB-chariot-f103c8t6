@@ -42,21 +42,24 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define IR_BAUD_RATE        9600
-#define IR_ADDRESS          0xFA
+typedef enum {
+    IR_STATE_EMISSION = 0xF1,
+    IR_STATE_CHANGE_ADDR,
+    IR_STATE_BAUD_RATE,
+} ir_state_t;
 
-#define IR_STAT_EMISSION    0xF1
-#define IR_STAT_CHANGE_ADDR 0xF2
-#define IR_STAT_BAUD_RATE   0xF3
+typedef enum {
+    IR_BAUD_RATE_4800 = 0x01,
+    IR_BAUD_RATE_9600,
+    IR_BAUD_RATE_19200,
+    IR_BAUD_RATE_57600,
+} ir_baud_rate_t;
 
-#define IR_BAUD_CODE_4800   0x01
-#define IR_BAUD_CODE_9600   0x02
-#define IR_BAUD_CODE_19200  0x03
-#define IR_BAUD_CODE_57600  0x04
-
-void ir_init();
-
-void ir_emission(uint8_t high, uint8_t low, uint8_t command);
+void ir_init(void);
+void ir_emission(uint8_t ir_addr, uint8_t high, uint8_t low, uint8_t command);
+char* ir_change_addr(uint8_t ir_addr, uint8_t new_addr);
+char* ir_change_baud_rate(uint8_t ir_addr, ir_baud_rate_t ir_baud_rate);
+uint8_t ir_addr_confirm(uint8_t ir_addr);
 
 #ifdef __cplusplus
 }
