@@ -1,13 +1,3 @@
-/*** 
- * @Author: Jinliang miku.cy@foxmail.com
- * @Date: 2024-03-08 22:22:28
- * @LastEditors: Jinliang miku.cy@foxmail.com
- * @LastEditTime: 2024-03-16 21:38:45
- * @FilePath: \NB-chariot-f103c8t6\APP\Control\control.h
- * @Description: 
- * @
- * @Copyright (c) 2024 by ${git_name_email}, All Rights Reserved. 
- */
 #ifndef CONTROL_H
 #define CONTROL_H
 #include "delay.h"
@@ -23,12 +13,6 @@
  * \brief       HSV转RGB的颜色
 */
 extern float RGB_R, RGB_G, RGB_B;
-
-/**
- * \brief       偏航角数据接收缓冲区
- * \note        已弃用!
-*/
-extern char Pitch_Roll_Buf[20];
 
 void movement_control(void);
 void mode_switch(void);
