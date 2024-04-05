@@ -56,13 +56,14 @@
 /**
  * \brief 所有技能类型结构体数组, 以技能类型为index
  */
-static weapon_skill_t weapon_skills[256] = {
+static const weapon_skill_t weapon_skills[256] = {
     [WEAPON_SKILL_INCREASE_DAMAGE] = {
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .activated_times = 2,
         .cooldown_time = 30,
         .duration = 30,
-        .remaining_duration = 0
+        .remaining_duration = 0,
+        .state = 0,
     },
     //TODO 补充其他技能类型
 };
@@ -70,7 +71,7 @@ static weapon_skill_t weapon_skills[256] = {
 /**
  * \brief 所有武器类型结构体数组, 以武器类型为index
  */
-static weapon_t weapons[256] = {
+static const weapon_t weapons[256] = {
     [WEAPON_TYPE_GUN] = {
         .type = WEAPON_TYPE_GUN,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
@@ -100,12 +101,13 @@ static weapon_t weapon;
 /**
  * \brief 挂载的武器的技能
  */
-static weapon_skill_t weapon_skill;
+weapon_skill_t weapon_skill;
 
 static void weapon_steering(void);
 static void weapon_attack(uint8_t charged);
 static void clear_attacker(void);
 static uint8_t weapon_activate_skill(void);
+static void weapon_deactivate_skill(void);
 static void bt_received_data_handler(void);
 static void weapon_received_data_handler(void);
 
@@ -149,6 +151,10 @@ weapon_control_loop(void) {
     }
     if (weapon_received_data.receive_data_flag == 1) {
         weapon_received_data_handler();
+    }
+    /* 技能持续时间结束，移除增益 */
+    if (weapon_skill.state == 1 && weapon_skill.remaining_duration <= 0) {
+        weapon_deactivate_skill();
     }
 }
 
@@ -222,8 +228,8 @@ weapon_activate_skill(void) {
     /* 更新技能状态 */
     weapon_skill.activated_times--;
     weapon_skill.remaining_duration = weapon_skill.duration;
-    // TODO 需要通过计时器实现duration递减
-
+    weapon_skill.state = 1;
+    /* 通过计时器实现了remaining_duration递减 */
 
     if (weapon_skill.skill_type == WEAPON_SKILL_INCREASE_DAMAGE) {
         /* 技能效果: 攻击力增加 */
@@ -232,6 +238,19 @@ weapon_activate_skill(void) {
     //TODO 补充其他技能效果
 
     return 0;
+}
+
+/**
+ * \brief 移除技能效果
+ */
+static void
+weapon_deactivate_skill(void) {
+    if (weapon_skill.skill_type == WEAPON_SKILL_INCREASE_DAMAGE) {
+        /* 移除攻击力增益 */
+        weapon.power = weapons[weapon.type].power;
+    }
+    weapon_skill.state = 0;
+    //TODO 补充其他技能效果
 }
 
 /**

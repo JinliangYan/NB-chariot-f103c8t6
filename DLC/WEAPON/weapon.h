@@ -69,6 +69,7 @@ typedef struct {
     uint8_t activated_times;    /*!< 技能可发动次数 */
     uint8_t duration;           /*!< 技能持续时间 */
     uint8_t remaining_duration; /*!< 技能剩余持续时间 */
+    uint8_t state;              /*!< 是否激活 */
 } weapon_skill_t;
 
 typedef struct {

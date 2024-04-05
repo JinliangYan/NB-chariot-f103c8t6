@@ -33,9 +33,24 @@
  */
 
 #include "dlc.h"
+#include "timer.h"
+
+/**
+ * \brief 计时变量
+ */
+uint32_t count_1ms;
+uint32_t count_2ms;
+uint32_t count_4ms;
+uint32_t count_10ms;
+uint32_t count_100ms;
+uint32_t count_500ms;
+uint32_t count_1000ms;
+
+extern weapon_skill_t weapon_skill;
 
 void
 dlc_init(void) {
+    tim2_init(72, 1000);
     status_init();
     electromagnet_init();
     weapon_init();
@@ -47,4 +62,46 @@ void
 dlc_control(void) {
     weapon_control_loop();
     defence_loop();
+}
+
+/**
+ * \brief 对时间要求高的任务调度
+ */
+__attribute__((unused)) void
+TIM2_IRQHandler(void) {
+    if (TIM_GetITStatus(TIM2, TIM_IT_Update) != RESET) {
+        count_1ms++;
+        count_2ms++;
+        count_4ms++;
+        count_10ms++;
+        count_100ms++;
+        count_500ms++;
+        count_1000ms++;
+
+        if (count_1ms == 1) {
+            count_1ms = 0;
+        }
+        if (count_2ms == 2) {
+            count_2ms = 0;
+        }
+        if (count_4ms == 4) {
+            count_4ms = 0;
+        }
+        if (count_10ms == 10) {
+            count_10ms = 0;
+        }
+        if (count_100ms == 100) {
+            count_100ms = 0;
+        }
+        if (count_500ms == 500) {
+            count_500ms = 0;
+        }
+        if (count_1000ms == 1000) {
+            if (weapon_skill.remaining_duration > 0) {
+                weapon_skill.remaining_duration--;
+            }
+            count_1000ms = 0;
+        }
+        TIM_ClearITPendingBit(TIM2, TIM_IT_Update); //清除标志位
+    }
 }

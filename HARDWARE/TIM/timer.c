@@ -2,9 +2,14 @@
 #include "led.h"
 
 /*
-定时时间=(arr+1)(psc+1)/72*10^6
 */
 
+/**
+ * \brief 配置生成电机PWM的定时器
+ * \param[in] arr: 自动重装载寄存器周期
+ * \param[in] psc: 分频值
+ * \note time_out = arr * psc / 72 * 10^6 us
+ */
 void
 tim1_init(uint32_t arr, uint32_t psc) {
     TIM_TimeBaseInitTypeDef TIM_InitStructure;
@@ -21,26 +26,26 @@ tim1_init(uint32_t arr, uint32_t psc) {
     TIM_Cmd(TIM1, ENABLE); //使能计数器
 }
 
-/**************************************************
-函数名称：TIM2_Init(u32 arr,u32 psc)
-函数功能：定时器2初始化函数
-入口参数：arr 重装载值    psc   预分频系数
-返回参数：无
-***************************************************/
+/**
+ * \brief 配置任务调度的定时器
+ * \param[in] arr: 自动重装载寄存器周期
+ * \param[in] psc: 分频值
+ * \note time_out = arr * psc / 72 * 10^6 us
+ */
 void
 tim2_init(u32 arr, u32 psc) {
     TIM_DeInit(TIM2);
 
     TIM_TimeBaseInitTypeDef TIM_InitStructure;
-    // NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
 
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE); //开启定时器2时钟
 
-    // NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
-    // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority=2 ;//抢占优先级2
-    // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;			//子优先级3
-    // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;					//IRQ通道使能
-    // NVIC_Init(&NVIC_InitStructure);
+    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2; //抢占优先级2
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 3;        //子优先级3
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           //IRQ通道使能
+    NVIC_Init(&NVIC_InitStructure);
 
     TIM_InitStructure.TIM_Period = arr - 1;                 //自动重装载寄存器周期的值
     TIM_InitStructure.TIM_Prescaler = psc - 1;              //设置预分频值
@@ -50,17 +55,17 @@ tim2_init(u32 arr, u32 psc) {
 
     TIM_TimeBaseInit(TIM2, &TIM_InitStructure);
 
-    // TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);           //使能计数器中断
+    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE); //使能计数器中断
 
     TIM_Cmd(TIM2, ENABLE); //使能计数器
 }
 
-/**************************************************
-函数名称：TIM3_Init(u32 arr,u32 psc)
-函数功能：定时器3初始化函数
-入口参数：arr 重装载值    psc   预分频系数
-返回参数：无
-***************************************************/
+/**
+ * \brief 配置生成舵机PWM的定时器
+ * \param[in] arr: 自动重装载寄存器周期
+ * \param[in] psc: 分频值
+ * \note time_out = arr * psc / 72 * 10^6 us
+ */
 void
 tim3_init(u32 arr, u32 psc) {
     TIM_DeInit(TIM3);
@@ -89,12 +94,12 @@ tim3_init(u32 arr, u32 psc) {
     TIM_Cmd(TIM3, ENABLE); //使能计数器
 }
 
-/**************************************************
-函数名称：TIM4_Init(u32 arr,u32 psc)
-函数功能：定时器4初始化函数
-入口参数：arr 重装载值    psc   预分频系数
-返回参数：无
-***************************************************/
+/**
+ * \brief 配置超声波计数定时器
+ * \param[in] arr: 自动重装载寄存器周期
+ * \param[in] psc: 分频值
+ * \note time_out = arr * psc / 72 * 10^6 us
+ */
 void
 tim4_init(u32 arr, u32 psc) {
     TIM_DeInit(TIM4);
