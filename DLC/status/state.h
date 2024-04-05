@@ -1,5 +1,5 @@
 /**
- * \file            defence.h
+ * \file            status.h
  * \date            3/19/2024
  * \brief           
  */
@@ -32,38 +32,48 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#ifndef NB_CHARIOT_F103C8T6_DEFENCE_H
-#define NB_CHARIOT_F103C8T6_DEFENCE_H
+#ifndef NB_CHARIOT_F103C8T6_STATUS_H
+#define NB_CHARIOT_F103C8T6_STATUS_H
 
 #include "stm32f10x.h"
+#include "defence.h"
+#include "weapon.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
+/**
+ * \brief 战车ID, 1 ~ 255
+ */
+#define CHARIOT_ID 0x01
+
+#define WEIGHT_0   0
+#define WEIGHT_S   50
+#define WEIGHT_M   80
+#define WEIGHT_L   110
+
 typedef enum {
-    DEFENCE_TYPE_NONE,          /*!< 无防具 */
-    DEFENCE_TYPE_LIGHTWEIGHT,   /*!< 轻量级防具 */
-    DEFENCE_TYPE_HEAVYWEIGHT,   /*!< 重量级防具 */
-} defence_type_t;
+    CHARIOT_TYPE_LW,        /*!< 轻量型战车， */
+    CHARIOT_TYPE_HW,
+} chariot_type_t;
 
 typedef struct {
-    defence_type_t type; /*!< 防具类型 */
-    uint8_t hp;          /*!< 攻击力 */
-    uint8_t weight;      /*!< 重量 */
-} defence_t;
+    uint32_t core_hp;   /*!< 核心血量 */
+    uint8_t bt_connected;  /*!< 蓝牙连接状态 */
+    uint32_t total_weight; /*!< 战车总重量 */
+    weapon_t* weapon;      /*!< 武器数据结构体 */
+    defence_t* defence;     /*!< 防具数据结构体 */
+    weapon_skill_t* skill; /*!< 技能数据结构体 */
+} status_t;
 
-typedef struct {
-    uint8_t id;
-    uint8_t skill;
-    uint8_t power;
-} attacker_t;
+extern status_t chariot;
 
-void defence_init(void);
-void defence_loop(void);
+void state_init(void);
+void state_handler(void);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* NB_CHARIOT_F103C8T6_DEFENCE_H */
+#endif /* NB_CHARIOT_F103C8T6_STATUS_H */

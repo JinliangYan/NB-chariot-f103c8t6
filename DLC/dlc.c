@@ -51,7 +51,7 @@ extern weapon_skill_t weapon_skill;
 void
 dlc_init(void) {
     tim2_init(72, 1000);
-    status_init();
+    state_init();
     electromagnet_init();
     weapon_init();
     defence_init();

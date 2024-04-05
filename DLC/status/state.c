@@ -1,5 +1,5 @@
 /**
- * \file            status.h
+ * \file            status.c
  * \date            3/19/2024
  * \brief           
  */
@@ -32,34 +32,68 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#ifndef NB_CHARIOT_F103C8T6_STATUS_H
-#define NB_CHARIOT_F103C8T6_STATUS_H
+#include <stdlib.h>
+#include "blt.h"
+#include "electromagnet.h"
+#include "led.h"
+#include "motor.h"
+#include "state.h"
 
-#include "stm32f10x.h"
+status_t chariot;
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+static void chariot_hp_handler(void);
+static void defence_hp_handler(void);
+static void weapon_hp_handler(void);
+static void bt_connect_handler(void);
+
+void
+state_init(void) {
+    chariot.core_hp = 1;
+    chariot.bt_connected = is_bt_connected();
+}
 
 /**
- * \brief 战车ID, 1 ~ 255
+ * \brief 检查蓝牙是否连接, 如果没有连接则在此循环
  */
-#define CHARIOT_ID 0x01
-
-typedef struct {
-    uint8_t chariot_hp;
-    uint8_t weapon_hp;
-    uint8_t defence_hp;
-    uint8_t is_connected;
-} status_t;
-
-extern status_t chariot_status;
-
-void status_init(void);
-void status_handler(void);
-
-#ifdef __cplusplus
+void
+state_handler(void) {
+    bt_connect_handler();
+    chariot_hp_handler();
+    defence_hp_handler();
+    weapon_hp_handler();
 }
-#endif /* __cplusplus */
 
-#endif /* NB_CHARIOT_F103C8T6_STATUS_H */
+static void
+bt_connect_handler(void) {
+    while ((chariot.bt_connected = is_bt_connected()) != 1) {
+        LED = 1;
+        delay_ms(500);
+        LED = 0;
+        delay_ms(500);
+    }
+}
+
+static void
+chariot_hp_handler(void) {
+    if (chariot.core_hp <= 0) {
+        // TODO 游戏结束, 收尾任务, 待完善
+        motor_state(0);
+        exit(0);
+    }
+}
+
+static void
+defence_hp_handler(void) {
+    if (chariot.defence->hp <= 0) {
+        // TODO 防御模块被击破反应, 待完善
+    }
+}
+
+static void
+weapon_hp_handler(void) {
+    if (chariot.weapon->hp <= 0) {
+        // TODO 武器模块被击破反应, 待完善
+        /* 武器掉落 */
+        electromagnet_off();
+    }
+}

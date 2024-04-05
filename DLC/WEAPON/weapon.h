@@ -76,6 +76,7 @@ typedef struct {
     weapon_type_t type; /*!< 武器类型 */
     skill_t skill_type; /*!< 技能类型 */
     uint8_t power;      /*!< 攻击力 */
+    uint8_t hp;         /*!< 血量 */
     uint8_t weight;     /*!< 重量 */
     uint8_t steerable;  /*!< 能(1)否(0)转向 */
     float x_angle;      /*!< 武器当前X偏移角, 当steerable为0时无用 */

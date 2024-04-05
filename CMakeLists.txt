@@ -31,7 +31,7 @@ set(sources_SRCS
         HARDWARE/TIM/timer.c
         DLC/ir/ir.c
         DLC/irDa/irda.c
-        DLC/status/status.c
+        DLC/status/state.c
         DLC/defence/defence.c
         CORE/sysmem.c
 )

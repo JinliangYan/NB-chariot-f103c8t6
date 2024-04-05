@@ -35,10 +35,37 @@
 #include "defence.h"
 #include "irda.h"
 #include "printf.h"
-#include "status.h"
+#include "state.h"
 
 //#define DEFENCE_DEBUG
 
+/**
+ * \brief 所有防具类型结构体数组, 以防具类型为index
+ */
+static const defence_t defences[256] = {
+    [DEFENCE_TYPE_NONE] = {
+        .type = DEFENCE_TYPE_NONE,
+        .hp = 0,
+        .weight = WEIGHT_0,
+    },
+    [DEFENCE_TYPE_LIGHTWEIGHT] = {
+        .type = DEFENCE_TYPE_LIGHTWEIGHT,
+        .hp = 2,
+        .weight = WEIGHT_M,
+    },
+    [DEFENCE_TYPE_HEAVYWEIGHT] = {
+        .type = DEFENCE_TYPE_HEAVYWEIGHT,
+        .hp = 4,
+        .weight = WEIGHT_L,
+    }
+    // TODO 补充其他武器类型
+};
+
+/**
+ * \brief 防具数据结构体
+ * \note  因防具模块没有找到合适的识别方法，所以只能在应用端手动选择
+ */
+defence_t defence;
 
 static void clear_attacker_info(void);
 uint8_t defence_attacked_data[4];
@@ -47,6 +74,12 @@ static attacker_t attacker;
 void
 defence_init(void) {
     irda_init();
+    /* 默认使用轻量级防具 */
+    defence_type_t defence_type = DEFENCE_TYPE_LIGHTWEIGHT;
+    
+    // TODO 获得用户选择的防具类型
+    
+    defence = defences[defence_type];
 }
 
 void
@@ -59,15 +92,16 @@ defence_loop(void) {
         /* 最后一个字节为power反码, 这里不取 */
     }
     if (attacker.id != 0) {
-        if (chariot_status.defence_hp != 0) {
-            if (attacker.power > chariot_status.defence_hp) {
-                chariot_status.defence_hp = 0;
-                chariot_status.defence_hp -= attacker.power - chariot_status.defence_hp;
+        if (defence.hp != 0) {
+            if (attacker.power > defence.hp) {
+                defence.hp = 0;
+                defence.hp -= attacker.power - defence.hp;
             } else {
-                chariot_status.defence_hp -= attacker.power;
+                defence.hp -= attacker.power;
             }
         } else {
-            chariot_status.chariot_hp -= attacker.power;
+            /* 核心被击中 */
+            chariot.core_hp = 0;
         }
 #ifdef DEFENCE_DEBUG
         printf_("\r\n HP = %d \r\n", status_hp);

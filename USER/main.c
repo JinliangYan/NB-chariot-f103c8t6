@@ -14,7 +14,7 @@ main(void) {
     dlc_init();
 
     while (1) {
-        status_handler();
+        state_handler();
         control();
         dlc_control();
     }

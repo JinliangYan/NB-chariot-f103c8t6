@@ -39,10 +39,10 @@
 #include "defence.h"
 #include "electromagnet.h"
 #include "servo.h"
-#include "status.h"
+#include "slaver.h"
+#include "state.h"
 #include "stm32f10x.h"
 #include "weapon.h"
-#include "slaver.h"
 
 #ifdef __cplusplus
 extern "C" {

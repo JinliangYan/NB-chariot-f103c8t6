@@ -35,7 +35,7 @@
 #include "defence.h"
 #include "ir.h"
 #include "servo.h"
-#include "status.h"
+#include "state.h"
 #include "usart.h"
 
 /**
@@ -77,13 +77,15 @@ static const weapon_t weapons[256] = {
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 50,
         .steerable = 1,
-        .weight = 1},
+        .weight = WEIGHT_M
+    },
     [WEAPON_TYPE_OTHER] = {
         .type = WEAPON_TYPE_OTHER,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 70,
         .steerable = 0,
-        .weight = 1}
+        .weight = WEIGHT_L
+    }
     // TODO 补充其他武器类型
 };
 
@@ -198,7 +200,7 @@ weapon_received_data_handler(void) {
 
     if (attacker.id != 0) {
         //TODO 判断该红外是否来自敌方小车
-        chariot_status.weapon_hp -= attacker.power;
+        weapon.hp -= attacker.power;
         clear_attacker();
         weapon_received_data.receive_data_flag = 0;
     }
