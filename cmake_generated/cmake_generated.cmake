@@ -46,7 +46,7 @@ set(sources_SRCS ${sources_SRCS}
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_tim.c
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_usart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_wwdg.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/sys/sys.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/sys.c
 )
 
 # Include directories
