@@ -17,21 +17,12 @@ set(linker_script_SRC ${linker_script_SRC} ${CMAKE_CURRENT_SOURCE_DIR}/STM32F103
 
 # Sources
 set(sources_SRCS ${sources_SRCS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/APP/Control/control.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/APP/HCSR04/hcsr.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/APP/Motor/motor.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/APP/WS2812B/ws2812b.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/CORE/core_cm3.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/CORE/startup_stm32f103c8tx.s
-    ${CMAKE_CURRENT_SOURCE_DIR}/CORE/syscalls.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/core_cm3.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/startup_stm32f103c8tx.s
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/syscalls.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/DLC/SERVO/servo.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/DLC/WEAPON/weapon.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/DLC/dlc.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/HARDWARE/LED/led.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/HARDWARE/PWM/pwm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/core_cm3.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/startup_stm32f103c8tx.s
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/syscalls.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/core_cm3.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/startup_stm32f103c8tx.s
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/syscalls.c
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/misc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_adc.c
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_bkp.c
@@ -55,23 +46,14 @@ set(sources_SRCS ${sources_SRCS}
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_tim.c
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_usart.c
     ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/src/stm32f10x_wwdg.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/SYSTEM/delay/delay.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/SYSTEM/sys/sys.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/SYSTEM/usart/usart.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/TEST/printf_/printf.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/TEST/test.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/USER/main.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/USER/stm32f10x_it.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/USER/system_stm32f10x.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/sys/sys.c
 )
 
 # Include directories
 set(include_c_DIRS ${include_c_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/STM32F10x_FWLib/sys
 )
 set(include_cxx_DIRS ${include_cxx_DIRS})
 set(include_asm_DIRS ${include_asm_DIRS})

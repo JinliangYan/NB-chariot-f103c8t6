@@ -11,8 +11,8 @@ task.txt
 .history/
 
 build/*
-USER/DebugConfig/
-USER/Listings/
+chariot/DebugConfig/
+chariot/Listings/
 
 # Built Visual Studio Code Extensions
 *.vsix

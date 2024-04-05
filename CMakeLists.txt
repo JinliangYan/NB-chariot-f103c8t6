@@ -25,50 +25,44 @@ set(cpu_PARAMS)
 
 # Sources
 set(sources_SRCS
-        DLC/slaver/slaver.c
-        DLC/electromagnet/electromagnet.c
-        DLC/bluetooth/blt.c
-        HARDWARE/TIM/timer.c
-        DLC/ir/ir.c
-        DLC/irDa/irda.c
-        DLC/status/state.c
-        DLC/defence/defence.c
-        CORE/sysmem.c
+        base/src/blt.c
+        base/src/delay.c
+        base/src/electromagnet.c
+        base/src/hcsr.c
+        base/src/ir.c
+        base/src/irda.c
+        base/src/led.c
+        base/src/motor.c
+        base/src/pwm.c
+        base/src/servo.c
+        base/src/timer.c
+        base/src/usart.c
+        base/src/ws2812b.c
+
+        chariot/src/start.c
+        chariot/src/stm32f10x_it.c
+        chariot/src/system_stm32f10x.c
+
+        logic/src/state.c
+        logic/src/task_runner.c
+
+        models/src/core.c
+        models/src/move.c
+        models/src/defence.c
+        models/src/slaver.c
+        models/src/weapon.c
+
+        test/src/printf.c
+        test/src/test.c
 )
 
 # Include directories for all compilers
 set(include_DIRS
-        DLC
-        DLC/slaver
-        DLC/electromagnet
-        DLC/status
-        DLC/defence
-        DLC/ir
-        DLC/irDa
-        DLC/SERVO
-        DLC/WEAPON
-        DLC/bluetooth/
-        APP/Control
-        APP/HCSR04
-        APP/Motor
-        APP/NRF24L01
-        APP/SDCard
-        APP/WS2812B
-        CORE
-        HARDWARE/FLASH
-        HARDWARE/GAP
-        HARDWARE/IWDG
-        HARDWARE/LED
-        HARDWARE/PWM
-        HARDWARE/SPI
-        HARDWARE/TIM
-        MALLOC
-        STM32F10x_FWLib/inc
-        SYSTEM/delay
-        SYSTEM/sys
-        SYSTEM/usart
-        USER
-        TEST/printf_
+        base/inc
+        chariot/inc
+        logic/inc
+        models/inc
+        test/inc
 )
 
 # Include directories for each compiler
