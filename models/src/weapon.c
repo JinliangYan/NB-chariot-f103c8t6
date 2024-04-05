@@ -98,7 +98,7 @@ static attacker_t attacker;
  * \brief 挂载的武器
  * \note  可以视为红外的地址
  */
-static weapon_t weapon;
+weapon_t weapon;
 
 /**
  * \brief 挂载的武器的技能
@@ -118,12 +118,12 @@ static void weapon_received_data_handler(void);
  */
 void
 weapon_init(void) {
-    weapon_type_t weapon_type = WEAPON_TYPE_BEGIN;
+    weapon_type_t weapon_type = WEAPON_TYPE_BEGIN + 1;
 
     ir_init();
 
     /* 扫描武器库，确定武器类型 */
-    for (weapon_type_t i = WEAPON_TYPE_BEGIN + 1; i < WEAPON_TYPE_END; ++i) {
+    for (weapon_type_t i = weapon_type; i < WEAPON_TYPE_END; ++i) {
         if (ir_addr_confirm(i)) {
             weapon_type = i;
             break;

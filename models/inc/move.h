@@ -41,6 +41,19 @@
 extern "C" {
 #endif /* __cplusplus */
 
+typedef enum {
+    MOVE_MODEL_TYPE_LIGHTWEIGHT,
+    MOVE_MODEL_TYPE_HEAVYWEIGHT,
+} move_model_type_t;
+
+typedef struct {
+    move_model_type_t type;
+    uint16_t hp;
+    uint16_t weight;
+    uint16_t speed;
+} move_model_t;
+
+void move_init(void);
 void move_control(void);
 
 #ifdef __cplusplus

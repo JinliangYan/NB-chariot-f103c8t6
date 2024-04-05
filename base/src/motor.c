@@ -1,25 +1,13 @@
 #include "motor.h"
 #include "pwm.h"
 
-/**************************************************
-函数名称：Motor_PWM_Init(u32 arr,u32 psc)
-函数功能：电机PWM输出函数
-入口参数：arr 重装载值    psc   预分频系数
-返回参数：无
-***************************************************/
-void
-Motor_PWM_Init(uint32_t arr, uint32_t psc) {
+static void
+motor_pwm_init(uint32_t arr, uint32_t psc) {
     pwm1_init(arr, psc);
 }
 
-/**************************************************
-函数名称：Motor_GPIO_Init(void)
-函数功能：电机GPIO初始化函数
-入口参数：无
-返回参数：无
-***************************************************/
-void
-Motor_GPIO_Init(void) {
+static void
+motor_gpio_init(void) {
     GPIO_InitTypeDef GPIO_InitStruct;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -33,14 +21,8 @@ Motor_GPIO_Init(void) {
     GPIO_Init(GPIOA, &GPIO_InitStruct);
 }
 
-/**************************************************
-函数名称：STBY_Init(void)
-函数功能：STBY初始化
-入口参数：无
-返回参数：无
-***************************************************/
-void
-STBY_Init(void) {
+static void
+stby_init(void) {
     GPIO_InitTypeDef GPIO_InitStruct;
 
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
@@ -65,9 +47,9 @@ STBY_Init(void) {
 ***************************************************/
 void
 motor_init(void) {
-    Motor_PWM_Init(500, 72);
-    Motor_GPIO_Init();
-    STBY_Init();
+    motor_pwm_init(500, 72);
+    motor_gpio_init();
+    stby_init();
     motor_state(1);
 }
 
@@ -168,14 +150,14 @@ motor_turn_right(u16 speed) {
 }
 
 /************************************************************************
-函数名称：Move(u16 Dir,u16 speed)
+函数名称：move(u16 Dir,u16 speed)
 函数功能：小车平移
 入口参数：Dir 平移方向(L_Move R_Move L_U_Move L_D_Move R_U_Move L_D_Move)
 					方向 speed  0-500
 返回参数：无
 *********************************************************&&*************/
 void
-Move(u16 Dir, u16 speed) {
+move(u16 Dir, u16 speed) {
     if (Dir == 0) //左移
     {
         L_STBY_ON;

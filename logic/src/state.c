@@ -39,6 +39,11 @@
 #include "led.h"
 #include "motor.h"
 
+extern move_model_t move_model;
+extern weapon_t weapon;
+extern defence_t defence;
+extern weapon_skill_t weapon_skill;
+
 status_t chariot;
 
 static void chariot_hp_handler(void);
@@ -50,6 +55,12 @@ void
 state_init(void) {
     chariot.core_hp = 1;
     chariot.bt_connected = is_bt_connected();
+    chariot.move_model = &move_model;
+    chariot.weapon = &weapon;
+    chariot.defence = &defence;
+    chariot.skill = &weapon_skill;
+    chariot.total_weight = weapon.weight + defence.weight;
+    chariot.speed_with_weight = move_model.speed - chariot.total_weight;
 }
 
 /**

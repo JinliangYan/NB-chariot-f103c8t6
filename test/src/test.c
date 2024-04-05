@@ -101,7 +101,7 @@ test_motor_pwm(void) {
     backward(100);
     motor_turn_left(100);
 
-    Move(0, 0);
+    move(0, 0);
 
 }
 

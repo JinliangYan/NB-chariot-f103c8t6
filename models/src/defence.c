@@ -58,7 +58,7 @@ static const defence_t defences[256] = {
         .hp = 4,
         .weight = WEIGHT_L,
     }
-    // TODO 补充其他武器类型
+    // TODO 补充其他防具类型
 };
 
 /**

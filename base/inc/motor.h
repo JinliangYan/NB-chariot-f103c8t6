@@ -18,9 +18,6 @@
 #define R_STBY_ON  GPIO_SetBits(GPIOA, GPIO_Pin_15)   //输出高电平,电机工作
 #define R_STBY_OFF GPIO_ResetBits(GPIOA, GPIO_Pin_15) //输出低电平,电机停止
 
-void Motor_PWM_Init(u32 arr, u32 psc);
-void Motor_GPIO_Init(void);
-void STBY_Init(void);
 void motor_init(void);
 void motor_reset(void);
 
@@ -28,7 +25,7 @@ void forward(u16 speed);
 void backward(u16 speed);
 void motor_turn_left(u16 speed);
 void motor_turn_right(u16 speed);
-void Move(u16 Dir, u16 speed);
+void move(u16 Dir, u16 speed);
 void motor_state(u16 on);
 
 #endif

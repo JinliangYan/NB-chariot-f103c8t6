@@ -33,27 +33,58 @@
 */
 
 #include "move.h"
-#include "mode.h"
 #include "delay.h"
 #include "hcsr.h"
+#include "mode.h"
 #include "motor.h"
+#include "state.h"
 #include "usart.h"
-
-#define PWM_MIN (-199)
-#define PWM_MAX (199)
 
 static void pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4);
 static int Map(int val, int in_min, int in_max, int out_min, int out_max);
 static void avoid(void);
 static void follow(void);
 
+static uint16_t speed_max;
+
+/**
+ * \brief 所有类型结构体数组, 以防具类型为index
+ */
+static const move_model_t move_models[256] = {
+    [MOVE_MODEL_TYPE_LIGHTWEIGHT] = {
+        .type = MOVE_MODEL_TYPE_LIGHTWEIGHT,
+        .hp = HP_S,
+        .speed = 499,
+    },
+    [MOVE_MODEL_TYPE_HEAVYWEIGHT] = {
+        .type = MOVE_MODEL_TYPE_HEAVYWEIGHT,
+        .hp = HP_L,
+        .speed = 349,
+    },
+    // TODO 补充其他移动模块类型
+};
+
+move_model_t move_model;
+
+/**
+ * \brief 移动模块初始化
+ * TODO 实现挂载的移动模块的识别
+ */
+void
+move_init(void) {
+    move_model_type_t move_model_type = MOVE_MODEL_TYPE_LIGHTWEIGHT;
+    move_model = move_models[move_model_type];
+    speed_max = chariot.speed_with_weight;
+}
+
 /**
  * \brief           Movement control function
  */
 void
 move_control(void) {
-    avoid();
+    speed_max = chariot.speed_with_weight;
 
+    avoid();
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_LEFT_JOYSTICK) {
         int Joy_Lx = (bt_received_data.uart_buff[1] - '0') * 10 + (bt_received_data.uart_buff[2] - '0');
         int Joy_Ly = (bt_received_data.uart_buff[4] - '0') * 10 + (bt_received_data.uart_buff[5] - '0');
@@ -66,10 +97,10 @@ move_control(void) {
         int pwm3 = -Map_Ly - Map_Lx;
         int pwm4 = -Map_Ly + Map_Lx;
 
-        pwm1 = Map(pwm1, -127, 127, PWM_MIN, PWM_MAX);
-        pwm2 = Map(pwm2, -127, 127, PWM_MIN, PWM_MAX);
-        pwm3 = Map(pwm3, -127, 127, PWM_MIN, PWM_MAX);
-        pwm4 = Map(pwm4, -127, 127, PWM_MIN, PWM_MAX);
+        pwm1 = Map(pwm1, -127, 127, -speed_max, speed_max);
+        pwm2 = Map(pwm2, -127, 127, -speed_max, speed_max);
+        pwm3 = Map(pwm3, -127, 127, -speed_max, speed_max);
+        pwm4 = Map(pwm4, -127, 127, -speed_max, speed_max);
 
         pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 
@@ -80,9 +111,9 @@ move_control(void) {
 
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_TURN) {
         if (bt_received_data.uart_buff[0] == 'L') {
-            motor_turn_left(PWM_MAX);
+            motor_turn_left(speed_max);
         } else if (bt_received_data.uart_buff[0] == 'R') {
-            motor_turn_right(PWM_MAX);
+            motor_turn_right(speed_max);
         }
 
         bt_received_data.receive_data_flag = 0;
@@ -99,7 +130,7 @@ avoid(void) {
     float dis;
     do {
         dis = Hcsr04GetLength();
-        motor_turn_left(PWM_MAX);
+        motor_turn_left(speed_max);
     } while (dis <= 15);
     motor_reset();
 }
@@ -143,30 +174,30 @@ pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4) {
         pwm4 = 0;
     }
 
-    if (pwm1 > PWM_MAX) {
-        pwm1 = PWM_MAX;
+    if (pwm1 > speed_max) {
+        pwm1 = speed_max;
     }
-    if (pwm2 > PWM_MAX) {
-        pwm2 = PWM_MAX;
+    if (pwm2 > speed_max) {
+        pwm2 = speed_max;
     }
-    if (pwm3 > PWM_MAX) {
-        pwm3 = PWM_MAX;
+    if (pwm3 > speed_max) {
+        pwm3 = speed_max;
     }
-    if (pwm4 > PWM_MAX) {
-        pwm4 = PWM_MAX;
+    if (pwm4 > speed_max) {
+        pwm4 = speed_max;
     }
 
-    if (pwm1 < PWM_MIN) {
-        pwm1 = PWM_MIN;
+    if (pwm1 < -speed_max) {
+        pwm1 = -speed_max;
     }
-    if (pwm2 < PWM_MIN) {
-        pwm2 = PWM_MIN;
+    if (pwm2 < -speed_max) {
+        pwm2 = -speed_max;
     }
-    if (pwm3 < PWM_MIN) {
-        pwm3 = PWM_MIN;
+    if (pwm3 < -speed_max) {
+        pwm3 = -speed_max;
     }
-    if (pwm4 < PWM_MIN) {
-        pwm4 = PWM_MIN;
+    if (pwm4 < -speed_max) {
+        pwm4 = -speed_max;
     }
 
     if (pwm1 >= 0) {

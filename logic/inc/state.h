@@ -36,6 +36,7 @@
 #define NB_CHARIOT_F103C8T6_STATUS_H
 
 #include "defence.h"
+#include "move.h"
 #include "stm32f10x.h"
 #include "weapon.h"
 
@@ -53,18 +54,24 @@ extern "C" {
 #define WEIGHT_M   80
 #define WEIGHT_L   110
 
+#define HP_S       50
+#define HP_M       100
+#define HP_L       150
+
 typedef enum {
-    CHARIOT_TYPE_LW,        /*!< 轻量型战车， */
+    CHARIOT_TYPE_LW, /*!< 轻量型战车， */
     CHARIOT_TYPE_HW,
 } chariot_type_t;
 
 typedef struct {
-    uint32_t core_hp;   /*!< 核心血量 */
-    uint8_t bt_connected;  /*!< 蓝牙连接状态 */
-    uint32_t total_weight; /*!< 战车总重量 */
-    weapon_t* weapon;      /*!< 武器数据结构体 */
-    defence_t* defence;     /*!< 防具数据结构体 */
-    weapon_skill_t* skill; /*!< 技能数据结构体 */
+    uint32_t core_hp;           /*!< 核心血量 */
+    uint8_t bt_connected;       /*!< 蓝牙连接状态 */
+    uint32_t total_weight;      /*!< 战车总重量 */
+    move_model_t* move_model;   /*!< 移动模块数据结构体 */
+    weapon_t* weapon;           /*!< 武器数据结构体 */
+    defence_t* defence;         /*!< 防具数据结构体 */
+    weapon_skill_t* skill;      /*!< 技能数据结构体 */
+    uint16_t speed_with_weight; /*!< 计算重量后的速度 */
 } status_t;
 
 extern status_t chariot;

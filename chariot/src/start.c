@@ -4,6 +4,7 @@
 #include "hcsr.h"
 #include "led.h"
 #include "motor.h"
+#include "move.h"
 #include "printf.h"
 #include "state.h"
 #include "task_runner.h"
@@ -30,21 +31,21 @@ base_init(void) {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     led_init();
-    hcsr04_init();  //超声波初始化
-    rgb_led_init(); //RGB彩灯初始化
+    hcsr04_init();
+    rgb_led_init();
     printf_init();
-    motor_init(); //电机初始化
-    delay_ms(1000);
+    motor_init();
 }
 
 void
 models_init(void) {
-    state_init();
+    move_init();
     electromagnet_init();
     weapon_init();
     defence_init();
     bt_init();
     tim2_init(72, 1000);
+    state_init();
 }
 
 void
