@@ -2,7 +2,7 @@
  * \file            ir.h
  * \date            3/19/2024
  * \brief           ir head file, used to config ir models
- * \discription     仅需配置头文件即可实现控制同一系统的不同红外模块，最大支持4个（修改部分代码支持更多）
+ * \discription     控制同一系统的不同红外模块，最大支持4个（修改部分代码支持更多）
  * \usuage
  *                  1.根据环境配置好该头文件，
  *                  2.根据环境编写ir.c的get_one_time_feedback(char* feedback)函数
@@ -113,20 +113,6 @@ typedef enum {
 //#define ir2_usart_send_array(array, size)
 //#define ir3_usart_send_array(array, size)
 //#define ir4_usart_send_array(array, size)
-//more...
-/**
- * \end
- */
-
-#define ir1_usart_buffer
-
-/**
- * \brief 红外模块串口接收到feedback标志
- * \note 在此定义所有红外模块串口接收到feedback标志，必须与ir_t枚举中的名称一一对应
- */
-//#define ir1_get_feedback         weapon_received_data.receive_data_flag == 1 && weapon_received_data.message_type == WEAPON_MESSAGE_FEEDBACK
-//#define ir2_get_feedback
-//#define ir3_get_feedback
 //more...
 /**
  * \end

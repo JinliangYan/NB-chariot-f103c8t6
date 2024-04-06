@@ -37,19 +37,28 @@
 #include "delay.h"
 #include "ir.h"
 
+static char* send_command(uint8_t ir_addr, ir_cmd_type_t ir_cmd_type, uint8_t high, uint8_t low, uint8_t command);
+static uint8_t get_one_time_feedback(char* feedback);
+
 /**
  * \brief 红外模块通用地址
  */
 #define IR_UNIVERSAL_ADDRESS 0xFA
 
+/**
+ * \brief 对应至ir_t枚举，用来实现预编译控制
+ */
 #define IR1 0
 #define IR2 1
 #define IR3 2
 #define IR4 3
+/**
+ * \end
+ */
 
-static char* send_command(uint8_t ir_addr, ir_cmd_type_t ir_cmd_type, uint8_t high, uint8_t low, uint8_t command);
-static uint8_t get_one_time_feedback(char* feedback);
-
+/**
+ * \brief 当前操作的红外模块，默认IR1
+ */
 static ir_t operated_ir;
 
 /**
