@@ -33,6 +33,7 @@
 */
 
 #include "task_runner.h"
+#include "core.h"
 #include "move.h"
 #include "state.h"
 
@@ -55,6 +56,7 @@ run(void) {
     move_control();
     weapon_control();
     defence_control();
+    core_control();
 }
 
 /**

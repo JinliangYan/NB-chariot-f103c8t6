@@ -57,12 +57,6 @@ typedef struct {
     uint8_t weight;      /*!< ÖØÁ¿ */
 } defence_t;
 
-typedef struct {
-    uint8_t id;
-    uint8_t skill;
-    uint8_t power;
-} attacker_t;
-
 void defence_init(void);
 void defence_control(void);
 

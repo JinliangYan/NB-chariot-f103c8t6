@@ -33,10 +33,37 @@
 */
 
 #include "core.h"
+#include "irda.h"
+#include "state.h"
 
-//TODO 核心模块现在只能挂在副板， 通过串口通信
+static void clear_attacker_info(void);
+uint8_t core_attacked_data[4];
+
+static attacker_t attacker;
 
 void core_init(void) {
-
+    irda_init();
 }
 
+void
+core_control(void) {
+    if (irda_frame_flag == 1) {
+        irda_process(core_attacked_data); /* 处理完后标志位置0了 */
+        attacker.id = core_attacked_data[0];
+        attacker.skill = core_attacked_data[1];
+        attacker.power = core_attacked_data[2];
+        /* 最后一个字节为power反码, 这里不取 */
+    }
+    if (attacker.id != 0) {
+        chariot.core_hp -= attacker.power;
+    }
+
+    clear_attacker_info();
+}
+
+static void
+clear_attacker_info(void) {
+    attacker.power = 0;
+    attacker.id = 0;
+    attacker.skill = 0;
+}

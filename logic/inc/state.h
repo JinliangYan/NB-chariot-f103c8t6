@@ -74,6 +74,13 @@ typedef struct {
     uint16_t speed_with_weight; /*!< 计算重量后的速度 */
 } status_t;
 
+
+typedef struct {
+    uint8_t id;
+    uint8_t skill;
+    uint8_t power;
+} attacker_t;
+
 extern status_t chariot;
 
 void state_init(void);

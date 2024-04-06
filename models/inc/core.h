@@ -42,6 +42,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 void core_init(void);
+void core_control(void);
 
 #ifdef __cplusplus
 }

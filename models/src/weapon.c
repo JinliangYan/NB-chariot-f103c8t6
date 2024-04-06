@@ -148,6 +148,9 @@ weapon_init(void) {
  */
 void
 weapon_control(void) {
+    if (weapon.hp <= 0) {
+        return;     /* ÎäÆ÷Ëð»Ù */
+    }
     if (bt_received_data.receive_data_flag == 1) {
         bt_received_data_handler();
     }
@@ -212,6 +215,8 @@ weapon_received_data_handler(void) {
  */
 static void
 weapon_attack(uint8_t charged) {
+    //TODO ¸æËß¸±°å·¢³ö¹¥»÷ÒôÐ§
+
     ir_emission(weapon.type, CHARIOT_ID, 0, charged ? (uint8_t)(weapon.power * 1.5) : weapon.power);
 }
 

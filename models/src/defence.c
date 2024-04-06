@@ -68,13 +68,10 @@ static const defence_t defences[256] = {
 defence_t defence;
 
 static void clear_attacker_info(void);
-uint8_t defence_attacked_data[4];
 static attacker_t attacker;
 
 void
 defence_init(void) {
-    irda_init();
-    
     defence_type_t defence_type = WEAPON_TYPE_BEGIN + 1;
     
     /* 1. 扫描，确定类型 */
@@ -89,13 +86,7 @@ defence_init(void) {
 
 void
 defence_control(void) {
-    if (irda_frame_flag == 1) {
-        irda_process(defence_attacked_data); /* 处理完后标志位置0了 */
-        attacker.id = defence_attacked_data[0];
-        attacker.skill = defence_attacked_data[1];
-        attacker.power = defence_attacked_data[2];
-        /* 最后一个字节为power反码, 这里不取 */
-    }
+    //TODO 从副板获得攻击者ID，伤害，技能
     if (attacker.id != 0) {
         if (defence.hp != 0) {
             if (attacker.power > defence.hp) {
@@ -108,12 +99,6 @@ defence_control(void) {
             /* 核心被击中 */
             chariot.core_hp = 0;
         }
-#ifdef DEFENCE_DEBUG
-        printf_("\r\n HP = %d \r\n", status_hp);
-        printf_("\r\n attacker_id = %d \r\n", attacker.id);
-        printf_("\r\n attacker_skill = %d \r\n", attacker.skill);
-        printf_("\r\n attacker_power = %d \r\n", attacker.power);
-#endif
     }
 
     clear_attacker_info();
