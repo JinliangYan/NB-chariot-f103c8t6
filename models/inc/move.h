@@ -42,8 +42,12 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef enum {
+    MOVE_MODEL_TYPE_BEGIN,
+
     MOVE_MODEL_TYPE_LIGHTWEIGHT,
     MOVE_MODEL_TYPE_HEAVYWEIGHT,
+
+    MOVE_MODEL_TYPE_END,
 } move_model_type_t;
 
 typedef struct {

@@ -36,15 +36,17 @@
 #include "string.h"
 #include "usart.h"
 
+static void slaver_video_wifi_config_connect(const char* ssid, const char* pwd);
+static void slaver_video_quick_connect(void);
+static void get_video_message(void);
+static void get_model_message(void);
+
 #define SLAVER_BAUD_RATE 9600
 #define SSID             ""
 #define PASSWORD         ""
 #define TIME_OUT         strstr(message, "Connect_TimeOut")
 
 static char message[1024];
-static void slaver_video_wifi_config_connect(const char* ssid, const char* pwd);
-static void slaver_video_quick_connect(void);
-static void get_video_message(void);
 
 void
 slaver_init(void) {
@@ -78,6 +80,32 @@ slaver_video_disconnect(void) {
     } while (!strstr(message, "Disconnect_Finish"));
 }
 
+/**
+ * \brief               向从板发送验证模块地址的命令
+ *                      格式：$MConfirm[model]Addr[addr]*
+ *                         -model:  Defence || Move
+ *                         -addr:   待求证的地址， 大小1字节
+ * \param[in] model： Model to be confirm, can be Defence or Move
+ * \param[in] addr:  Addr to be confirm, can be any 1byte number
+ * \return              If matches return 1, otherwise 0
+ * \note                从机接口实现要求:
+ *                          返回Yes || No
+ *                          在一定时间内等待模块回应
+ *                          如果地址符合， 发送$MYes*
+ *                          超时则不符合， 返回$MNo*
+ */
+uint8_t slaver_model_addr_confirm(char* model, uint8_t addr) {
+    char command[1024];
+    sprintf(command, "$MConfirm%sAddr%02X*", model, addr);
+    usart3_send_str(command);
+    do {
+        get_model_message();
+    } while (!strstr("YesNo", message));
+    if (strchr(message, 'Y'))
+        return 1;
+    return 0;
+}
+
 static void
 slaver_video_wifi_config_connect(const char* ssid, const char* pwd) {
     char command[1024];
@@ -103,6 +131,15 @@ slaver_video_quick_connect(void) {
 static void
 get_video_message(void) {
     while (slaver_received_data.receive_data_flag == 0 && slaver_received_data.message_type != SLAVER_MESSAGE_VIDEO) {
+        ;
+    }
+    strcpy(message, (char*)slaver_received_data.uart_buff);
+    slaver_received_data.receive_data_flag = 0;
+}
+
+static void
+get_model_message(void) {
+    while (slaver_received_data.receive_data_flag == 0 && slaver_received_data.message_type != SLAVER_MESSAGE_MODEL) {
         ;
     }
     strcpy(message, (char*)slaver_received_data.uart_buff);

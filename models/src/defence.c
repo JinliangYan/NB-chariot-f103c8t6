@@ -36,6 +36,7 @@
 #include "state.h"
 #include "printf.h"
 #include "irda.h"
+#include "slaver.h"
 
 //#define DEFENCE_DEBUG
 
@@ -63,7 +64,6 @@ static const defence_t defences[256] = {
 
 /**
  * \brief 防具数据结构体
- * \note  因防具模块没有找到合适的识别方法，所以只能在应用端手动选择
  */
 defence_t defence;
 
@@ -74,11 +74,16 @@ static attacker_t attacker;
 void
 defence_init(void) {
     irda_init();
-    /* 默认使用轻量级防具 */
-    defence_type_t defence_type = DEFENCE_TYPE_LIGHTWEIGHT;
     
-    // TODO 获得用户选择的防具类型
+    defence_type_t defence_type = WEAPON_TYPE_BEGIN + 1;
     
+    /* 1. 扫描，确定类型 */
+    for (defence_type_t i = defence_type; i < WEAPON_TYPE_END; ++i) {
+        if (slaver_model_addr_confirm("Defence", i)) {
+            defence_type = i;
+            break;
+        }
+    }
     defence = defences[defence_type];
 }
 

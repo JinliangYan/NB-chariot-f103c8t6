@@ -42,9 +42,13 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef enum {
+    DEFENCE_TYPE_BEGIN,
+
     DEFENCE_TYPE_NONE,          /*!< 无防具 */
     DEFENCE_TYPE_LIGHTWEIGHT,   /*!< 轻量级防具 */
     DEFENCE_TYPE_HEAVYWEIGHT,   /*!< 重量级防具 */
+
+    DEFENCE_TYPE_END,
 } defence_type_t;
 
 typedef struct {

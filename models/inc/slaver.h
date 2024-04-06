@@ -45,6 +45,7 @@ void slaver_init(void);
 void slaver_video_start(void);
 void slaver_video_restart(void);
 void slaver_video_disconnect(void);
+uint8_t slaver_model_addr_confirm(char* model, uint8_t addr);
 void slaver_clean_rebuff(void);
 
 #ifdef __cplusplus

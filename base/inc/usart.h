@@ -27,6 +27,7 @@ typedef enum { WEAPON_MESSAGE_NONE, WEAPON_MESSAGE_IR_SIG, WEAPON_MESSAGE_FEEDBA
 typedef enum {
     SLAVER_MESSAGE_NONE,
     SLAVER_MESSAGE_VIDEO,
+    SLAVER_MESSAGE_MODEL,
 } slaver_board_message_type_t;
 
 /**
