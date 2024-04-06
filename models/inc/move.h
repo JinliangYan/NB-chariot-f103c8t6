@@ -52,7 +52,7 @@ typedef enum {
 
 typedef struct {
     move_model_type_t type;
-    uint16_t hp;
+    int32_t hp;
     uint16_t weight;
     uint16_t speed;
 } move_model_t;
