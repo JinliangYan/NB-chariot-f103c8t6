@@ -63,9 +63,6 @@ state_init(void) {
     chariot.speed_with_weight = move_model.speed - chariot.total_weight;
 }
 
-/**
- * \brief 检查蓝牙是否连接, 如果没有连接则在此循环
- */
 void
 state_handler(void) {
     bt_connect_handler();
@@ -74,6 +71,9 @@ state_handler(void) {
     weapon_hp_handler();
 }
 
+/**
+ * \brief 检查蓝牙是否连接, 如果没有连接则循环等待，LED闪烁
+ */
 static void
 bt_connect_handler(void) {
     while ((chariot.bt_connected = is_bt_connected()) != 1) {
