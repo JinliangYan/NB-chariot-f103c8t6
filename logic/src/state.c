@@ -87,8 +87,10 @@ bt_connect_handler(void) {
 static void
 chariot_hp_handler(void) {
     if (chariot.core_hp <= 0) {
-        // TODO 游戏结束, 收尾任务, 待完善
+        /* 关闭电机 */
         motor_state(0);
+        //TODO 告诉副板发出声光提示
+
         exit(0);
     }
 }
@@ -97,6 +99,8 @@ static void
 defence_hp_handler(void) {
     if (chariot.defence->hp <= 0) {
         // TODO 防御模块被击破反应, 待完善
+        /* 防具掉落 */
+        electromagnet_off();
     }
 }
 
@@ -104,7 +108,5 @@ static void
 weapon_hp_handler(void) {
     if (chariot.weapon->hp <= 0) {
         // TODO 武器模块被击破反应, 待完善
-        /* 武器掉落 */
-        electromagnet_off();
     }
 }
