@@ -34,11 +34,6 @@
 
 #include "defence.h"
 #include "state.h"
-#include "printf.h"
-#include "irda.h"
-#include "slaver.h"
-
-//#define DEFENCE_DEBUG
 
 /**
  * \brief 所有防具类型结构体数组, 以防具类型为index
