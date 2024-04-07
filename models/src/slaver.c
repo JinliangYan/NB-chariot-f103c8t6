@@ -35,16 +35,20 @@
 #include "slaver.h"
 #include "string.h"
 #include "usart.h"
+#include "delay.h"
 
-static void slaver_video_wifi_config_connect(const char* ssid, const char* pwd);
-static void slaver_video_quick_connect(void);
-static void get_video_message(void);
-static void get_model_message(void);
+static uint8_t slaver_video_wifi_config_connect(const char* ssid, const char* pwd);
+static uint8_t slaver_video_quick_connect(void);
+static uint8_t get_once_video_message(void);
+static uint8_t get_once_model_message(void);
 
 #define SLAVER_BAUD_RATE 9600
 #define SSID             ""
 #define PASSWORD         ""
-#define TIME_OUT         strstr(message, "Connect_TimeOut")
+#define TIME_OUT_SLAVER  strstr(message, "Connect_TimeOut")
+
+#define TIME_OUT      1000
+#define TIME_RESEND   300
 
 static char message[1024];
 
@@ -56,28 +60,55 @@ slaver_init(void) {
     slaver_video_wifi_config_connect(SSID, PASSWORD);
 }
 
-void
+uint8_t
 slaver_video_start(void) {
-    usart3_send_str("$VStart*");
+    uint16_t time_out = TIME_OUT;
     do {
-        get_video_message();
-    } while (!strstr(message, "READY"));
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str("$VStart*");
+        }
+        delay_ms(1);
+        time_out--;
+    } while (!(get_once_model_message() || time_out == 0));
+
+    if (strstr(message, "READY")) {
+        return 1;
+    }
+    return 0;
 }
 
-void
+uint8_t
 slaver_video_restart(void) {
-    usart3_send_str("VRestart*");
+    uint16_t time_out = TIME_OUT;
     do {
-        get_video_message();
-    } while (!strstr(message, "READY"));
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str("VRestart*");
+        }
+        delay_ms(1);
+        time_out--;
+    } while (!(get_once_model_message() || time_out == 0));
+
+    if (strstr(message, "READY")) {
+        return 1;
+    }
+    return 0;
 }
 
-void
+uint8_t
 slaver_video_disconnect(void) {
-    usart3_send_str("$VDisconnect*");
+    uint16_t time_out = TIME_OUT;
     do {
-        get_video_message();
-    } while (!strstr(message, "Disconnect_Finish"));
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str("$VDisconnect*");
+        }
+        delay_ms(1);
+        time_out--;
+    } while (!(get_once_model_message() || time_out == 0));
+
+    if (strstr(message, "Disconnect_Finish")) {
+        return 1;
+    }
+    return 0;
 }
 
 /**
@@ -95,55 +126,108 @@ slaver_video_disconnect(void) {
  *                          超时则不符合， 返回$MNo*
  */
 uint8_t slaver_model_addr_confirm(char* model, uint8_t addr) {
+    uint16_t time_out = TIME_OUT;
     char command[1024];
+
     sprintf(command, "$MConfirm%sAddr%02X*", model, addr);
-    usart3_send_str(command);
+
     do {
-        get_model_message();
-    } while (!strstr("YesNo", message));
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str(command);
+        }
+        delay_ms(1);
+        time_out--;
+    } while (!(get_once_model_message() || time_out == 0));
+
     if (strchr(message, 'Y'))
         return 1;
     return 0;
 }
 
-static void
+/**
+ * \brief 配置摄像头wifi
+ * \param ssid wifi ssid
+ * \param pwd wifi pwd
+ * \return 配置成功返回1, 失败返回0
+ */
+static uint8_t
 slaver_video_wifi_config_connect(const char* ssid, const char* pwd) {
+    uint16_t time_out = TIME_OUT;
+
     char command[1024];
-    usart3_send_str("$VWificonfig*");
     sprintf(command, "$V%sP%s\n", ssid, pwd);
-    usart3_send_str(command);
+
     do {
-        get_video_message();
-    } while (!strstr(message, "Connect_OK") || TIME_OUT);
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str("$VWificonfig*");
+        }
+        delay_ms(1);
+        time_out--;
+    } while (!(get_once_video_message() || time_out == 0));
+
+    if (!strstr(message, "Connect_OK")) {
+        return 0;
+    }
+
     do {
-        get_video_message();
-    } while (!strstr(message, "Wificonfig_Finish"));
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str(command);
+        }
+        delay_ms(1);
+        time_out--;
+    } while (!(get_once_video_message() || time_out == 0));
+
+    if (!strstr(message, "Wificonfig_Finish")) {
+        return 0;
+    }
+
+    return 1;
 }
 
-static void
+static uint8_t
 slaver_video_quick_connect(void) {
-    usart3_send_str("$VQuickconnect*");
+    uint16_t time_out = TIME_OUT;
+
     do {
-        get_video_message();
-    } while (!strstr(message, "Quickconnect_Finish") || TIME_OUT);
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str("$VQuickconnect*");
+        }
+        delay_ms(1);
+        time_out--;
+    } while (!(get_once_video_message() || time_out == 0));
+
+    if (strstr(message, "Quickconnect_Finish")) {
+        return 1;
+    }
+    return 0;
 }
 
-static void
-get_video_message(void) {
-    while (slaver_received_data.receive_data_flag == 0 && slaver_received_data.message_type != SLAVER_MESSAGE_VIDEO) {
-        ;
+/**
+ * \brief 检查一次是否接收到视频信息, 如果有则将信息复制到 message 中.
+ * \return 有视频信息返回1, 没有返回0
+ */
+static uint8_t
+get_once_video_message(void) {
+    if (slaver_received_data.receive_data_flag == 1 && slaver_received_data.message_type == SLAVER_MESSAGE_VIDEO) {
+        strcpy(message, (char*)slaver_received_data.uart_buff);
+        slaver_received_data.receive_data_flag = 0;
+        return 1;
     }
-    strcpy(message, (char*)slaver_received_data.uart_buff);
-    slaver_received_data.receive_data_flag = 0;
+    return 0;
 }
 
-static void
-get_model_message(void) {
-    while (slaver_received_data.receive_data_flag == 0 && slaver_received_data.message_type != SLAVER_MESSAGE_MODEL) {
-        ;
+/**
+ * \brief 检查一次是否接收到模块信息, 如果有则将信息复制到 message 中.
+ * \return 有模块信息返回1, 没有返回0
+ */
+static uint8_t
+get_once_model_message(void) {
+    if (slaver_received_data.receive_data_flag == 1 && slaver_received_data.message_type == SLAVER_MESSAGE_MODEL) {
+        strcpy(message, (char*)slaver_received_data.uart_buff);
+        slaver_received_data.receive_data_flag = 0;
+        return 1;
     }
-    strcpy(message, (char*)slaver_received_data.uart_buff);
-    slaver_received_data.receive_data_flag = 0;
+    return 0;
 }
 
 void

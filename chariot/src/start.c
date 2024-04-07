@@ -31,7 +31,7 @@ void
 base_init(void) {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
-//    slaver_init();
+    slaver_init();
     led_init();
     hcsr04_init();
     rgb_led_init();
