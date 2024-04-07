@@ -117,20 +117,16 @@ move_control(void) {
         pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 
         bt_received_data.receive_data_flag = 0;
-
-        delay_ms(10);
     }
 
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_TURN) {
         if (bt_received_data.uart_buff[0] == 'L') {
-            motor_turn_left(speed_max);
+            motor_turn_left(170);
         } else if (bt_received_data.uart_buff[0] == 'R') {
-            motor_turn_right(speed_max);
+            motor_turn_right(170);
         }
 
         bt_received_data.receive_data_flag = 0;
-
-        delay_ms(10);
     }
 }
 
