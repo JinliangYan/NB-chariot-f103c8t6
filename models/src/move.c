@@ -56,11 +56,13 @@ static const move_model_t move_models[256] = {
         .type = MOVE_MODEL_TYPE_LIGHTWEIGHT,
         .hp = HP_S,
         .speed = 499,
+        .name = "MOVE_MODEL_TYPE_LIGHTWEIGHT",
     },
     [MOVE_MODEL_TYPE_HEAVYWEIGHT] = {
         .type = MOVE_MODEL_TYPE_HEAVYWEIGHT,
         .hp = HP_L,
         .speed = 349,
+        .name = "MOVE_MODEL_TYPE_HEAVYWEIGHT",
     },
     // TODO 补充其他移动模块类型
 };

@@ -6,6 +6,7 @@
 #include "motor.h"
 #include "move.h"
 #include "printf.h"
+#include "slaver.h"
 #include "state.h"
 #include "task_runner.h"
 #include "timer.h"
@@ -30,6 +31,7 @@ void
 base_init(void) {
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+    slaver_init();
     led_init();
     hcsr04_init();
     rgb_led_init();

@@ -64,6 +64,7 @@ static const weapon_skill_t weapon_skills[256] = {
         .duration = 30,
         .remaining_duration = 0,
         .state = 0,
+        .name = "WEAPON_SKILL_INCREASE_DAMAGE",
     },
     //TODO 补充其他技能类型
 };
@@ -77,14 +78,16 @@ static const weapon_t weapons[256] = {
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 50,
         .steerable = 1,
-        .weight = WEIGHT_M
+        .weight = WEIGHT_M,
+        .name = "WEAPON_TYPE_GUN",
     },
     [WEAPON_TYPE_OTHER] = {
         .type = WEAPON_TYPE_OTHER,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 70,
         .steerable = 0,
-        .weight = WEIGHT_L
+        .weight = WEIGHT_L,
+        .name = "WEAPON_TYPE_OTHER",
     }
     // TODO 补充其他武器类型
 };

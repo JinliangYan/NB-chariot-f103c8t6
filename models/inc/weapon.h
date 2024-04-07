@@ -70,6 +70,7 @@ typedef struct {
     uint8_t duration;           /*!< 技能持续时间 */
     uint8_t remaining_duration; /*!< 技能剩余持续时间 */
     uint8_t state;              /*!< 是否激活 */
+    char* name;
 } weapon_skill_t;
 
 typedef struct {
@@ -81,6 +82,7 @@ typedef struct {
     uint8_t steerable;  /*!< 能(1)否(0)转向 */
     float x_angle;      /*!< 武器当前X偏移角, 当steerable为0时无用 */
     float y_angle;      /*!< 武器当前Y偏移角, 当steerable为0时无用 */
+    char* name;
 } weapon_t;
 
 void weapon_init(void);

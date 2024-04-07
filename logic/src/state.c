@@ -33,6 +33,7 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "state.h"
 #include "blt.h"
 #include "electromagnet.h"
@@ -53,6 +54,8 @@ static void bt_connect_handler(void);
 
 void
 state_init(void) {
+    char state_str[1024];
+
     chariot.core_hp = 1;
     chariot.bt_connected = is_bt_connected();
     chariot.move_model = &move_model;
@@ -61,6 +64,26 @@ state_init(void) {
     chariot.skill = &weapon_skill;
     chariot.total_weight = weapon.weight + defence.weight;
     chariot.speed_with_weight = move_model.speed - chariot.total_weight;
+
+    sprintf(state_str,
+                        "core_hp{%ld}"
+                        "bt_connected{%d}"
+                        "move_model{%s}"
+                        "weapon{%s}"
+                        "defence{%s}"
+                        "skill{%s}"
+                        "total_weight{%lu}"
+                        "speed_with_weight{%d}",
+                                                chariot.core_hp,
+                                                chariot.bt_connected,
+                                                chariot.move_model->name,
+                                                chariot.weapon->name,
+                                                chariot.defence->name,
+                                                chariot.skill->name,
+                                                chariot.total_weight,
+                                                chariot.speed_with_weight);
+
+    bt_send_str(state_str);
 }
 
 void
