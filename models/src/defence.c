@@ -75,7 +75,7 @@ static attacker_t attacker;
 
 void
 defence_init(void) {
-    defence_type_t defence_type = WEAPON_TYPE_BEGIN + 1;
+    defence_type_t defence_type = DEFENCE_TYPE_BEGIN + 1;
     
     /* 1. 扫描，确定类型 */
 //    for (defence_type_t i = defence_type; i < WEAPON_TYPE_END; ++i) {

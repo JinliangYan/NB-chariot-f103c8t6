@@ -74,15 +74,15 @@ move_model_t move_model;
  */
 void
 move_init(void) {
-    move_model_type_t move_model_type = WEAPON_TYPE_BEGIN + 1;
+    move_model_type_t move_model_type = MOVE_MODEL_TYPE_BEGIN + 1;
 
     /* 1. 扫描，确定类型 */
-    for (move_model_type_t i = move_model_type; i < WEAPON_TYPE_END; ++i) {
-        if (slaver_model_addr_confirm("Move", i)) {
-            move_model_type = i;
-            break;
-        }
-    }
+//    for (move_model_type_t i = move_model_type; i < WEAPON_TYPE_END; ++i) {
+//        if (slaver_model_addr_confirm("Move", i)) {
+//            move_model_type = i;
+//            break;
+//        }
+//    }
     move_model = move_models[move_model_type];
 
     /* 2. 根据总重确定速度 */
