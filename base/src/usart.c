@@ -329,6 +329,9 @@ USART3_IRQHandler(void) {
                 case 'M':
                     slaver_received_data.message_type = SLAVER_MESSAGE_MODEL;
                     break;
+                case 'I':
+                    slaver_received_data.message_type = SLAVER_MESSAGE_INFO;
+                    break;
                 default: break;
             }
             next_state = MESSAGE;

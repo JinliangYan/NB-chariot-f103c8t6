@@ -28,6 +28,7 @@ typedef enum {
     SLAVER_MESSAGE_NONE,
     SLAVER_MESSAGE_VIDEO,
     SLAVER_MESSAGE_MODEL,
+    SLAVER_MESSAGE_INFO,
 } slaver_board_message_type_t;
 
 /**

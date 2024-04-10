@@ -32,11 +32,12 @@
 * Author:          JinLiang YAN <yanmiku0206@outlook.com>
 */
 
-#include "move.h"
+#include <string.h>
 #include "delay.h"
 #include "hcsr.h"
 #include "mode.h"
 #include "motor.h"
+#include "move.h"
 #include "slaver.h"
 #include "state.h"
 #include "usart.h"
@@ -45,7 +46,9 @@ static void pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4);
 static int Map(int val, int in_min, int in_max, int out_min, int out_max);
 static void avoid(void);
 static void follow(void);
+static void clear_attacker_info(void);
 
+    static attacker_t attacker;
 static uint16_t speed_max;
 
 /**
@@ -95,6 +98,20 @@ move_init(void) {
 void
 move_control(void) {
     speed_max = chariot.speed_with_weight;
+
+    /* 从副板获得攻击者ID，伤害，技能 */
+    if (slaver_received_data.receive_data_flag == 1 && slaver_received_data.message_type == SLAVER_MESSAGE_INFO) {
+        if (strstr((char*)slaver_received_data.uart_buff, "attacked")
+            && strstr((char*)slaver_received_data.uart_buff, "move")) {
+            scanf((char*)slaver_received_data.uart_buff, "attacked-i%d-s%d-p%d", &attacker.id, &attacker.skill,
+                  &attacker.power);
+        }
+    }
+    /* 扣血 */
+    if (attacker.id != 0) {
+            move_model.hp -= attacker.power;
+            clear_attacker_info();
+    }
 
     avoid();
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_LEFT_JOYSTICK) {
@@ -259,4 +276,11 @@ pwm_data_process(int pwm1, int pwm2, int pwm3, int pwm4) {
 static int
 Map(int val, int in_min, int in_max, int out_min, int out_max) {
     return (int)(val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+static void
+clear_attacker_info(void) {
+    attacker.power = 0;
+    attacker.id = 0;
+    attacker.skill = 0;
 }

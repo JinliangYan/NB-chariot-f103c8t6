@@ -32,32 +32,37 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
+#include <string.h>
 #include "defence.h"
 #include "slaver.h"
 #include "state.h"
+#include "usart.h"
 
 /**
  * \brief 所有防具类型结构体数组, 以防具类型为index
  */
 static const defence_t defences[20] = {
-    [DEFENCE_TYPE_NONE] = {
-        .type = DEFENCE_TYPE_NONE,
-        .hp = 0,
-        .weight = WEIGHT_0,
-        .name = "DEFENCE_TYPE_NONE",
-    },
-    [DEFENCE_TYPE_LIGHTWEIGHT] = {
-        .type = DEFENCE_TYPE_LIGHTWEIGHT,
-        .hp = 2,
-        .weight = WEIGHT_M,
-        .name = "DEFENCE_TYPE_LIGHTWEIGHT",
-    },
-    [DEFENCE_TYPE_HEAVYWEIGHT] = {
-        .type = DEFENCE_TYPE_HEAVYWEIGHT,
-        .hp = 4,
-        .weight = WEIGHT_L,
-        .name = "DEFENCE_TYPE_HEAVYWEIGHT",
-    }
+    [DEFENCE_TYPE_NONE] =
+        {
+            .type = DEFENCE_TYPE_NONE,
+            .hp = 0,
+            .weight = WEIGHT_0,
+            .name = "DEFENCE_TYPE_NONE",
+        },
+    [DEFENCE_TYPE_LIGHTWEIGHT] =
+        {
+            .type = DEFENCE_TYPE_LIGHTWEIGHT,
+            .hp = 2,
+            .weight = WEIGHT_M,
+            .name = "DEFENCE_TYPE_LIGHTWEIGHT",
+        },
+    [DEFENCE_TYPE_HEAVYWEIGHT] =
+        {
+            .type = DEFENCE_TYPE_HEAVYWEIGHT,
+            .hp = 4,
+            .weight = WEIGHT_L,
+            .name = "DEFENCE_TYPE_HEAVYWEIGHT",
+        }
     // TODO 补充其他防具类型
 };
 
@@ -72,7 +77,7 @@ static attacker_t attacker;
 void
 defence_init(void) {
     defence_type_t defence_type = DEFENCE_TYPE_BEGIN + 1;
-    
+
     /* 1. 扫描，确定类型 */
     for (defence_type_t i = defence_type; i < WEAPON_TYPE_END; ++i) {
         if (slaver_model_addr_confirm("Defence", i)) {
@@ -85,7 +90,14 @@ defence_init(void) {
 
 void
 defence_control(void) {
-    //TODO 从副板获得攻击者ID，伤害，技能
+    /* 从副板获得攻击者ID，伤害，技能 */
+    if (slaver_received_data.receive_data_flag == 1 && slaver_received_data.message_type == SLAVER_MESSAGE_INFO) {
+        if (strstr((char*)slaver_received_data.uart_buff, "attacked")
+            && strstr((char*)slaver_received_data.uart_buff, "defence")) {
+            scanf((char*)slaver_received_data.uart_buff, "attacked-i%d-s%d-p%d", &attacker.id, &attacker.skill,
+                  &attacker.power);
+        }
+    }
     if (attacker.id != 0) {
         if (defence.hp != 0) {
             if (attacker.power > defence.hp) {
