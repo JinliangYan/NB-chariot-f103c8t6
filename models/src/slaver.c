@@ -85,10 +85,10 @@ slaver_video_disconnect(void) {
 
 /**
  * \brief               向从板发送验证模块地址的命令
- *                      格式：$MConfirm[model]Addr[addr]*
+ *                      格式：$Mconfirm-a[addr]-m[model]*
  *                         -model:  Defence || Move
  *                         -addr:   待求证的地址， 大小1字节
- * \param[in] model： Model to be confirm, can be Defence or Move
+ * \param[in] model： Model to be confirm, can be -Defence or -Move
  * \param[in] addr:  Addr to be confirm, can be any 1byte number
  * \return              If matches return 1, otherwise 0
  * \note                从机接口实现要求:
@@ -101,7 +101,7 @@ uint8_t
 slaver_model_addr_confirm(char* model, uint8_t addr) {
     char command[256];
 
-    sprintf(command, "$MConfirm%sAddr%02X*", model, addr);
+    sprintf(command, "$Mconfirm-a%d-m%s*", addr, model);
     return send_command_cmp_feedback(command, "Y", get_once_model_message);
 }
 

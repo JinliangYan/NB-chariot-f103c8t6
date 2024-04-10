@@ -63,6 +63,20 @@ typedef enum {
     CHARIOT_TYPE_HW,
 } chariot_type_t;
 
+typedef enum {
+    MODEL_CORE,
+    MODEL_MOVE,
+    MODEL_WEAPON,
+    MODEL_DEFENCE,
+    MODEL_SKILL,
+} model_t;
+
+typedef enum {
+    ATTRIBUTE_HP,
+    ATTRIBUTE_TIME,
+    ATTRIBUTE_POWER,
+} attribute_t;
+
 typedef struct {
     int16_t core_hp;            /*!< 核心血量 */
     uint8_t bt_connected;       /*!< 蓝牙连接状态 */
@@ -85,6 +99,7 @@ extern status_t chariot;
 
 void state_init(void);
 void state_handler(void);
+void state_update_model(model_t model, attribute_t attribute, uint8_t value);
 
 #ifdef __cplusplus
 }

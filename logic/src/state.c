@@ -32,13 +32,14 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
-#include <stdlib.h>
 #include <stdio.h>
-#include "state.h"
+#include <stdlib.h>
 #include "blt.h"
 #include "electromagnet.h"
 #include "led.h"
 #include "motor.h"
+#include "slaver.h"
+#include "state.h"
 
 extern move_model_t move_model;
 extern weapon_t weapon;
@@ -54,8 +55,6 @@ static void bt_connect_handler(void);
 
 void
 state_init(void) {
-    char state_str[1024];
-
     chariot.core_hp = 1;
     chariot.bt_connected = is_bt_connected();
     chariot.move_model = &move_model;
@@ -65,25 +64,11 @@ state_init(void) {
     chariot.total_weight = weapon.weight + defence.weight;
     chariot.speed_with_weight = move_model.speed - chariot.total_weight;
 
-    sprintf(state_str,
-                        "core_hp{%ld}"
-                        "bt_connected{%d}"
-                        "move_model{%s}"
-                        "weapon{%s}"
-                        "defence{%s}"
-                        "skill{%s}"
-                        "total_weight{%lu}"
-                        "speed_with_weight{%d}",
-                                                chariot.core_hp,
-                                                chariot.bt_connected,
-                                                chariot.move_model->name,
-                                                chariot.weapon->name,
-                                                chariot.defence->name,
-                                                chariot.skill->name,
-                                                chariot.total_weight,
-                                                chariot.speed_with_weight);
-
-    bt_send_str(state_str);
+//    state_update_model(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
+//    state_update_model(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
+//    state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
+//    state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
+//    state_update_model(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
 }
 
 void
@@ -92,6 +77,41 @@ state_handler(void) {
     chariot_hp_handler();
     defence_hp_handler();
     weapon_hp_handler();
+}
+
+void state_update_model(model_t model, attribute_t attribute, uint8_t value) {
+    char state_str[256];
+
+    if (model == MODEL_CORE) {
+        if (attribute == ATTRIBUTE_HP) {
+            /* 核心血量 */
+            sprintf(state_str, "ch%d", chariot.core_hp);
+            bt_send_str(state_str);
+        }
+    } else if (model == MODEL_DEFENCE) {
+        if (attribute == ATTRIBUTE_HP) {
+            /* 防御模块血量 */
+            sprintf(state_str, "mvh%d", chariot.move_model->hp);
+            bt_send_str(state_str);
+        }
+    } else if (model == MODEL_MOVE) {
+        if (attribute == ATTRIBUTE_HP) {
+            /* 行走模块血量 */
+            sprintf(state_str, "mvh%d", chariot.move_model->hp);
+            bt_send_str(state_str);
+        }
+    } else if (model == MODEL_WEAPON) {
+        if (attribute == ATTRIBUTE_HP) {
+            /* 行走模块血量 */
+            sprintf(state_str, "wph%d", chariot.move_model->hp);
+            bt_send_str(state_str);
+        }
+    } else if (model == MODEL_SKILL) {
+        if (attribute == ATTRIBUTE_TIME) {
+            sprintf(state_str, "scdt%d", chariot.move_model->hp);
+            bt_send_str(state_str);
+        }
+    }
 }
 
 /**
@@ -112,8 +132,7 @@ chariot_hp_handler(void) {
     if (chariot.core_hp <= 0) {
         /* 关闭电机 */
         motor_state(0);
-        //TODO 告诉副板发出声光提示
-
+        slaver_send('I', "dead");
         exit(0);
     }
 }

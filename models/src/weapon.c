@@ -33,6 +33,7 @@
  */
 #include "weapon.h"
 #include "state.h"
+#include "slaver.h"
 #include "defence.h"
 #include "ir.h"
 #include "servo.h"
@@ -171,6 +172,7 @@ weapon_control(void) {
  */
 static void
 bt_received_data_handler(void) {
+    char cmd[256];
     if (bt_received_data.receive_data_flag == 0) {
         return;
     }
@@ -180,8 +182,10 @@ bt_received_data_handler(void) {
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_ATTACK) {
         if (bt_received_data.uart_buff[0] == 'N') {
             weapon_attack(0);
+            slaver_send('I', "weaponattack-tn");
         } else if (bt_received_data.uart_buff[0] == 'C') {
             weapon_attack(1);
+            slaver_send('I', "weaponattack-tc");
         }
         bt_received_data.receive_data_flag = 0;
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_SKILL) {
@@ -218,8 +222,7 @@ weapon_received_data_handler(void) {
  */
 static void
 weapon_attack(uint8_t charged) {
-    //TODO 告诉副板发出攻击音效
-
+    slaver_send('I', "weapon_attack");
     ir_emission(weapon.type, CHARIOT_ID, 0, charged ? (uint8_t)(weapon.power * 1.5) : weapon.power);
 }
 
@@ -244,6 +247,7 @@ weapon_activate_skill(void) {
     if (weapon_skill.skill_type == WEAPON_SKILL_INCREASE_DAMAGE) {
         /* 技能效果: 攻击力增加 */
         weapon.power = (uint8_t)(weapon.power * 1.5);
+        slaver_send('I', "skill-t1");
     }
     //TODO 补充其他技能效果
 

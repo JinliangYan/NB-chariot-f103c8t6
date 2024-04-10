@@ -42,6 +42,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 void slaver_init(void);
+void slaver_send(char type, const char* str);
 uint8_t slaver_video_start(void);
 uint8_t slaver_video_restart(void);
 uint8_t slaver_video_disconnect(void);
