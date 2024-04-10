@@ -56,7 +56,7 @@
 /**
  * \brief 所有技能类型结构体数组, 以技能类型为index
  */
-static const weapon_skill_t weapon_skills[256] = {
+static const weapon_skill_t weapon_skills[10] = {
     [WEAPON_SKILL_INCREASE_DAMAGE] = {
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .activated_times = 2,
@@ -72,7 +72,7 @@ static const weapon_skill_t weapon_skills[256] = {
 /**
  * \brief 所有武器类型结构体数组, 以武器类型为index
  */
-static const weapon_t weapons[256] = {
+static const weapon_t weapons[20] = {
     [WEAPON_TYPE_GUN] = {
         .type = WEAPON_TYPE_GUN,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,

@@ -51,7 +51,7 @@ static uint8_t send_command_cmp_feedback(char* command, char* expect_feedback, u
 #define TIME_OUT      10
 #define TIME_RESEND   5
 
-static char message[1024];
+static char message[256];
 
 void
 slaver_init(void) {
@@ -59,6 +59,13 @@ slaver_init(void) {
     slaver_video_start();
 
     slaver_video_wifi_config_connect(SSID, PASSWORD);
+}
+
+void
+slaver_send(char type, const char* str) {
+    char temp[256];
+    sprintf(temp, "$%c%s*", type, str);
+    usart3_send_str(temp);
 }
 
 uint8_t
@@ -90,8 +97,9 @@ slaver_video_disconnect(void) {
  *                          如果地址符合， 发送$MYes*
  *                          超时则不符合， 返回$MNo*
  */
-uint8_t slaver_model_addr_confirm(char* model, uint8_t addr) {
-    char command[1024];
+uint8_t
+slaver_model_addr_confirm(char* model, uint8_t addr) {
+    char command[256];
 
     sprintf(command, "$MConfirm%sAddr%02X*", model, addr);
     return send_command_cmp_feedback(command, "Y", get_once_model_message);
@@ -105,7 +113,7 @@ uint8_t slaver_model_addr_confirm(char* model, uint8_t addr) {
  */
 static uint8_t
 slaver_video_wifi_config_connect(const char* ssid, const char* pwd) {
-    char command[1024];
+    char command[256];
 
     if (send_command_cmp_feedback("$VWificonfig*", "Connect_OK", get_once_video_message) == 0) {
         return 0;

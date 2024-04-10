@@ -105,7 +105,7 @@ TIM2_IRQHandler(void) {
                 weapon_skill.remaining_duration--;
             }
 
-            char state[1024];
+            char state[256];
             if (is_bt_connected()) {
                 sprintf(state, "core_hp[%d]defence_hp[%d]weapon_hp[%d]move_model_hp[%d]",
                         chariot.core_hp, chariot.defence->hp, chariot.weapon->hp, chariot.move_model->hp);

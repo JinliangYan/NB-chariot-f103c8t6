@@ -39,7 +39,7 @@
 /**
  * \brief 所有防具类型结构体数组, 以防具类型为index
  */
-static const defence_t defences[256] = {
+static const defence_t defences[20] = {
     [DEFENCE_TYPE_NONE] = {
         .type = DEFENCE_TYPE_NONE,
         .hp = 0,

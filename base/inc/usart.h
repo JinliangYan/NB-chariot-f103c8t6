@@ -6,7 +6,7 @@
 /**
  * \brief   蓝牙串口接收缓冲区大小
  */
-#define BUFF_SIZE 1024
+#define BUFF_SIZE 256
 
 /**
  * \brief   蓝牙接收消息类型

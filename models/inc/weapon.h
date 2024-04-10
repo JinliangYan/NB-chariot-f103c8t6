@@ -45,7 +45,7 @@ extern "C" {
  * \brief   Œ‰∆˜¿‡–Õ√∂æŸ
  */
 typedef enum {
-    WEAPON_TYPE_BEGIN = 0xA0,
+    WEAPON_TYPE_BEGIN,
 
     WEAPON_TYPE_GUN,
     WEAPON_TYPE_OTHER,
