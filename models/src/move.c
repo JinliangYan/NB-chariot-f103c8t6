@@ -77,7 +77,7 @@ move_init(void) {
     move_model_type_t move_model_type = MOVE_MODEL_TYPE_BEGIN + 1;
 
     /* 1. 扫描，确定类型 */
-    for (move_model_type_t i = move_model_type; i < WEAPON_TYPE_END; ++i) {
+    for (move_model_type_t i = move_model_type; i < MOVE_MODEL_TYPE_END; ++i) {
         if (slaver_model_addr_confirm("Move", i)) {
             move_model_type = i;
             break;

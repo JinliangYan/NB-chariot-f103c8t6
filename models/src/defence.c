@@ -33,6 +33,7 @@
  */
 
 #include "defence.h"
+#include "slaver.h"
 #include "state.h"
 
 /**
@@ -73,12 +74,12 @@ defence_init(void) {
     defence_type_t defence_type = DEFENCE_TYPE_BEGIN + 1;
     
     /* 1. 扫描，确定类型 */
-//    for (defence_type_t i = defence_type; i < WEAPON_TYPE_END; ++i) {
-//        if (slaver_model_addr_confirm("Defence", i)) {
-//            defence_type = i;
-//            break;
-//        }
-//    }
+    for (defence_type_t i = defence_type; i < WEAPON_TYPE_END; ++i) {
+        if (slaver_model_addr_confirm("Defence", i)) {
+            defence_type = i;
+            break;
+        }
+    }
     defence = defences[defence_type];
 }
 

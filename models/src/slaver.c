@@ -41,14 +41,15 @@ static uint8_t slaver_video_wifi_config_connect(const char* ssid, const char* pw
 static uint8_t slaver_video_quick_connect(void);
 static uint8_t get_once_video_message(void);
 static uint8_t get_once_model_message(void);
+static uint8_t send_command_cmp_feedback(char* command, char* expect_feedback, uint8_t (*get_once_message)(void));
 
 #define SLAVER_BAUD_RATE 9600
 #define SSID             ""
 #define PASSWORD         ""
 #define TIME_OUT_SLAVER  strstr(message, "Connect_TimeOut")
 
-#define TIME_OUT      1000
-#define TIME_RESEND   300
+#define TIME_OUT      10
+#define TIME_RESEND   5
 
 static char message[1024];
 
@@ -62,53 +63,17 @@ slaver_init(void) {
 
 uint8_t
 slaver_video_start(void) {
-    uint16_t time_out = TIME_OUT;
-    do {
-        if (time_out % TIME_RESEND == 0) {
-            usart3_send_str("$VStart*");
-        }
-        delay_ms(1);
-        time_out--;
-    } while (!(get_once_model_message() || time_out == 0));
-
-    if (strstr(message, "READY")) {
-        return 1;
-    }
-    return 0;
+    return send_command_cmp_feedback("$VStart*", "READY", get_once_video_message);
 }
 
 uint8_t
 slaver_video_restart(void) {
-    uint16_t time_out = TIME_OUT;
-    do {
-        if (time_out % TIME_RESEND == 0) {
-            usart3_send_str("VRestart*");
-        }
-        delay_ms(1);
-        time_out--;
-    } while (!(get_once_model_message() || time_out == 0));
-
-    if (strstr(message, "READY")) {
-        return 1;
-    }
-    return 0;
+    return send_command_cmp_feedback("VRestart*", "READY", get_once_video_message);
 }
 
 uint8_t
 slaver_video_disconnect(void) {
-    uint16_t time_out = TIME_OUT;
-    do {
-        if (time_out % TIME_RESEND == 0) {
-            usart3_send_str("$VDisconnect*");
-        }
-        delay_ms(1);
-        time_out--;
-    } while (!(get_once_model_message() || time_out == 0));
-
-    if (strstr(message, "Disconnect_Finish")) {
-        return 1;
-    }
-    return 0;
+    return send_command_cmp_feedback("VRestart*", "READY", get_once_video_message);
 }
 
 /**
@@ -126,22 +91,10 @@ slaver_video_disconnect(void) {
  *                          超时则不符合， 返回$MNo*
  */
 uint8_t slaver_model_addr_confirm(char* model, uint8_t addr) {
-    uint16_t time_out = TIME_OUT;
     char command[1024];
 
     sprintf(command, "$MConfirm%sAddr%02X*", model, addr);
-
-    do {
-        if (time_out % TIME_RESEND == 0) {
-            usart3_send_str(command);
-        }
-        delay_ms(1);
-        time_out--;
-    } while (!(get_once_model_message() || time_out == 0));
-
-    if (strchr(message, 'Y'))
-        return 1;
-    return 0;
+    return send_command_cmp_feedback(command, "Y", get_once_model_message);
 }
 
 /**
@@ -152,54 +105,19 @@ uint8_t slaver_model_addr_confirm(char* model, uint8_t addr) {
  */
 static uint8_t
 slaver_video_wifi_config_connect(const char* ssid, const char* pwd) {
-    uint16_t time_out = TIME_OUT;
-
     char command[1024];
+
+    if (send_command_cmp_feedback("$VWificonfig*", "Connect_OK", get_once_video_message) == 0) {
+        return 0;
+    }
+
     sprintf(command, "$V%sP%s\n", ssid, pwd);
-
-    do {
-        if (time_out % TIME_RESEND == 0) {
-            usart3_send_str("$VWificonfig*");
-        }
-        delay_ms(1);
-        time_out--;
-    } while (!(get_once_video_message() || time_out == 0));
-
-    if (!strstr(message, "Connect_OK")) {
-        return 0;
-    }
-
-    do {
-        if (time_out % TIME_RESEND == 0) {
-            usart3_send_str(command);
-        }
-        delay_ms(1);
-        time_out--;
-    } while (!(get_once_video_message() || time_out == 0));
-
-    if (!strstr(message, "Wificonfig_Finish")) {
-        return 0;
-    }
-
-    return 1;
+    return send_command_cmp_feedback(command, "Wificonfig_Finish", get_once_video_message);
 }
 
 static uint8_t
 slaver_video_quick_connect(void) {
-    uint16_t time_out = TIME_OUT;
-
-    do {
-        if (time_out % TIME_RESEND == 0) {
-            usart3_send_str("$VQuickconnect*");
-        }
-        delay_ms(1);
-        time_out--;
-    } while (!(get_once_video_message() || time_out == 0));
-
-    if (strstr(message, "Quickconnect_Finish")) {
-        return 1;
-    }
-    return 0;
+    return send_command_cmp_feedback("$VQuickconnect", "Quickconnect_Finish", get_once_video_message);
 }
 
 /**
@@ -225,6 +143,23 @@ get_once_model_message(void) {
     if (slaver_received_data.receive_data_flag == 1 && slaver_received_data.message_type == SLAVER_MESSAGE_MODEL) {
         strcpy(message, (char*)slaver_received_data.uart_buff);
         slaver_received_data.receive_data_flag = 0;
+        return 1;
+    }
+    return 0;
+}
+
+static uint8_t
+send_command_cmp_feedback(char* command, char* expect_feedback, uint8_t (*get_once_message)(void)) {
+    uint16_t time_out = TIME_OUT;
+    do {
+        delay_ms(1);
+        time_out--;
+        if (time_out % TIME_RESEND == 0) {
+            usart3_send_str(command);
+        }
+    } while (!(time_out == 0 || get_once_message()));
+
+    if (strstr(message, expect_feedback)) {
         return 1;
     }
     return 0;
