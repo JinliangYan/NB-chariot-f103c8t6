@@ -53,7 +53,7 @@ typedef enum {
 
 typedef struct {
     defence_type_t type; /*!< 防具类型 */
-    int32_t hp;          /*!< 攻击力 */
+    int16_t hp;          /*!< 攻击力 */
     uint8_t weight;      /*!< 重量 */
     char* name;
 } defence_t;

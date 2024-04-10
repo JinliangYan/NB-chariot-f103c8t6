@@ -64,7 +64,7 @@ typedef enum {
 } chariot_type_t;
 
 typedef struct {
-    int32_t core_hp;            /*!< 核心血量 */
+    int16_t core_hp;            /*!< 核心血量 */
     uint8_t bt_connected;       /*!< 蓝牙连接状态 */
     uint32_t total_weight;      /*!< 战车总重量 */
     move_model_t* move_model;   /*!< 移动模块数据结构体 */
