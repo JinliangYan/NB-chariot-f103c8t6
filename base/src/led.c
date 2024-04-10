@@ -20,5 +20,5 @@ led_init(void) {
 
     GPIO_Init(GPIOC, &GPIO_InitStructure);
 
-    LED = 0;
+    LED = 1;
 }

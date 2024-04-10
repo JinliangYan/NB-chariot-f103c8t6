@@ -9,7 +9,6 @@
 #include "slaver.h"
 #include "state.h"
 #include "task_runner.h"
-#include "timer.h"
 #include "ws2812b.h"
 
 void pin_remap(void);
@@ -21,6 +20,7 @@ main(void) {
     pin_remap();
     base_init();
     models_init();
+    task_runner_init();
 
     while (1) {
         run();
@@ -29,10 +29,10 @@ main(void) {
 
 void
 base_init(void) {
+    led_init();
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     slaver_init();
-    led_init();
     hcsr04_init();
     rgb_led_init();
     printf_init();
@@ -46,7 +46,6 @@ models_init(void) {
     weapon_init();
     defence_init();
     bt_init();
-    tim2_init(72, 1000);
     state_init();
 }
 

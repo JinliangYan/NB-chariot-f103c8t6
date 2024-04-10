@@ -32,10 +32,13 @@
 * Author:          JinLiang YAN <yanmiku0206@outlook.com>
 */
 
-#include "task_runner.h"
+#include <stdio.h>
+#include "blt.h"
 #include "core.h"
 #include "move.h"
 #include "state.h"
+#include "task_runner.h"
+#include "timer.h"
 
 extern weapon_skill_t weapon_skill;
 
@@ -49,6 +52,11 @@ static uint32_t count_10ms;
 static uint32_t count_100ms;
 static uint32_t count_500ms;
 static uint32_t count_1000ms;
+static uint32_t count_20s;
+
+void task_runner_init(void) {
+    tim2_init(72, 1000);
+}
 
 void
 run(void) {
@@ -92,10 +100,22 @@ TIM2_IRQHandler(void) {
             count_500ms = 0;
         }
         if (count_1000ms == 1000) {
+            count_20s++;
             if (weapon_skill.remaining_duration > 0) {
                 weapon_skill.remaining_duration--;
             }
+
+            char state[1024];
+            if (is_bt_connected()) {
+                sprintf(state, "core_hp[%d]defence_hp[%d]weapon_hp[%d]move_model_hp[%d]",
+                        chariot.core_hp, chariot.defence->hp, chariot.weapon->hp, chariot.move_model->hp);
+                bt_send_str(state);
+            }
             count_1000ms = 0;
+        }
+        if (count_20s == 20) {
+
+            count_20s = 0;
         }
         TIM_ClearITPendingBit(TIM2, TIM_IT_Update); //清除标志位
     }

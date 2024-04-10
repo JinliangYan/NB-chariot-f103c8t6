@@ -41,6 +41,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
+void task_runner_init(void);
 void run(void);
 
 #ifdef __cplusplus
