@@ -97,16 +97,27 @@ Hcsr04GetLength(void) {
     int i = 0;
     float lengthTemp = 0;
     float sum = 0;
+    uint16_t time_out = 20;
+
     while (i != 5) {
         TRIG_Send = 1;
         delay_us(20);
         TRIG_Send = 0;
-        while (ECHO_Reci == 0)
-            ;
+
+        while (ECHO_Reci == 0 && time_out != 0) {
+            delay_ms(1);
+            time_out--;
+        }
+
         OpenTimerForHc();
         i = i + 1;
-        while (ECHO_Reci == 1)
-            ;
+
+        time_out = 20;
+        while (ECHO_Reci == 1 && time_out != 0) {
+            delay_ms(1);
+            time_out--;
+        }
+
         CloseTimerForHc();
         t = GetEchoTimer();
         lengthTemp = ((float)t / 58.0f); //cm
