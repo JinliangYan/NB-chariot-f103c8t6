@@ -96,24 +96,19 @@ void
 defence_control(void) {
     /* 从副板获得攻击者ID，伤害，技能 */
     if (slaver_received_data.receive_data_flag == 1 && slaver_received_data.message_type == SLAVER_MESSAGE_INFO) {
+
         if (strstr((char*)slaver_received_data.uart_buff, "attacked")
             && strstr((char*)slaver_received_data.uart_buff, "defence")) {
-            scanf((char*)slaver_received_data.uart_buff, "attacked-i%d-s%d-p%d", &attacker.id, &attacker.skill,
-                  &attacker.power);
+
+            scanf(
+                (char*)slaver_received_data.uart_buff,
+                "attacked-i%d-s%d-p%d",
+                &attacker.id, &attacker.skill, &attacker.power
+                );
         }
     }
     if (attacker.id != 0) {
-        if (defence.hp != 0) {
-            if (attacker.power > defence.hp) {
-                defence.hp = 0;
-                defence.hp -= attacker.power - defence.hp;
-            } else {
-                defence.hp -= attacker.power;
-            }
-        } else {
-            /* 核心被击中 */
-            chariot.core_hp = 0;
-        }
+        defence.hp -= attacker.power;
     }
 
     clear_attacker_info();
