@@ -192,6 +192,24 @@ bt_send_str(char* str) {
     usart1_send_str((uint8_t*)str);
 }
 
+/**
+ * \brief 发送固定20字节大小的包
+ * \param[in] str: 要发送的数据
+ */
+void
+bt_send20_packet(char* str) {
+    uint8_t packet[20];
+    size_t idx = 0;
+    uint8_t* p_packet = packet;
+    while (*p_packet) {
+        packet[idx++] = *p_packet;
+        p_packet++;
+    }
+    while (idx < 20) {
+        packet[idx++] = '\0';
+    }
+    usart1_send_nbyte(packet, 20);
+}
 
 /**
   * @brief  从stream中获取一行字符串到line中

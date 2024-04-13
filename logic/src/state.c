@@ -64,11 +64,11 @@ state_init(void) {
     chariot.total_weight = weapon.weight + defence.weight;
     chariot.speed_with_weight = move_model.speed - chariot.total_weight;
 
-//    state_update_model(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
-//    state_update_model(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
-//    state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
-//    state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
-//    state_update_model(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
+    state_update_model(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_model(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_model(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
 }
 
 void
@@ -86,30 +86,30 @@ void state_update_model(model_t model, attribute_t attribute, uint8_t value) {
         if (attribute == ATTRIBUTE_HP) {
             /* 核心血量 */
             sprintf(state_str, "ch%d", chariot.core_hp);
-            bt_send_str(state_str);
+            bt_send20_packet(state_str);
         }
     } else if (model == MODEL_DEFENCE) {
         if (attribute == ATTRIBUTE_HP) {
             /* 防御模块血量 */
             sprintf(state_str, "mvh%d", chariot.move_model->hp);
-            bt_send_str(state_str);
+            bt_send20_packet(state_str);
         }
     } else if (model == MODEL_MOVE) {
         if (attribute == ATTRIBUTE_HP) {
             /* 行走模块血量 */
             sprintf(state_str, "mvh%d", chariot.move_model->hp);
-            bt_send_str(state_str);
+            bt_send20_packet(state_str);
         }
     } else if (model == MODEL_WEAPON) {
         if (attribute == ATTRIBUTE_HP) {
             /* 行走模块血量 */
             sprintf(state_str, "wph%d", chariot.move_model->hp);
-            bt_send_str(state_str);
+            bt_send20_packet(state_str);
         }
     } else if (model == MODEL_SKILL) {
         if (attribute == ATTRIBUTE_TIME) {
             sprintf(state_str, "scdt%d", chariot.move_model->hp);
-            bt_send_str(state_str);
+            bt_send20_packet(state_str);
         }
     }
 }
