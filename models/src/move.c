@@ -77,15 +77,21 @@ move_model_t move_model;
  */
 void
 move_init(void) {
-    move_model_type_t move_model_type = MOVE_MODEL_TYPE_BEGIN + 1;
+    move_model_type_t move_model_type = MOVE_MODEL_TYPE_BEGIN;
 
     /* 1. 扫描，确定类型 */
     for (move_model_type_t i = move_model_type; i < MOVE_MODEL_TYPE_END; ++i) {
-        if (slaver_model_addr_confirm("Move", i)) {
+        if (slaver_model_addr_confirm("move", i)) {
             move_model_type = i;
             break;
         }
     }
+
+    /* 设置默认值 */
+    if (move_model_type == MOVE_MODEL_TYPE_BEGIN) {
+        move_model_type = MOVE_MODEL_TYPE_LIGHTWEIGHT;
+    }
+
     move_model = move_models[move_model_type];
 
     /* 2. 根据总重确定速度 */
@@ -121,10 +127,10 @@ move_control(void) {
         int Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
         int Map_Ly = Map(Joy_Ly, 10, 90, -127, 127);
 
-        int pwm1 = -Map_Ly - Map_Lx;
-        int pwm2 = -Map_Ly + Map_Lx;
-        int pwm3 = -Map_Ly - Map_Lx;
-        int pwm4 = -Map_Ly + Map_Lx;
+        int pwm1 = Map_Ly + Map_Lx;
+        int pwm2 = Map_Ly - Map_Lx;
+        int pwm3 = Map_Ly + Map_Lx;
+        int pwm4 = Map_Ly - Map_Lx;
 
         pwm1 = Map(pwm1, -127, 127, -speed_max, speed_max);
         pwm2 = Map(pwm2, -127, 127, -speed_max, speed_max);
@@ -134,16 +140,18 @@ move_control(void) {
         pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 
         bt_received_data.receive_data_flag = 0;
+//        delay_ms(10);
     }
 
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_TURN) {
         if (bt_received_data.uart_buff[0] == 'L') {
-            motor_turn_left(170);
+            motor_turn_left(200);
         } else if (bt_received_data.uart_buff[0] == 'R') {
-            motor_turn_right(170);
+            motor_turn_right(200);
         }
 
         bt_received_data.receive_data_flag = 0;
+//        delay_ms(10);
     }
 }
 

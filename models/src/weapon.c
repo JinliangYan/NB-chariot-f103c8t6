@@ -122,7 +122,7 @@ static void weapon_received_data_handler(void);
  */
 void
 weapon_init(void) {
-    weapon_type_t weapon_type = WEAPON_TYPE_BEGIN + 1;
+    weapon_type_t weapon_type = WEAPON_TYPE_BEGIN;
 
     ir_init();
 
@@ -132,6 +132,11 @@ weapon_init(void) {
             weapon_type = i;
             break;
         }
+    }
+
+    /* …Ë÷√ƒ¨»œ÷µ */
+    if (weapon_type == WEAPON_TYPE_BEGIN) {
+        weapon_type = WEAPON_TYPE_GUN;
     }
 
     weapon = weapons[weapon_type];
@@ -172,7 +177,6 @@ weapon_control(void) {
  */
 static void
 bt_received_data_handler(void) {
-    char cmd[256];
     if (bt_received_data.receive_data_flag == 0) {
         return;
     }

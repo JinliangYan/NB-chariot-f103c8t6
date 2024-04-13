@@ -76,14 +76,18 @@ static attacker_t attacker;
 
 void
 defence_init(void) {
-    defence_type_t defence_type = DEFENCE_TYPE_BEGIN + 1;
+    defence_type_t defence_type = DEFENCE_TYPE_BEGIN;
 
     /* 1. 扫描，确定类型 */
     for (defence_type_t i = defence_type; i < DEFENCE_TYPE_END; ++i) {
-        if (slaver_model_addr_confirm("Defence", i)) {
+        if (slaver_model_addr_confirm("defence", i)) {
             defence_type = i;
             break;
         }
+    }
+    /* 设置默认值 */
+    if (defence_type == DEFENCE_TYPE_BEGIN) {
+        defence_type = DEFENCE_TYPE_LIGHTWEIGHT;
     }
     defence = defences[defence_type];
 }
