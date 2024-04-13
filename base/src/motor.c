@@ -60,7 +60,7 @@ motor_init(void) {
 返回参数：无
 ***************************************************/
 void
-forward(u16 speed) {
+backward(u16 speed) {
     L_STBY_ON;
     R_STBY_ON;
 
@@ -84,7 +84,7 @@ forward(u16 speed) {
 返回参数：无
 ***************************************************/
 void
-backward(u16 speed) {
+forward(u16 speed) {
     L_STBY_ON;
     R_STBY_ON;
 
@@ -108,7 +108,7 @@ backward(u16 speed) {
 返回参数：无
 ***************************************************/
 void
-motor_turn_left(u16 speed) {
+motor_turn_right(u16 speed) {
     L_STBY_ON;
     R_STBY_ON;
 
@@ -132,7 +132,7 @@ motor_turn_left(u16 speed) {
 返回参数：无
 ***************************************************/
 void
-motor_turn_right(u16 speed) {
+motor_turn_left(u16 speed) {
     L_STBY_ON;
     R_STBY_ON;
 
@@ -163,22 +163,6 @@ move(u16 Dir, u16 speed) {
         L_STBY_ON;
         R_STBY_ON;
 
-        TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
-        R_AIN2_OFF;
-
-        TIM_SetCompare2(TIM1, 500 - speed); //R_BIN2:左下
-        R_BIN2_OFF;
-
-        TIM_SetCompare3(TIM1, speed); //L_AIN2:右上
-        L_AIN2_ON;
-
-        TIM_SetCompare4(TIM1, speed); //L_BIN2:左上
-        L_BIN2_ON;
-    } else if (Dir == 1) //右移
-    {
-        L_STBY_ON;
-        R_STBY_ON;
-
         TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
         R_AIN2_ON;
 
@@ -190,12 +174,12 @@ move(u16 Dir, u16 speed) {
 
         TIM_SetCompare4(TIM1, 500 - speed); //L_BIN2:左上
         L_BIN2_OFF;
-    } else if (Dir == 2) //左上移动
+    } else if (Dir == 1) //右移
     {
         L_STBY_ON;
         R_STBY_ON;
 
-        TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
+        TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
         R_AIN2_OFF;
 
         TIM_SetCompare2(TIM1, 500 - speed); //R_BIN2:左下
@@ -204,7 +188,23 @@ move(u16 Dir, u16 speed) {
         TIM_SetCompare3(TIM1, speed); //L_AIN2:右上
         L_AIN2_ON;
 
-        TIM_SetCompare4(TIM1, 500 - speed); //L_BIN2:左上
+        TIM_SetCompare4(TIM1, speed); //L_BIN2:左上
+        L_BIN2_ON;
+    } else if (Dir == 2) //左上移动
+    {
+        L_STBY_ON;
+        R_STBY_ON;
+
+        TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
+        R_AIN2_OFF;
+
+        TIM_SetCompare2(TIM1, 500 - speed); //R_BIN2:左下
+        R_BIN2_ON;
+
+        TIM_SetCompare3(TIM1, speed); //L_AIN2:右上
+        L_AIN2_OFF;
+
+        TIM_SetCompare4(TIM1, speed); //L_BIN2:左上
         L_BIN2_ON;
     } else if (Dir == 3) //右上移动
     {
@@ -212,22 +212,6 @@ move(u16 Dir, u16 speed) {
         R_STBY_ON;
 
         TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
-        R_AIN2_ON;
-
-        TIM_SetCompare2(TIM1, 500 - speed); //R_BIN2:左下
-        R_BIN2_ON;
-
-        TIM_SetCompare3(TIM1, speed); //L_AIN2:右上
-        L_AIN2_OFF;
-
-        TIM_SetCompare4(TIM1, 500 - speed); //L_BIN2:左上
-        L_BIN2_OFF;
-    } else if (Dir == 4) //左下移动
-    {
-        L_STBY_ON;
-        R_STBY_ON;
-
-        TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
         R_AIN2_OFF;
 
         TIM_SetCompare2(TIM1, speed); //R_BIN2:左下
@@ -238,13 +222,13 @@ move(u16 Dir, u16 speed) {
 
         TIM_SetCompare4(TIM1, 500 - speed); //L_BIN2:左上
         L_BIN2_ON;
-    } else if (Dir == 5) //右下移动
+    } else if (Dir == 4) //左下移动
     {
         L_STBY_ON;
         R_STBY_ON;
 
-        TIM_SetCompare1(TIM1, 500 - speed); //R_AIN2:右下
-        R_AIN2_OFF;
+        TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
+        R_AIN2_ON;
 
         TIM_SetCompare2(TIM1, 500 - speed); //R_BIN2:左下
         R_BIN2_ON;
@@ -252,7 +236,23 @@ move(u16 Dir, u16 speed) {
         TIM_SetCompare3(TIM1, speed); //L_AIN2:右上
         L_AIN2_OFF;
 
-        TIM_SetCompare4(TIM1, speed); //L_BIN2:左上
+        TIM_SetCompare4(TIM1, 500 - speed); //L_BIN2:左上
+        L_BIN2_OFF;
+    } else if (Dir == 5) //右下移动
+    {
+        L_STBY_ON;
+        R_STBY_ON;
+
+        TIM_SetCompare1(TIM1, speed); //R_AIN2:右下
+        R_AIN2_OFF;
+
+        TIM_SetCompare2(TIM1, 500 - speed); //R_BIN2:左下
+        R_BIN2_OFF;
+
+        TIM_SetCompare3(TIM1, speed); //L_AIN2:右上
+        L_AIN2_ON;
+
+        TIM_SetCompare4(TIM1, 500 - speed); //L_BIN2:左上
         L_BIN2_ON;
     }
 }
