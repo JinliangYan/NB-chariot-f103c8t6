@@ -119,6 +119,9 @@ void state_update_model(model_t model, attribute_t attribute, uint8_t value) {
  */
 static void
 bt_connect_handler(void) {
+    if (is_bt_connected()) {
+        LED = 0;
+    }
     while ((chariot.bt_connected = is_bt_connected()) != 1) {
         LED = 1;
         delay_ms(500);
