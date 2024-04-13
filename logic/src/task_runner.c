@@ -105,11 +105,12 @@ TIM2_IRQHandler(void) {
                 weapon_skill.remaining_duration--;
             }
 
-            char state[256];
             if (is_bt_connected()) {
-                sprintf(state, "core_hp[%d]defence_hp[%d]weapon_hp[%d]move_model_hp[%d]",
-                        chariot.core_hp, chariot.defence->hp, chariot.weapon->hp, chariot.move_model->hp);
-                bt_send_str(state);
+                state_update_model(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_model(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_model(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
             }
             count_1000ms = 0;
         }
