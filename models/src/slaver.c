@@ -43,13 +43,13 @@ static uint8_t get_once_video_message(void);
 static uint8_t get_once_model_message(void);
 static uint8_t send_command_cmp_feedback(char* command, char* expect_feedback, uint8_t (*get_once_message)(void));
 
-#define SLAVER_BAUD_RATE 9600
+#define SLAVER_BAUD_RATE 115200
 #define SSID             ""
 #define PASSWORD         ""
 #define TIME_OUT_SLAVER  strstr(message, "Connect_TimeOut")
 
-#define TIME_OUT      10
-#define TIME_RESEND   5
+#define TIME_OUT      1500
+#define TIME_RESEND   500
 
 static char message[256];
 
@@ -160,11 +160,11 @@ static uint8_t
 send_command_cmp_feedback(char* command, char* expect_feedback, uint8_t (*get_once_message)(void)) {
     uint16_t time_out = TIME_OUT;
     do {
-        delay_ms(1);
-        time_out--;
         if (time_out % TIME_RESEND == 0) {
             usart3_send_str(command);
         }
+        delay_ms(1);
+        time_out--;
     } while (!(time_out == 0 || get_once_message()));
 
     if (strstr(message, expect_feedback)) {
