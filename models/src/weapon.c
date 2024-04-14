@@ -67,23 +67,32 @@ static const weapon_skill_t weapon_skills[10] = {
         .state = 0,
         .name = "WEAPON_SKILL_INCREASE_DAMAGE",
     },
-    //TODO 补充其他技能类型
+    [WEAPON_SKILL_SPEED_UP] = {
+        .skill_type = WEAPON_SKILL_SPEED_UP,
+        .activated_times = 2,
+        .cooldown_time = 30,
+        .remaining_duration = 0,
+        .state = 0,
+        .name = "WEAPON_SKILL_SPEED_UP",
+    }
 };
 
 /**
  * \brief 所有武器类型结构体数组, 以武器类型为index
  */
 static const weapon_t weapons[20] = {
-    [WEAPON_TYPE_GUN] = {
-        .type = WEAPON_TYPE_GUN,
+    [WEAPON_TYPE_HEAVY] = {
+        .type = WEAPON_TYPE_HEAVY,
+        .hp = HP_M,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 50,
         .steerable = 1,
         .weight = WEIGHT_M,
-        .name = "WEAPON_TYPE_GUN",
+        .name = "WEAPON_TYPE_HEAVY",
     },
-    [WEAPON_TYPE_OTHER] = {
-        .type = WEAPON_TYPE_OTHER,
+    [WEAPON_TYPE_LIGHTWEIGHT] = {
+        .type = WEAPON_TYPE_LIGHTWEIGHT,
+        .hp = HP_M,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 70,
         .steerable = 0,
@@ -103,6 +112,12 @@ static attacker_t attacker;
  * \note  可以视为红外的地址
  */
 weapon_t weapon;
+
+/**
+ * \brief 技能增益要使用到
+ */
+extern move_model_t move_model;
+extern move_model_t move_models[];
 
 /**
  * \brief 挂载的武器的技能
@@ -136,7 +151,7 @@ weapon_init(void) {
 
     /* 设置默认值 */
     if (weapon_type == WEAPON_TYPE_BEGIN) {
-        weapon_type = WEAPON_TYPE_GUN;
+        weapon_type = WEAPON_TYPE_HEAVY;
     }
 
     weapon = weapons[weapon_type];
@@ -186,10 +201,8 @@ bt_received_data_handler(void) {
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_ATTACK) {
         if (bt_received_data.uart_buff[0] == 'N') {
             weapon_attack(0);
-            slaver_send('I', "weaponattack-tn");
         } else if (bt_received_data.uart_buff[0] == 'C') {
             weapon_attack(1);
-            slaver_send('I', "weaponattack-tc");
         }
         bt_received_data.receive_data_flag = 0;
     } else if (bt_received_data.message_type == BT_MESSAGE_WEAPON_SKILL) {
@@ -215,6 +228,12 @@ weapon_received_data_handler(void) {
     if (attacker.id != 0) {
         //TODO 判断该红外是否来自敌方小车
         weapon.hp -= attacker.power;
+
+        if (weapon.hp < 0) {
+            weapon.hp = 0;
+        }
+        state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, weapon.hp);
+
         clear_attacker();
         weapon_received_data.receive_data_flag = 0;
     }
@@ -226,7 +245,9 @@ weapon_received_data_handler(void) {
  */
 static void
 weapon_attack(uint8_t charged) {
-    slaver_send('I', "weapon_attack");
+    char cmd[256];
+    sprintf(cmd, "weaponattack-t%c", charged ? 'c' : 'n');
+    slaver_send('I', cmd);
     ir_emission(weapon.type, CHARIOT_ID, 0, charged ? (uint8_t)(weapon.power * 1.5) : weapon.power);
 }
 
@@ -251,8 +272,11 @@ weapon_activate_skill(void) {
         /* 技能效果: 攻击力增加 */
         weapon.power = (uint8_t)(weapon.power * 1.5);
         slaver_send('I', "skill-t1");
+    } else if (weapon_skill.skill_type == WEAPON_SKILL_SPEED_UP) {
+        /* 技能效果: 移动速度增加 */
+        move_model.speed += 100;
+        slaver_send('I', "skill-t2");
     }
-    //TODO 补充其他技能效果
 
     return 0;
 }
@@ -265,9 +289,10 @@ weapon_deactivate_skill(void) {
     if (weapon_skill.skill_type == WEAPON_SKILL_INCREASE_DAMAGE) {
         /* 移除攻击力增益 */
         weapon.power = weapons[weapon.type].power;
+    } else if (weapon_skill.skill_type == WEAPON_SKILL_SPEED_UP) {
+        move_model.speed = move_models[move_model.type].speed;
     }
     weapon_skill.state = 0;
-    //TODO 补充其他技能效果
 }
 
 /**

@@ -47,8 +47,8 @@ extern "C" {
 typedef enum {
     WEAPON_TYPE_BEGIN,
 
-    WEAPON_TYPE_GUN,
-    WEAPON_TYPE_OTHER,
+    WEAPON_TYPE_HEAVY,
+    WEAPON_TYPE_LIGHTWEIGHT,
     // TODO 补充武器类型
 
     WEAPON_TYPE_END,
@@ -58,9 +58,8 @@ typedef enum {
  * \brief 技能种类枚举
  */
 typedef enum {
-    WEAPON_SKILL_INCREASE_DAMAGE, /* 增加攻击力 */
-    WEAPON_SKILL_COUNT
-    //TODO 补充技能类型
+    WEAPON_SKILL_INCREASE_DAMAGE = 1, /* 增加攻击力 */
+    WEAPON_SKILL_SPEED_UP,
 } skill_t;
 
 typedef struct {
@@ -75,6 +74,7 @@ typedef struct {
 
 typedef struct {
     weapon_type_t type; /*!< 武器类型 */
+    uint8_t id;
     skill_t skill_type; /*!< 技能类型 */
     uint8_t power;      /*!< 攻击力 */
     int16_t hp;         /*!< 血量 */
