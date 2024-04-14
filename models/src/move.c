@@ -119,6 +119,10 @@ move_control(void) {
     /* ПлбЊ */
     if (attacker.id != 0) {
             move_model.hp -= attacker.power;
+            if (move_model.hp < 0) {
+                move_model.hp = 0;
+            }
+            state_update_model(MODEL_MOVE, ATTRIBUTE_HP, move_model.hp);
             clear_attacker_info();
     }
 
@@ -143,7 +147,7 @@ move_control(void) {
         pwm_data_process(pwm1, pwm2, pwm3, pwm4);
 
         bt_received_data.receive_data_flag = 0;
-//        delay_ms(10);
+        delay_ms(50);
     }
 
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_TURN) {
@@ -154,7 +158,7 @@ move_control(void) {
         }
 
         bt_received_data.receive_data_flag = 0;
-//        delay_ms(10);
+        delay_ms(50);
     }
 }
 

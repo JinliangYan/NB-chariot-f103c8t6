@@ -78,6 +78,7 @@ typedef enum {
 } attribute_t;
 
 typedef struct {
+    char* name;
     int16_t core_hp;            /*!< 核心血量 */
     uint8_t bt_connected;       /*!< 蓝牙连接状态 */
     uint32_t total_weight;      /*!< 战车总重量 */
