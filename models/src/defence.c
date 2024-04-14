@@ -100,7 +100,7 @@ defence_control(void) {
         if (strstr((char*)slaver_received_data.uart_buff, "attacked")
             && strstr((char*)slaver_received_data.uart_buff, "defence")) {
 
-            scanf(
+            sscanf(
                 (char*)slaver_received_data.uart_buff,
                 "attacked-i%d-s%d-p%d",
                 &attacker.id, &attacker.skill, &attacker.power
