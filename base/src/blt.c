@@ -1,6 +1,7 @@
 #include "blt.h"
 #include <stdio.h>
 #include <string.h>
+#include "state.h"
 #include "usart.h"
 
 static char* get_rebuff(uint16_t* len);
@@ -20,7 +21,10 @@ bt_init(void) {
     GPIO_Init(BT_SATAT_PORT, &GPIO_InitStructure);
     usart1_init_remap(BLT_USART_BAUD_RATE);
     delay_ms(100);
-    return bt_send_atcmd_with_check("AT+BAUD4\r\n", 1);
+
+    char cmd[200];
+    sprintf(cmd, "AT+NAME%s\r\n", chariot.name);
+    return bt_send_atcmd_with_check(cmd, 1);
 }
 
 uint8_t
