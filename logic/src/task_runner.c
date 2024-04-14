@@ -99,7 +99,7 @@ TIM2_IRQHandler(void) {
         if (count_500ms == 500) {
             count_500ms = 0;
         }
-        if (count_1000ms == 1000) {
+        if (count_1000ms == 5000) {
             count_20s++;
             if (weapon_skill.remaining_duration > 0) {
                 weapon_skill.remaining_duration--;
@@ -107,11 +107,13 @@ TIM2_IRQHandler(void) {
             }
 
             if (is_bt_connected()) {
+                state_update_info(MODEL_CHARIOT, ATTRIBUTE_ID, chariot.id);
                 state_update_info(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_info(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_info(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_info(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
+                state_update_info(MODEL_MOVE, ATTRIBUTE_HP, chariot.move_model->hp);
+                //    state_update_info(MODEL_WEAPON, ATTRIBUTE_HP, chariot.weapon->hp);
+                state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.defence->hp);
+                state_update_info(MODEL_SKILL, ATTRIBUTE_ID, chariot.weapon->skill_type);
+                state_update_info(MODEL_SKILL, ATTRIBUTE_TIME, chariot.skill->cooldown_time);
             }
             count_1000ms = 0;
         }

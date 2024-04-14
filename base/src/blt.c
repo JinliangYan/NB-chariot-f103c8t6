@@ -204,13 +204,12 @@ void
 bt_send20_packet(char* str) {
     uint8_t packet[20];
     size_t idx = 0;
-    uint8_t* p_packet = packet;
-    while (*p_packet) {
-        packet[idx++] = *p_packet;
-        p_packet++;
+    while (*str) {
+        packet[idx++] = *str;
+        str++;
     }
     while (idx < 20) {
-        packet[idx++] = '\0';
+        packet[idx++] = '*';
     }
     usart1_send_nbyte(packet, 20);
 }
