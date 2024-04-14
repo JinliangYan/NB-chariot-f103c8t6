@@ -123,8 +123,9 @@ state_update_info(model_t model, attribute_t attribute, uint8_t value) {
             /* 技能类型
              * 1:加攻击力
              * 2:加速
+             * 为什么是G开头? 因为队友要求
              */
-            sprintf(state_str, "stype%d", value);
+            sprintf(state_str, "Gtype%d", value);
             bt_send20_packet(state_str);
         }
     } else if (model == MODEL_CHARIOT) {
