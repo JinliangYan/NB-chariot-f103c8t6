@@ -56,10 +56,8 @@ static char message[256];
 void
 slaver_init(void) {
     usart3_init(SLAVER_BAUD_RATE);
-    slaver_video_start();
-
-    slaver_video_wifi_config_connect(SSID, PASSWORD);
 }
+
 
 void
 slaver_send(char type, const char* str) {
@@ -75,12 +73,12 @@ slaver_video_start(void) {
 
 uint8_t
 slaver_video_restart(void) {
-    return send_command_cmp_feedback("VRestart*", "READY", get_once_video_message);
+    return send_command_cmp_feedback("$VRestart*", "READY", get_once_video_message);
 }
 
 uint8_t
 slaver_video_disconnect(void) {
-    return send_command_cmp_feedback("VRestart*", "READY", get_once_video_message);
+    return send_command_cmp_feedback("$VRestart*", "READY", get_once_video_message);
 }
 
 /**
@@ -106,6 +104,15 @@ slaver_model_addr_confirm(char* model, uint8_t addr) {
 }
 
 /**
+ * \brief ≥ı ºªØ…„œÒÕ∑
+ */
+static void slaver_video_init(void) {
+    slaver_video_start();
+
+    slaver_video_wifi_config_connect(SSID, PASSWORD);
+}
+
+/**
  * \brief ≈‰÷√…„œÒÕ∑wifi
  * \param ssid wifi ssid
  * \param pwd wifi pwd
@@ -119,13 +126,13 @@ slaver_video_wifi_config_connect(const char* ssid, const char* pwd) {
         return 0;
     }
 
-    sprintf(command, "$V%sP%s\n", ssid, pwd);
+    sprintf(command, "$V%sP%s*", ssid, pwd);
     return send_command_cmp_feedback(command, "Wificonfig_Finish", get_once_video_message);
 }
 
 static uint8_t
 slaver_video_quick_connect(void) {
-    return send_command_cmp_feedback("$VQuickconnect", "Quickconnect_Finish", get_once_video_message);
+    return send_command_cmp_feedback("$VQuickconnect*", "Connect_OK", get_once_video_message);
 }
 
 /**
