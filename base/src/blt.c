@@ -23,7 +23,7 @@ bt_init(void) {
     delay_ms(100);
 
     char cmd[200];
-    sprintf(cmd, "AT+NAME%s\r\n", chariot.name);
+    sprintf(cmd, "AT+NAME%s\r\n", NAME);
     return bt_send_atcmd_with_check(cmd, 1);
 }
 

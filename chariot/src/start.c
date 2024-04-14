@@ -29,9 +29,6 @@ main(void) {
 
 void
 base_init(void) {
-    chariot.name = "\u5c0f\u9ed1"; //小黑
-//    chariot.name = "\u5927\u84dd"; //大蓝
-//    chariot.name = "\u5927\u9ed1"; //大黑
     led_init();
     delay_init(); //延时函数初始化
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);

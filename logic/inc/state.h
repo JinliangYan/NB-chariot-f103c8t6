@@ -49,6 +49,13 @@ extern "C" {
  */
 #define CHARIOT_ID 0x01
 
+/**
+ * \brief 战车名字
+ */
+//#define NAME       "\u5c0f\u9ed1" //小黑
+#define NAME       "\u5927\u84dd" //大蓝
+//#define NAME       "\u5927\u9ed1" //大黑
+
 #define WEIGHT_0   0
 #define WEIGHT_S   50
 #define WEIGHT_M   80
