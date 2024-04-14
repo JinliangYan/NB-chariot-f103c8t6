@@ -105,6 +105,8 @@ defence_control(void) {
                 "attacked-i%d-s%d-p%d",
                 &attacker.id, &attacker.skill, &attacker.power
                 );
+
+            slaver_received_data.receive_data_flag = 0;
         }
     }
     if (attacker.id != 0) {

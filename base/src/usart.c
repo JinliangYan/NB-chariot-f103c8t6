@@ -310,7 +310,6 @@ USART3_IRQHandler(void) {
     uint8_t temp;
     static receive_state_t next_state = FINISH;
     static uint8_t idx = 0;
-    static uint8_t temp_buf1[BUFF_SIZE];
 
     if (USART_GetITStatus(USART3, USART_IT_RXNE) != RESET) {
         temp = USART_ReceiveData(USART3);
@@ -345,7 +344,6 @@ USART3_IRQHandler(void) {
         if (temp == PACKAGE_END_FLAG) {
             slaver_received_data.receive_data_flag = 1;
             next_state = START;
-            strcpy((char *)bt_received_data.uart_buff, (char *)temp_buf1);
             slaver_received_data.datanum = idx;
             slaver_received_data.receive_data_flag = 1;
             idx = 0;
@@ -358,7 +356,7 @@ USART3_IRQHandler(void) {
         }
 
         /* 接收消息内容 */
-        temp_buf1[idx++] = temp;
+        slaver_received_data.uart_buff[idx++] = temp;
     }
 }
 
