@@ -109,9 +109,15 @@ defence_control(void) {
     }
     if (attacker.id != 0) {
         defence.hp -= attacker.power;
+        if (defence.hp < 0) {
+            defence.hp = 0;
+        }
+        state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, defence.hp);
+        char cmd[20];
+        sprintf(cmd, "dvh%d", defence.hp / defences[defence.type].hp * 100);
+        slaver_send('M', cmd);
+        clear_attacker_info();
     }
-
-    clear_attacker_info();
 }
 
 static void
