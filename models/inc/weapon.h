@@ -63,12 +63,13 @@ typedef enum {
 } skill_t;
 
 typedef struct {
-    skill_t skill_type;         /*!< 技能类型 */
-    uint8_t cooldown_time;      /*!< 技能冷却时间 */
-    uint8_t activated_times;    /*!< 技能可发动次数 */
-    uint8_t duration;           /*!< 技能持续时间 */
-    uint8_t remaining_duration; /*!< 技能剩余持续时间 */
-    uint8_t state;              /*!< 是否激活 */
+    skill_t skill_type;              /*!< 技能类型 */
+    uint8_t cooldown_time;           /*!< 技能冷却时间 */
+    uint8_t remaining_cooldown_time; /*!< 剩余技能冷却时间 */
+    uint8_t activated_times;         /*!< 技能可发动次数 */
+    uint8_t duration;                /*!< 技能持续时间 */
+    uint8_t remaining_duration;      /*!< 技能剩余持续时间 */
+    uint8_t state;                   /*!< 是否激活 */
     char* name;
 } weapon_skill_t;
 

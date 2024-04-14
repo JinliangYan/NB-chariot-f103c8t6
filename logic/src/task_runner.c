@@ -103,6 +103,7 @@ TIM2_IRQHandler(void) {
             count_20s++;
             if (weapon_skill.remaining_duration > 0) {
                 weapon_skill.remaining_duration--;
+                weapon_skill.remaining_cooldown_time--;
             }
 
             if (is_bt_connected()) {

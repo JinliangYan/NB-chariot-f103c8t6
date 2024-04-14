@@ -62,6 +62,7 @@ static const weapon_skill_t weapon_skills[10] = {
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .activated_times = 2,
         .cooldown_time = 30,
+        .remaining_cooldown_time = 0,
         .duration = 30,
         .remaining_duration = 0,
         .state = 0,
@@ -71,6 +72,7 @@ static const weapon_skill_t weapon_skills[10] = {
         .skill_type = WEAPON_SKILL_SPEED_UP,
         .activated_times = 2,
         .cooldown_time = 30,
+        .remaining_cooldown_time = 0,
         .remaining_duration = 0,
         .state = 0,
         .name = "WEAPON_SKILL_SPEED_UP",
@@ -257,7 +259,7 @@ weapon_attack(uint8_t charged) {
  */
 static uint8_t
 weapon_activate_skill(void) {
-    if (weapon_skill.activated_times <= 0 || weapon_skill.cooldown_time > 0) {
+    if (weapon_skill.activated_times <= 0 || weapon_skill.remaining_cooldown_time > 0) {
         /* 技能可释放次数不足或正在冷却, 无法释放 */
         return 1;
     }
@@ -265,8 +267,9 @@ weapon_activate_skill(void) {
     /* 更新技能状态 */
     weapon_skill.activated_times--;
     weapon_skill.remaining_duration = weapon_skill.duration;
+    weapon_skill.remaining_cooldown_time = weapon_skill.cooldown_time;
     weapon_skill.state = 1;
-    /* 通过计时器实现了remaining_duration递减 */
+    /* 通过计时器实现了remaining_time递减 */
 
     if (weapon_skill.skill_type == WEAPON_SKILL_INCREASE_DAMAGE) {
         /* 技能效果: 攻击力增加 */
