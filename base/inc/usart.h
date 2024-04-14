@@ -19,7 +19,8 @@ typedef enum {
     BT_MESSAGE_WEAPON_JOYSTICK, /*!< ÎäÆ÷Ò¡¸ËÊý¾Ý */
     BT_MESSAGE_WEAPON_ATTACK,   /*!< ÎäÆ÷¹¥»÷ÃüÁî */
     BT_MESSAGE_WEAPON_SKILL,    /*!< ÎäÆ÷¼¼ÄÜÊÍ·ÅÃüÁî */
-    BT_MESSAGE_AT_COMMAND       /*!< ATÖ¸Áî»Ø¸´ */
+    BT_MESSAGE_AT_COMMAND,      /*!< ATÖ¸Áî»Ø¸´ */
+    BT_MESSAGE_GAME,            /*!< ÓÎÏ·ÐÅÏ¢ */
 } bt_receiving_message_type_t;
 
 typedef enum { WEAPON_MESSAGE_NONE, WEAPON_MESSAGE_IR_SIG, WEAPON_MESSAGE_FEEDBACK } weapon_receiving_message_type_t;

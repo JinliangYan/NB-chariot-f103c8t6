@@ -207,6 +207,9 @@ USART1_IRQHandler(void) {
                 case 'M':
                     bt_received_data.message_type = BT_MESSAGE_MODE_SWITCH;
                     break;
+                case 'G':
+                    bt_received_data.message_type = BT_MESSAGE_GAME;
+                    break;
                 default: break;
             }
             next_state = MESSAGE;

@@ -34,12 +34,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "blt.h"
 #include "electromagnet.h"
 #include "led.h"
 #include "motor.h"
 #include "slaver.h"
 #include "state.h"
+#include "usart.h"
 
 extern move_model_t move_model;
 extern weapon_t weapon;
@@ -52,6 +54,7 @@ static void chariot_hp_handler(void);
 static void defence_hp_handler(void);
 static void weapon_hp_handler(void);
 static void bt_connect_handler(void);
+static void game_handler(void);
 
 void
 state_init(void) {
@@ -77,9 +80,11 @@ state_handler(void) {
     chariot_hp_handler();
     defence_hp_handler();
     weapon_hp_handler();
+    game_handler();
 }
 
-void state_update_model(model_t model, attribute_t attribute, uint8_t value) {
+void
+state_update_model(model_t model, attribute_t attribute, uint8_t value) {
     char state_str[256];
 
     if (model == MODEL_CORE) {
@@ -153,5 +158,15 @@ static void
 weapon_hp_handler(void) {
     if (chariot.weapon->hp <= 0) {
         // TODO 武器模块被击破反应, 待完善
+    }
+}
+
+static void
+game_handler(void) {
+    if (bt_received_data.message_type == BT_MESSAGE_GAME && strstr((const char*)bt_received_data.uart_buff, "Death")) {
+        /* 游戏时间到 */
+        /* 关闭电机 */
+        motor_state(0);
+        exit(0);
     }
 }
