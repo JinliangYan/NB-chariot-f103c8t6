@@ -59,26 +59,24 @@ extern "C" {
 #define HP_L       150
 
 typedef enum {
-    CHARIOT_TYPE_LW, /*!< 轻量型战车， */
-    CHARIOT_TYPE_HW,
-} chariot_type_t;
-
-typedef enum {
     MODEL_CORE,
     MODEL_MOVE,
     MODEL_WEAPON,
     MODEL_DEFENCE,
     MODEL_SKILL,
+    MODEL_CHARIOT,
 } model_t;
 
 typedef enum {
     ATTRIBUTE_HP,
     ATTRIBUTE_TIME,
     ATTRIBUTE_POWER,
+    ATTRIBUTE_ID,
 } attribute_t;
 
 typedef struct {
     char* name;
+    uint8_t id;
     int16_t core_hp;            /*!< 核心血量 */
     uint8_t bt_connected;       /*!< 蓝牙连接状态 */
     uint32_t total_weight;      /*!< 战车总重量 */
@@ -87,8 +85,7 @@ typedef struct {
     defence_t* defence;         /*!< 防具数据结构体 */
     weapon_skill_t* skill;      /*!< 技能数据结构体 */
     uint16_t speed_with_weight; /*!< 计算重量后的速度 */
-} status_t;
-
+} chariot_t;
 
 typedef struct {
     uint8_t id;
@@ -96,11 +93,11 @@ typedef struct {
     uint8_t power;
 } attacker_t;
 
-extern status_t chariot;
+extern chariot_t chariot;
 
 void state_init(void);
 void state_handler(void);
-void state_update_model(model_t model, attribute_t attribute, uint8_t value);
+void state_update_info(model_t model, attribute_t attribute, uint8_t value);
 
 #ifdef __cplusplus
 }

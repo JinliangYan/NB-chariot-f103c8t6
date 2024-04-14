@@ -107,11 +107,11 @@ TIM2_IRQHandler(void) {
             }
 
             if (is_bt_connected()) {
-                state_update_model(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_model(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_model(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
+                state_update_info(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_info(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_info(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
+                state_update_info(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
             }
             count_1000ms = 0;
         }

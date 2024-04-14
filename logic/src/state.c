@@ -48,7 +48,7 @@ extern weapon_t weapon;
 extern defence_t defence;
 extern weapon_skill_t weapon_skill;
 
-status_t chariot;
+chariot_t chariot;
 
 static void chariot_hp_handler(void);
 static void defence_hp_handler(void);
@@ -59,6 +59,7 @@ static void game_handler(void);
 void
 state_init(void) {
     chariot.core_hp = 1;
+    chariot.id = CHARIOT_ID;
     chariot.bt_connected = is_bt_connected();
     chariot.move_model = &move_model;
     chariot.weapon = &weapon;
@@ -67,11 +68,13 @@ state_init(void) {
     chariot.total_weight = weapon.weight + defence.weight;
     chariot.speed_with_weight = move_model.speed - chariot.total_weight;
 
-    state_update_model(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
-    state_update_model(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
-    state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
-    state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
-    state_update_model(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
+    state_update_info(MODEL_CHARIOT, ATTRIBUTE_ID, chariot.id);
+    state_update_info(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_info(MODEL_MOVE, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_info(MODEL_WEAPON, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.core_hp);
+    state_update_info(MODEL_SKILL, ATTRIBUTE_ID, chariot.weapon->skill_type);
+    state_update_info(MODEL_SKILL, ATTRIBUTE_TIME, chariot.core_hp);
 }
 
 void
@@ -84,36 +87,49 @@ state_handler(void) {
 }
 
 void
-state_update_model(model_t model, attribute_t attribute, uint8_t value) {
+state_update_info(model_t model, attribute_t attribute, uint8_t value) {
     char state_str[256];
 
     if (model == MODEL_CORE) {
         if (attribute == ATTRIBUTE_HP) {
             /* 核心血量 */
-            sprintf(state_str, "ch%d", chariot.core_hp);
+            sprintf(state_str, "ch%d", value);
             bt_send20_packet(state_str);
         }
     } else if (model == MODEL_DEFENCE) {
         if (attribute == ATTRIBUTE_HP) {
             /* 防御模块血量 */
-            sprintf(state_str, "mvh%d", chariot.move_model->hp);
+            sprintf(state_str, "mvh%d", value);
             bt_send20_packet(state_str);
         }
     } else if (model == MODEL_MOVE) {
         if (attribute == ATTRIBUTE_HP) {
             /* 行走模块血量 */
-            sprintf(state_str, "mvh%d", chariot.move_model->hp);
+            sprintf(state_str, "mvh%d", value);
             bt_send20_packet(state_str);
         }
     } else if (model == MODEL_WEAPON) {
         if (attribute == ATTRIBUTE_HP) {
             /* 行走模块血量 */
-            sprintf(state_str, "wph%d", chariot.move_model->hp);
+            sprintf(state_str, "wph%d", value);
             bt_send20_packet(state_str);
         }
     } else if (model == MODEL_SKILL) {
         if (attribute == ATTRIBUTE_TIME) {
-            sprintf(state_str, "scdt%d", chariot.move_model->hp);
+            /* 技能冷却时间 */
+            sprintf(state_str, "scdt%d", value);
+            bt_send20_packet(state_str);
+        } else if (attribute == ATTRIBUTE_ID) {
+            /* 技能类型
+             * 1:加攻击力
+             * 2:加速
+             */
+            sprintf(state_str, "stype%d", value);
+            bt_send20_packet(state_str);
+        }
+    } else if (model == MODEL_CHARIOT) {
+        if (attribute == ATTRIBUTE_ID) {
+            sprintf(state_str, "id%d", value);
             bt_send20_packet(state_str);
         }
     }

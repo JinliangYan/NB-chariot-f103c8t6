@@ -112,7 +112,7 @@ defence_control(void) {
         if (defence.hp < 0) {
             defence.hp = 0;
         }
-        state_update_model(MODEL_DEFENCE, ATTRIBUTE_HP, defence.hp);
+        state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, defence.hp);
         char cmd[20];
         sprintf(cmd, "dvh%d", defence.hp / defences[defence.type].hp * 100);
         slaver_send('M', cmd);

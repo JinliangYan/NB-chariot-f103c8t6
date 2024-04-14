@@ -233,7 +233,7 @@ weapon_received_data_handler(void) {
         if (weapon.hp < 0) {
             weapon.hp = 0;
         }
-        state_update_model(MODEL_WEAPON, ATTRIBUTE_HP, weapon.hp);
+        state_update_info(MODEL_WEAPON, ATTRIBUTE_HP, weapon.hp);
 
         clear_attacker();
         weapon_received_data.receive_data_flag = 0;

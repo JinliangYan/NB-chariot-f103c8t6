@@ -122,7 +122,7 @@ move_control(void) {
             if (move_model.hp < 0) {
                 move_model.hp = 0;
             }
-            state_update_model(MODEL_MOVE, ATTRIBUTE_HP, move_model.hp);
+            state_update_info(MODEL_MOVE, ATTRIBUTE_HP, move_model.hp);
             clear_attacker_info();
     }
 
