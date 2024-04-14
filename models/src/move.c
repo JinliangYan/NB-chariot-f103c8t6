@@ -54,7 +54,7 @@ static uint16_t speed_max;
 /**
  * \brief 所有类型结构体数组, 以防具类型为index
  */
-static const move_model_t move_models[256] = {
+const move_model_t move_models[256] = {
     [MOVE_MODEL_TYPE_LIGHTWEIGHT] = {
         .type = MOVE_MODEL_TYPE_LIGHTWEIGHT,
         .hp = HP_S,
