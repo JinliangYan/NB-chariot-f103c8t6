@@ -269,7 +269,7 @@ USART2_IRQHandler(void) {
             weapon_received_data.datanum = 0;
 
             /* 指令操作反馈类型信息 */
-            if (temp == 'F') {
+            if (temp == 0xF1 || temp == 0xF3 || temp == 0xF2) {
                 weapon_received_data.message_type = WEAPON_MESSAGE_FEEDBACK;
             }
             /* 红外数据类型信息 */

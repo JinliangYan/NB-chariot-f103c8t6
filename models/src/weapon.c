@@ -34,7 +34,6 @@
 #include "weapon.h"
 #include "state.h"
 #include "slaver.h"
-#include "defence.h"
 #include "ir.h"
 #include "servo.h"
 #include "usart.h"
@@ -82,7 +81,7 @@ static const weapon_skill_t weapon_skills[10] = {
 /**
  * \brief 所有武器类型结构体数组, 以武器类型为index
  */
-static const weapon_t weapons[20] = {
+static const weapon_t weapons[10] = {
     [WEAPON_TYPE_HEAVY] = {
         .type = WEAPON_TYPE_HEAVY,
         .hp = HP_M,

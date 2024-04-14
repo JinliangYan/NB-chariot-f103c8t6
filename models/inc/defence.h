@@ -42,7 +42,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef enum {
-    DEFENCE_TYPE_BEGIN,
+    DEFENCE_TYPE_BEGIN = 0x06,
 
     DEFENCE_TYPE_NONE,          /*!< 无防具 */
     DEFENCE_TYPE_LIGHTWEIGHT,   /*!< 轻量级防具 */

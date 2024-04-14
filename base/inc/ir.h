@@ -127,8 +127,8 @@ typedef enum {
  */
 typedef enum {
     IR_CMD_TYPE_EMISSION = 0xF1,
-    IR_CMD_TYPE_CHANGE_ADDR,
-    IR_CMD_TYPE_BAUD_RATE,
+    IR_CMD_TYPE_CHANGE_ADDR = 0xF2,
+    IR_CMD_TYPE_BAUD_RATE= 0xF3,
 } ir_cmd_type_t;
 
 /**
@@ -167,9 +167,9 @@ void ir_emission(uint8_t ir_addr, uint8_t high, uint8_t low, uint8_t command);
  * \brief 改变红外模块的地址
  * \param[in] ir_addr   要改变的红外模块的地址
  * \param[in] new_addr  新地址
- * \return 操作成功（1）或失败（0）
+ * \return 操作成功（0xF2）或失败（0）
  */
-char* ir_change_addr(uint8_t ir_addr, uint8_t new_addr);
+uint8_t ir_change_addr(uint8_t ir_addr, uint8_t new_addr);
 
 /**
  * \brief 改变红外模块串口通信波特率
@@ -177,7 +177,7 @@ char* ir_change_addr(uint8_t ir_addr, uint8_t new_addr);
  * \param[in] ir_baud_rate  要设置的波特率
  * \return 操作成功（1）或失败（0）
  */
-char* ir_change_baud_rate(uint8_t ir_addr, ir_baud_rate_t ir_baud_rate);
+uint8_t ir_change_baud_rate(uint8_t ir_addr, ir_baud_rate_t ir_baud_rate);
 
 /**
  * \brief 测试地址是否和模块地址匹配

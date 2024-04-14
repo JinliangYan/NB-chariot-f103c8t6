@@ -42,7 +42,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef enum {
-    MOVE_MODEL_TYPE_BEGIN,
+    MOVE_MODEL_TYPE_BEGIN = 0x03,
 
     MOVE_MODEL_TYPE_LIGHTWEIGHT,
     MOVE_MODEL_TYPE_HEAVYWEIGHT,

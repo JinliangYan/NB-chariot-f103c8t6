@@ -37,8 +37,8 @@
 #include "delay.h"
 #include "ir.h"
 
-static char* send_command(uint8_t ir_addr, ir_cmd_type_t ir_cmd_type, uint8_t high, uint8_t low, uint8_t command);
-static uint8_t get_one_time_feedback(char* feedback);
+static uint8_t send_command(uint8_t ir_addr, ir_cmd_type_t ir_cmd_type, uint8_t high, uint8_t low, uint8_t command);
+static uint8_t get_one_time_feedback(uint8_t* feedback);
 
 /**
  * \brief 红外模块通用地址
@@ -111,9 +111,9 @@ ir_emission(uint8_t ir_addr, uint8_t high, uint8_t low, uint8_t command) {
  * \brief 改变红外模块的地址
  * \param[in] ir_addr   要改变的红外模块的地址
  * \param[in] new_addr  新地址
- * \return 操作成功（1）或失败（0）
+ * \return 操作成功（0xF2）或失败（0）
  */
-char*
+uint8_t
 ir_change_addr(uint8_t ir_addr, uint8_t new_addr) {
     return send_command(ir_addr, IR_CMD_TYPE_CHANGE_ADDR, new_addr, 0x00, 0x00);
 }
@@ -122,9 +122,9 @@ ir_change_addr(uint8_t ir_addr, uint8_t new_addr) {
  * \brief 改变红外模块串口通信波特率
  * \param[in] ir_addr       红外模块地址
  * \param[in] ir_baud_rate  要设置的波特率
- * \return 操作成功（1）或失败（0）
+ * \return 操作成功（0xF2）或失败（0）
  */
-char*
+uint8_t
 ir_change_baud_rate(uint8_t ir_addr, ir_baud_rate_t ir_baud_rate) {
     return send_command(ir_addr, IR_CMD_TYPE_BAUD_RATE, ir_baud_rate, 0x00, 0x00);
 }
@@ -138,7 +138,7 @@ uint8_t
 ir_addr_confirm(uint8_t ir_addr) {
     /* 通过更改地址指令是否有反馈判断地址是否匹配 */
     /* 注意，这并不会对模块配置做出任何的改变，只起确认作用 */
-    return ir_change_addr(ir_addr, ir_addr) == NULL ? 0 : 1;
+    return ir_change_addr(ir_addr, ir_addr) == 0xF2 ? 1 : 0;
 }
 
 /**
@@ -148,11 +148,11 @@ ir_addr_confirm(uint8_t ir_addr) {
  * \param[in] high:      data1
  * \param[in] low:       data2
  * \param[in] command:   data3
- * \return  feedback(F1, F2 or F3)
+ * \return  feedback(0xF1, 0xF2 or 0xF3)
  */
-static char*
+static uint8_t
 send_command(uint8_t ir_addr, ir_cmd_type_t ir_cmd_type, uint8_t high, uint8_t low, uint8_t command) {
-    static char feedback[64];
+    uint8_t feedback;
     uint8_t time_out = IR_TIME_OUT;
     uint8_t command_arr[5];
     command_arr[0] = ir_addr;
@@ -183,10 +183,11 @@ send_command(uint8_t ir_addr, ir_cmd_type_t ir_cmd_type, uint8_t high, uint8_t l
         }
         ir_delay_ms(1);
         time_out--;
-    } while (!(time_out == 0 || get_one_time_feedback(feedback)));
+    } while (!(time_out == 0 || get_one_time_feedback(&feedback)));
     if (time_out == 0) {
-        return NULL;
+        return 0;
     }
+    weapon_received_data.receive_data_flag = 0;
     return feedback;
 }
 
@@ -200,11 +201,11 @@ send_command(uint8_t ir_addr, ir_cmd_type_t ir_cmd_type, uint8_t high, uint8_t l
  * \return          如果成功获取到反馈信息，则返回 1，否则返回 0
  */
 static uint8_t
-get_one_time_feedback(char* feedback) {
+get_one_time_feedback(uint8_t* feedback) {
     if (operated_ir == IR1) {
 #ifdef IR1_USARTx
         if (weapon_received_data.receive_data_flag == 1 && weapon_received_data.message_type == WEAPON_MESSAGE_FEEDBACK) {
-            strncpy(feedback, (char*)weapon_received_data.uart_buff, weapon_received_data.datanum);
+            *feedback = weapon_received_data.uart_buff[0];
             return 1;
         }
 #endif /* IR1_USARTx */

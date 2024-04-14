@@ -48,13 +48,13 @@ static void avoid(void);
 static void follow(void);
 static void clear_attacker_info(void);
 
-    static attacker_t attacker;
+static attacker_t attacker;
 static uint16_t speed_max;
 
 /**
  * \brief 所有类型结构体数组, 以防具类型为index
  */
-const move_model_t move_models[256] = {
+const move_model_t move_models[10] = {
     [MOVE_MODEL_TYPE_LIGHTWEIGHT] = {
         .type = MOVE_MODEL_TYPE_LIGHTWEIGHT,
         .hp = HP_S,
