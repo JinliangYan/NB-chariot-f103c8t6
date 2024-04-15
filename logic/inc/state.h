@@ -47,14 +47,15 @@ extern "C" {
 /**
  * \brief 战车ID, 1 ~ 255
  */
-#define CHARIOT_ID 0x02
+#define CHARIOT_ID 0x01
+//#define CHARIOT_ID 0x02
 
 
 /**
  * \brief 战车名字
  */
-//#define NAME       "\u5c0f\u9ed1" //小黑
-#define NAME       "\u5927\u84dd" //大蓝
+#define NAME       "\u5c0f\u9ed1" //小帅
+//#define NAME       "\u5927\u84dd" //大胖
 //#define NAME       "\u5927\u9ed1" //大黑
 
 #define WEIGHT_0   0
@@ -62,9 +63,9 @@ extern "C" {
 #define WEIGHT_M   80
 #define WEIGHT_L   110
 
-#define HP_S       10
-#define HP_M       20
-#define HP_L       30
+#define HP_S       50
+#define HP_M       80
+#define HP_L       100
 
 typedef enum {
     MODEL_CORE,

@@ -62,7 +62,7 @@ static const weapon_skill_t weapon_skills[10] = {
         .activated_times = 2,
         .cooldown_time = 10,
         .remaining_cooldown_time = 0,
-        .duration = 30,
+        .duration = 5,
         .remaining_duration = 0,
         .state = 0,
         .name = "WEAPON_SKILL_INCREASE_DAMAGE",
@@ -72,6 +72,7 @@ static const weapon_skill_t weapon_skills[10] = {
         .activated_times = 2,
         .cooldown_time = 10,
         .remaining_cooldown_time = 0,
+        .duration = 5,
         .remaining_duration = 0,
         .state = 0,
         .name = "WEAPON_SKILL_SPEED_UP",
@@ -226,7 +227,7 @@ weapon_received_data_handler(void) {
     attacker.skill = weapon_received_data.uart_buff[1];
     attacker.power = weapon_received_data.uart_buff[2];
 
-    if (attacker.id != 0) {
+    if (attacker.id != 0 && attacker.id != CHARIOT_ID) {
         //TODO 判断该红外是否来自敌方小车
         weapon.hp -= attacker.power;
 

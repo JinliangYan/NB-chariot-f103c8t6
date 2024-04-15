@@ -1,4 +1,5 @@
 #include "blt.h"
+#include "core.h"
 #include "delay.h"
 #include "electromagnet.h"
 #include "hcsr.h"
@@ -41,6 +42,7 @@ base_init(void) {
 
 void
 models_init(void) {
+    core_init();
     move_init();
     electromagnet_init();
     weapon_init();

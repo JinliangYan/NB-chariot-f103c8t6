@@ -79,10 +79,10 @@ defence_init(void) {
             break;
         }
     }
-//    /* 设置默认值 */
-//    if (defence_type == DEFENCE_TYPE_BEGIN) {
-//        defence_type = DEFENCE_TYPE_LIGHTWEIGHT;
-//    }
+    /* 设置默认值 */
+    if (defence_type == DEFENCE_TYPE_BEGIN) {
+        defence_type = DEFENCE_TYPE_LIGHTWEIGHT;
+    }
     defence = defences[defence_type];
 }
 
