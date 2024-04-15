@@ -60,7 +60,7 @@ static const weapon_skill_t weapon_skills[10] = {
     [WEAPON_SKILL_INCREASE_DAMAGE] = {
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .activated_times = 2,
-        .cooldown_time = 30,
+        .cooldown_time = 10,
         .remaining_cooldown_time = 0,
         .duration = 30,
         .remaining_duration = 0,
@@ -70,7 +70,7 @@ static const weapon_skill_t weapon_skills[10] = {
     [WEAPON_SKILL_SPEED_UP] = {
         .skill_type = WEAPON_SKILL_SPEED_UP,
         .activated_times = 2,
-        .cooldown_time = 30,
+        .cooldown_time = 10,
         .remaining_cooldown_time = 0,
         .remaining_duration = 0,
         .state = 0,
@@ -82,23 +82,23 @@ static const weapon_skill_t weapon_skills[10] = {
  * \brief 所有武器类型结构体数组, 以武器类型为index
  */
 static const weapon_t weapons[10] = {
-    [WEAPON_TYPE_HEAVY] = {
-        .type = WEAPON_TYPE_HEAVY,
+    [WEAPON_TYPE_LIGHTWEIGHT] = {
+        .type = WEAPON_TYPE_LIGHTWEIGHT,
         .hp = HP_M,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 50,
         .steerable = 1,
         .weight = WEIGHT_M,
-        .name = "WEAPON_TYPE_HEAVY",
+        .name = "WEAPON_TYPE_LIGHTWEIGHT",
     },
-    [WEAPON_TYPE_LIGHTWEIGHT] = {
-        .type = WEAPON_TYPE_LIGHTWEIGHT,
+    [WEAPON_TYPE_HEAVY] = {
+        .type = WEAPON_TYPE_HEAVY,
         .hp = HP_M,
         .skill_type = WEAPON_SKILL_INCREASE_DAMAGE,
         .power = 70,
-        .steerable = 0,
+        .steerable = 1,
         .weight = WEIGHT_L,
-        .name = "WEAPON_TYPE_OTHER",
+        .name = "WEAPON_TYPE_HEAVY",
     }
     // TODO 补充其他武器类型
 };

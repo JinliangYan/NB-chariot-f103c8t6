@@ -99,7 +99,7 @@ state_update_info(model_t model, attribute_t attribute, uint8_t value) {
     } else if (model == MODEL_DEFENCE) {
         if (attribute == ATTRIBUTE_HP) {
             /* ·ÀÓùÄ£¿éÑªÁ¿ */
-            sprintf(state_str, "mvh%d", value);
+            sprintf(state_str, "dfch%d", value);
             bt_send20_packet(state_str);
         }
     } else if (model == MODEL_MOVE) {

@@ -32,6 +32,7 @@
  * Author:          JinLiang YAN <yanmiku0206@outlook.com>
  */
 
+#include <stdlib.h>
 #include <string.h>
 #include "defence.h"
 #include "slaver.h"
@@ -42,24 +43,17 @@
  * \brief 所有防具类型结构体数组, 以防具类型为index
  */
 static const defence_t defences[10] = {
-    [DEFENCE_TYPE_NONE] =
-        {
-            .type = DEFENCE_TYPE_NONE,
-            .hp = 0,
-            .weight = WEIGHT_0,
-            .name = "DEFENCE_TYPE_NONE",
-        },
     [DEFENCE_TYPE_LIGHTWEIGHT] =
         {
             .type = DEFENCE_TYPE_LIGHTWEIGHT,
-            .hp = 2,
+            .hp = HP_M,
             .weight = WEIGHT_M,
             .name = "DEFENCE_TYPE_LIGHTWEIGHT",
         },
     [DEFENCE_TYPE_HEAVYWEIGHT] =
         {
             .type = DEFENCE_TYPE_HEAVYWEIGHT,
-            .hp = 4,
+            .hp = HP_L,
             .weight = WEIGHT_L,
             .name = "DEFENCE_TYPE_HEAVYWEIGHT",
         }
@@ -85,10 +79,10 @@ defence_init(void) {
             break;
         }
     }
-    /* 设置默认值 */
-    if (defence_type == DEFENCE_TYPE_BEGIN) {
-        defence_type = DEFENCE_TYPE_LIGHTWEIGHT;
-    }
+//    /* 设置默认值 */
+//    if (defence_type == DEFENCE_TYPE_BEGIN) {
+//        defence_type = DEFENCE_TYPE_LIGHTWEIGHT;
+//    }
     defence = defences[defence_type];
 }
 
@@ -102,24 +96,30 @@ defence_control(void) {
 
             sscanf(
                 (char*)slaver_received_data.uart_buff,
-                "attacked-i%d-s%d-p%d",
+                "attacked-i%d-s%d-p%d-defence",
                 &attacker.id, &attacker.skill, &attacker.power
                 );
 
             slaver_received_data.receive_data_flag = 0;
         }
-    }
-    if (attacker.id != 0) {
-        defence.hp -= attacker.power;
-        if (defence.hp < 0) {
-            defence.hp = 0;
+        if (attacker.id == 0) {
+            if (defence.hp < attacker.power) {
+                defence.hp = 0;
+            } else {
+                defence.hp -= attacker.power;
+            }
+
+            state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, defence.hp);
+            char cmd[20];
+            sprintf(cmd, "dvh%d", (uint8_t)(1.0 * defence.hp / defences[defence.type].hp * 100));
+            slaver_send('M', cmd);
+            clear_attacker_info();
         }
-        state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, defence.hp);
-        char cmd[20];
-        sprintf(cmd, "dvh%d", defence.hp / defences[defence.type].hp * 100);
-        slaver_send('M', cmd);
-        clear_attacker_info();
     }
+}
+
+static char* get_attacker_info(char *string) {
+
 }
 
 static void

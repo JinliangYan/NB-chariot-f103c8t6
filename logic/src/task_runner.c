@@ -105,16 +105,6 @@ TIM2_IRQHandler(void) {
                 weapon_skill.remaining_duration--;
                 weapon_skill.remaining_cooldown_time--;
             }
-
-            if (is_bt_connected()) {
-                state_update_info(MODEL_CHARIOT, ATTRIBUTE_ID, chariot.id);
-                state_update_info(MODEL_CORE, ATTRIBUTE_HP, chariot.core_hp);
-                state_update_info(MODEL_MOVE, ATTRIBUTE_HP, chariot.move_model->hp);
-                //    state_update_info(MODEL_WEAPON, ATTRIBUTE_HP, chariot.weapon->hp);
-                state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.defence->hp);
-                state_update_info(MODEL_SKILL, ATTRIBUTE_ID, chariot.weapon->skill_type);
-                state_update_info(MODEL_SKILL, ATTRIBUTE_TIME, chariot.skill->cooldown_time);
-            }
             count_1000ms = 0;
         }
         if (count_20s == 20) {

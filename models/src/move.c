@@ -134,10 +134,14 @@ move_control(void) {
         int Map_Lx = Map(Joy_Lx, 10, 90, -127, 127);
         int Map_Ly = Map(Joy_Ly, 10, 90, -127, 127);
 
-        int pwm1 = Map_Ly + Map_Lx;
-        int pwm2 = Map_Ly - Map_Lx;
-        int pwm3 = Map_Ly + Map_Lx;
-        int pwm4 = Map_Ly - Map_Lx;
+//        int pwm1 = Map_Ly + Map_Lx;
+//        int pwm2 = Map_Ly - Map_Lx;
+//        int pwm3 = Map_Ly + Map_Lx;
+//        int pwm4 = Map_Ly - Map_Lx;
+        int pwm1 = -Map_Ly - Map_Lx;
+        int pwm2 = -Map_Ly + Map_Lx;
+        int pwm3 = -Map_Ly - Map_Lx;
+        int pwm4 = -Map_Ly + Map_Lx;
 
         pwm1 = Map(pwm1, -127, 127, -speed_max, speed_max);
         pwm2 = Map(pwm2, -127, 127, -speed_max, speed_max);
@@ -152,9 +156,11 @@ move_control(void) {
 
     if (bt_received_data.receive_data_flag == 1 && bt_received_data.message_type == BT_MESSAGE_TURN) {
         if (bt_received_data.uart_buff[0] == 'L') {
-            motor_turn_left(200);
+            motor_turn_right(200);
+//            motor_turn_left(200);
         } else if (bt_received_data.uart_buff[0] == 'R') {
             motor_turn_right(200);
+//            motor_turn_right(200);
         }
 
         bt_received_data.receive_data_flag = 0;

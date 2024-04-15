@@ -47,7 +47,8 @@ extern "C" {
 /**
  * \brief 战车ID, 1 ~ 255
  */
-#define CHARIOT_ID 0x01
+#define CHARIOT_ID 0x02
+
 
 /**
  * \brief 战车名字
@@ -61,9 +62,9 @@ extern "C" {
 #define WEIGHT_M   80
 #define WEIGHT_L   110
 
-#define HP_S       50
-#define HP_M       100
-#define HP_L       150
+#define HP_S       10
+#define HP_M       20
+#define HP_L       30
 
 typedef enum {
     MODEL_CORE,

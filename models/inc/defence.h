@@ -44,7 +44,6 @@ extern "C" {
 typedef enum {
     DEFENCE_TYPE_BEGIN = 0x06,
 
-    DEFENCE_TYPE_NONE,          /*!< 无防具 */
     DEFENCE_TYPE_LIGHTWEIGHT,   /*!< 轻量级防具 */
     DEFENCE_TYPE_HEAVYWEIGHT,   /*!< 重量级防具 */
 
@@ -52,10 +51,11 @@ typedef enum {
 } defence_type_t;
 
 typedef struct {
+    uint8_t null;
+    char* name;
     defence_type_t type; /*!< 防具类型 */
     int16_t hp;          /*!< 攻击力 */
     uint8_t weight;      /*!< 重量 */
-    char* name;
 } defence_t;
 
 void defence_init(void);
