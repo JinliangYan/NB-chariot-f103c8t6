@@ -259,10 +259,10 @@ weapon_attack(uint8_t charged) {
  */
 static uint8_t
 weapon_activate_skill(void) {
-    if (weapon_skill.activated_times <= 0 || weapon_skill.remaining_cooldown_time > 0) {
-        /* 技能可释放次数不足或正在冷却, 无法释放 */
-        return 1;
-    }
+//    if (weapon_skill.activated_times <= 0 || weapon_skill.remaining_cooldown_time > 0) {
+//        /* 技能可释放次数不足或正在冷却, 无法释放 */
+//        return 1;
+//    }
 
     /* 更新技能状态 */
     weapon_skill.activated_times--;
