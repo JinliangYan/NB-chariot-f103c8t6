@@ -102,7 +102,7 @@ defence_control(void) {
 
             slaver_received_data.receive_data_flag = 0;
         }
-        if (attacker.id == 0) {
+        if (attacker.id > 0 && attacker.id <= 3 && attacker.id != CHARIOT_ID) {
             if (defence.hp < attacker.power) {
                 defence.hp = 0;
             } else {

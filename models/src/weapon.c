@@ -227,7 +227,7 @@ weapon_received_data_handler(void) {
     attacker.skill = weapon_received_data.uart_buff[1];
     attacker.power = weapon_received_data.uart_buff[2];
 
-    if (attacker.id != 0 && attacker.id != CHARIOT_ID) {
+    if (attacker.id > 0 && attacker.id <= 3 && attacker.id != CHARIOT_ID) {
         //TODO 判断该红外是否来自敌方小车
         weapon.hp -= attacker.power;
 

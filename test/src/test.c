@@ -95,7 +95,6 @@ test_bt(void) {
 void
 test_motor_pwm(void) {
     printf_("MOTOR TEST START\r\n");
-    uint16_t tmp = 100;
     motor_state(1);
     forward(100);
     backward(100);

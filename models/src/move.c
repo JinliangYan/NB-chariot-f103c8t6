@@ -117,7 +117,7 @@ move_control(void) {
         }
     }
     /* ¿ÛÑª */
-    if (attacker.id != 0 && attacker.id != CHARIOT_ID) {
+    if (attacker.id > 0 && attacker.id <= 3 && attacker.id != CHARIOT_ID) {
             move_model.hp -= attacker.power;
             if (move_model.hp < 0) {
                 move_model.hp = 0;
