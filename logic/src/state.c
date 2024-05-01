@@ -75,6 +75,9 @@ state_init(void) {
     state_update_info(MODEL_DEFENCE, ATTRIBUTE_HP, chariot.defence->hp);
     state_update_info(MODEL_SKILL, ATTRIBUTE_ID, chariot.weapon->skill_type);
     state_update_info(MODEL_SKILL, ATTRIBUTE_TIME, chariot.skill->cooldown_time);
+
+    /* 初始化血量显示 */
+    slaver_send('M', "dvh100");
 }
 
 void
