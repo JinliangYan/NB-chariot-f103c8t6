@@ -44,6 +44,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define MAX_PLAYER 3
+
 /**
  * \brief Õ½³µID, 1 ~ 255
  */

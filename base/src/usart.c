@@ -2,6 +2,7 @@
 #include "blt.h"
 #include "mode.h"
 #include "slaver.h"
+#include "state.h"
 #include "string.h"
 #include "sys.h"
 
@@ -256,7 +257,6 @@ USART1_IRQHandler(void) {
 
 /**
  * \brief 处理武器模块接收到的红外数据
- * TODO     消除垃圾数据
  */
 __attribute__((unused)) void
 USART2_IRQHandler(void) {
@@ -266,6 +266,10 @@ USART2_IRQHandler(void) {
 
         /* 确定消息类型 */
         if (next_state == START) {
+            /* 去除干扰 */
+            if (temp == 0 || (temp > MAX_PLAYER && temp < 0xF1)) {
+                return;
+            }
             /* 清空数据准备接收 */
             weapon_received_data.message_type = WEAPON_MESSAGE_NONE;
             weapon_received_data.receive_data_flag = 0;
@@ -274,30 +278,24 @@ USART2_IRQHandler(void) {
             /* 指令操作反馈类型信息 */
             if (temp == 0xF1 || temp == 0xF3 || temp == 0xF2) {
                 weapon_received_data.message_type = WEAPON_MESSAGE_FEEDBACK;
+                weapon_received_data.uart_buff[weapon_received_data.datanum++] = temp;
+                weapon_received_data.receive_data_flag = 1;
+                next_state = START;
+                return;
             }
             /* 红外数据类型信息 */
             else {
                 weapon_received_data.message_type = WEAPON_MESSAGE_IR_SIG;
+                next_state = MESSAGE;
             }
-
-            weapon_received_data.uart_buff[bt_received_data.datanum++] = temp;
-
-            next_state = MESSAGE;
-
-            return;
         }
 
-        if (next_state == MESSAGE) {
-            if (weapon_received_data.message_type == WEAPON_MESSAGE_FEEDBACK) {
-                weapon_received_data.uart_buff[bt_received_data.datanum++] = temp;
+        if (next_state == MESSAGE && weapon_received_data.message_type == WEAPON_MESSAGE_IR_SIG) {
+            weapon_received_data.uart_buff[weapon_received_data.datanum++] = temp;
+            if (weapon_received_data.datanum == 3) {
                 weapon_received_data.receive_data_flag = 1;
-            } else if (weapon_received_data.message_type == WEAPON_MESSAGE_IR_SIG) {
-                weapon_received_data.uart_buff[bt_received_data.datanum++] = temp;
-                if (weapon_received_data.datanum == 3) {
-                    weapon_received_data.receive_data_flag = 1;
-                }
+                next_state = START;
             }
-            next_state = START;
         }
     }
 }
